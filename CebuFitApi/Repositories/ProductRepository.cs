@@ -1,13 +1,11 @@
 ﻿using CebuFitApi.DTOs;
-using CebuFitApi.Interfaces;
 using CebuFitApi.Models;
-using System.Xml.Linq;
 
 namespace CebuFitApi.Repositories
 {
-    public class MealRepository : IMealRepository
+    public class ProductRepository : IProductRepository
     {
-        public Task CreateAsync(Meal blogPost)
+        public Task CreateAsync(Product product)
         {
             throw new NotImplementedException();
         }
@@ -17,17 +15,17 @@ namespace CebuFitApi.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<List<Meal>> GetAllAsync()
+        public Task<List<Product>> GetAllAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<Meal> GetByIdAsync(Guid id)
+        public Task<Product> GetByIdAsync(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public Task UpdateAsync(Meal blogPost)
+        public Task UpdateAsync(Product product)
         {
             throw new NotImplementedException();
         }

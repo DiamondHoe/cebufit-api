@@ -16,6 +16,8 @@ namespace CebuFitApi.Mapping
 
             CreateMap<CategoryDTO, Category>();
             CreateMap<Category, CategoryDTO>();
+            CreateMap<CategoryCreateDTO, Category>();
+            CreateMap<Category, CategoryCreateDTO>();
 
             CreateMap<DayDTO, Day>();
             CreateMap<Day, DayDTO>();

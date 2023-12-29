@@ -19,7 +19,7 @@ namespace CebuFitApi.Services
             throw new NotImplementedException();
         }
 
-        public Task DeleteMealAsync(int id)
+        public Task DeleteMealAsync(Guid id)
         {
             throw new NotImplementedException();
         }
@@ -31,12 +31,12 @@ namespace CebuFitApi.Services
             return mealDTOs;
         }
 
-        public Task<MealDTO> GetMealByIdAsync(int id)
+        public Task<MealDTO> GetMealByIdAsync(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public Task UpdateMealAsync(int id, MealDTO blogPostDTO)
+        public Task UpdateMealAsync(Guid id, MealDTO blogPostDTO)
         {
             throw new NotImplementedException();
         }

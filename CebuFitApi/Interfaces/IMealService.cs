@@ -5,9 +5,9 @@ namespace CebuFitApi.Interfaces
     public interface IMealService
     {
         Task<List<MealDTO>> GetAllMealsAsync();
-        Task<MealDTO> GetMealByIdAsync(int id);
+        Task<MealDTO> GetMealByIdAsync(Guid id);
         Task CreateMealAsync(MealDTO blogPostDTO);
-        Task UpdateMealAsync(int id, MealDTO blogPostDTO);
-        Task DeleteMealAsync(int id);
+        Task UpdateMealAsync(Guid id, MealDTO blogPostDTO);
+        Task DeleteMealAsync(Guid id);
     }
 }

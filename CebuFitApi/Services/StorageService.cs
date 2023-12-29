@@ -1,33 +1,31 @@
 ﻿using CebuFitApi.DTOs;
-using CebuFitApi.Interfaces;
 using CebuFitApi.Models;
-using System.Xml.Linq;
 
-namespace CebuFitApi.Repositories
+namespace CebuFitApi.Services
 {
-    public class MealRepository : IMealRepository
+    public class StorageService : IStorageService
     {
-        public Task CreateAsync(Meal blogPost)
+        public Task<StorageDTO> CreateStorageAsync(StorageDTO storage)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteAsync(Guid id)
+        public Task DeleteStorageAsync(Guid storageId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<Meal>> GetAllAsync()
+        public Task<List<StorageDTO>> GetAllStoragesAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<Meal> GetByIdAsync(Guid id)
+        public Task<StorageDTO> GetStorageByIdAsync(Guid storageId)
         {
             throw new NotImplementedException();
         }
 
-        public Task UpdateAsync(Meal blogPost)
+        public Task UpdateStorageAsync(StorageDTO storage)
         {
             throw new NotImplementedException();
         }

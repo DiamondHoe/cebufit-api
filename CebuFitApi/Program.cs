@@ -13,11 +13,31 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+#region repositories and services
 builder.Services.AddScoped<IMealRepository, MealRepository>();
 builder.Services.AddScoped<IMealService, MealService>();
 
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+
+builder.Services.AddScoped<IDayRepository, DayRepository>();
+builder.Services.AddScoped<IDayService, DayService>();
+
+builder.Services.AddScoped<IIngredientRepository, IngredientRepository>();
+builder.Services.AddScoped<IIngredientService, IngredientService>();
+
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductService, ProductService>();
+
+builder.Services.AddScoped<IRecipeRepository, RecipeRepository>();
+builder.Services.AddScoped<IRecipeService, RecipeService>();
+
+builder.Services.AddScoped<IStorageItemRepository, StorageItemRepository>();
+builder.Services.AddScoped<IStorageItemService, StorageItemService>();
+
+builder.Services.AddScoped<IStorageService, StorageService>();
+builder.Services.AddScoped<IStorageRepository, StorageRepository>();
+#endregion
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 

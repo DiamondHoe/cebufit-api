@@ -14,12 +14,10 @@ namespace CebuFitApi.Controllers
     {
         private readonly ILogger<MealController> _logger;
         private readonly IMealService _mealService;
-        private readonly IMapper _mapper;
-        public MealController(ILogger<MealController> logger, IMealService mealService, IMapper mapper)
+        public MealController(ILogger<MealController> logger, IMealService mealService)
         {           
             _logger = logger;
              _mealService = mealService;
-            _mapper = mapper;
         }
 
         [HttpGet(Name = "GetMeals")]

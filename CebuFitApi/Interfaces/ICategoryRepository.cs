@@ -8,6 +8,6 @@ namespace CebuFitApi.Interfaces
         Task<Category> GetByIdAsync(Guid categoryId);
         Task<List<Category>> GetAllAsync();
         Task UpdateAsync(Category category);
-        Task DeleteAsync(int categoryId);
+        Task DeleteAsync(Guid categoryId);
     }
 }

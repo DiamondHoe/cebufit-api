@@ -1,33 +1,31 @@
 ﻿using CebuFitApi.DTOs;
-using CebuFitApi.Interfaces;
 using CebuFitApi.Models;
-using System.Xml.Linq;
 
-namespace CebuFitApi.Repositories
+namespace CebuFitApi.Services
 {
-    public class MealRepository : IMealRepository
+    public class DayService : IDayService
     {
-        public Task CreateAsync(Meal blogPost)
+        public Task<DayDTO> CreateDayAsync(DayDTO day)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteAsync(Guid id)
+        public Task DeleteDayAsync(Guid dayId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<Meal>> GetAllAsync()
+        public Task<List<DayDTO>> GetAllDaysAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<Meal> GetByIdAsync(Guid id)
+        public Task<DayDTO> GetDayByIdAsync(Guid dayId)
         {
             throw new NotImplementedException();
         }
 
-        public Task UpdateAsync(Meal blogPost)
+        public Task UpdateDayAsync(DayDTO day)
         {
             throw new NotImplementedException();
         }

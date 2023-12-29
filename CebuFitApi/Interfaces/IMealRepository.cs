@@ -1,13 +1,14 @@
-﻿using CebuFitApi.Models;
+﻿using CebuFitApi.DTOs;
+using CebuFitApi.Models;
 
 namespace CebuFitApi.Interfaces
 {
     public interface IMealRepository
     {
         Task<List<Meal>> GetAllAsync();
-        Task<Meal> GetByIdAsync(int id);
+        Task<Meal> GetByIdAsync(Guid id);
         Task CreateAsync(Meal blogPost);
         Task UpdateAsync(Meal blogPost);
-        Task DeleteAsync(int id);
+        Task DeleteAsync(Guid id);
     }
 }

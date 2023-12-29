@@ -17,11 +17,17 @@ public class CategoryService : ICategoryService
         _mapper = mapper;
     }
 
-    public async Task<CategoryDTO> CreateCategoryAsync(Category category)
+    public async Task<CategoryDTO> CreateCategoryAsync(CategoryCreateDTO categoryDTO)
     {
-        // Add asynchronous implementation for creating a new category
-        // Example: await _categoryRepository.AddAsync(category);
-        throw new NotImplementedException();
+        var category = _mapper.Map<Category>(categoryDTO);
+        category.Id = Guid.NewGuid();
+        await _categoryRepository.AddAsync(category);
+        return _mapper.Map<CategoryDTO>(category);
+    }
+
+    public async Task DeleteCategoryAsync(Guid categoryId)
+    {
+        await _categoryRepository.DeleteAsync(categoryId);
     }
 
     public async Task<CategoryDTO> GetCategoryByIdAsync(Guid categoryId)
@@ -38,17 +44,9 @@ public class CategoryService : ICategoryService
         return categoryDTOs;
     }
 
-    public async Task UpdateCategoryAsync(Category category)
+    public async Task UpdateCategoryAsync(CategoryDTO categoryDTO)
     {
-        // Add asynchronous implementation for updating an existing category
-        // Example: await _categoryRepository.UpdateAsync(category);
-        throw new NotImplementedException();
-    }
-
-    public async Task DeleteCategoryAsync(int categoryId)
-    {
-        // Add asynchronous implementation for deleting a category by ID
-        // Example: await _categoryRepository.DeleteAsync(categoryId);
-        throw new NotImplementedException();
+        var category = _mapper.Map<Category>(categoryDTO);
+        await _categoryRepository.UpdateAsync(category);
     }
 }

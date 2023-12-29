@@ -1,42 +1,54 @@
-﻿using CebuFitApi.Interfaces;
+﻿using CebuFitApi.Data;
+using CebuFitApi.Interfaces;
 using CebuFitApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CebuFitApi.Repositories
 {
     public class CategoryRepository : ICategoryRepository
     {
-        public Task<Category> AddAsync(Category category)
+        private readonly CebuFitApiDbContext _dbContext;
+        public CategoryRepository(CebuFitApiDbContext dbContext)
         {
-            throw new NotImplementedException();
+            _dbContext = dbContext;
+        }
+        public async Task<Category> AddAsync(Category category)
+        {
+            _dbContext.Categories.Add(category);
+            await _dbContext.SaveChangesAsync();
+
+            return category;
         }
 
-        public Task DeleteAsync(int categoryId)
+        public async Task DeleteAsync(Guid categoryId)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<Category>> GetAllAsync()
-        {
-            var categories =  new List<Category> 
+            var categoryToDelete = await _dbContext.Categories.FindAsync(categoryId);
+            if (categoryToDelete != null)
             {
-                new Category
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "Pieczywo"
-                }
-            };
-            return Task.FromResult(categories);
+                _dbContext.Categories.Remove(categoryToDelete);
+                await _dbContext.SaveChangesAsync();
+            }
         }
 
-        public Task<Category> GetByIdAsync(Guid categoryId)
+        public async Task<List<Category>> GetAllAsync()
         {
-            var category = new Category { Id = categoryId, Name = "Pieczywko" };
-            return Task.FromResult(category);
+            var categories = await _dbContext.Categories.ToListAsync();
+            return categories;
         }
 
-        public Task UpdateAsync(Category category)
+        public async Task<Category> GetByIdAsync(Guid categoryId)
         {
-            throw new NotImplementedException();
+            var category = await _dbContext.Categories.FindAsync(categoryId);
+            return category;
+        }
+
+        public async Task UpdateAsync(Category category)
+        {
+            var existingCategory = await _dbContext.Categories.FindAsync(category.Id);
+            _dbContext.Entry(existingCategory).CurrentValues.SetValues(category);
+
+            // Save changes to the database
+            await _dbContext.SaveChangesAsync();
         }
     }
 }
