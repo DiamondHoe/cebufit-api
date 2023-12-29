@@ -25,16 +25,6 @@ namespace CebuFitApi.Repositories
                         new Ingredient {
                             Id = Guid.NewGuid(),
                             Quantity = 1,
-                            AssociatedProduct = new Product {
-                                Id = Guid.NewGuid(),
-                                Name ="SMTH",
-                                Calories=200,
-                                Importance = Helpers.Enums.ImportanceEnum.Medium,
-                                UnitWieght = 20,
-                                Category = new Category{ 
-                                    Id = Guid.NewGuid(),
-                                    Name = "Chlep"}
-                            } 
                         } 
                     } 
                 },

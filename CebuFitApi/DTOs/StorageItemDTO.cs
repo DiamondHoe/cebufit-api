@@ -9,6 +9,5 @@ namespace CebuFitApi.DTOs
         public decimal? Price { get; set; }
         public decimal? Quantity { get; set; }
         public decimal? Weight { get; set; }
-        public Product AssociatedProduct { get; set; }
     }
 }

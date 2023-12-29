@@ -23,7 +23,7 @@ namespace CebuFitApi.Controllers
         }
 
         [HttpGet(Name = "GetMeals")]
-        public async Task<IEnumerable<MealDTO>> Get()
+        public async Task<List<MealDTO>> Get()
         {
             return await _mealService.GetAllMealsAsync();
         }

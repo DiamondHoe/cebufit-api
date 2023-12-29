@@ -3,6 +3,7 @@
     public class MacroDTO
     {
         public Guid Id { get; set; }
+        public int Calories { get; set; }
         public decimal Carb { get; set; }
         public decimal Sugar { get; set; }
         public decimal Fat { get; set; }

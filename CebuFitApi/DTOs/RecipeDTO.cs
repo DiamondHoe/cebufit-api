@@ -5,6 +5,7 @@ namespace CebuFitApi.DTOs
     public class RecipeDTO
     {
         public Guid Id { get; set; }
-        public IEnumerable<Ingredient>? Ingredients { get; set; }
+        public string Name { get; set; }
+        public List<Ingredient> Ingredients { get; set; }
     }
 }
