@@ -1,33 +1,75 @@
-﻿using CebuFitApi.DTOs;
+﻿using AutoMapper;
+using CebuFitApi.DTOs;
+using CebuFitApi.Interfaces;
 using CebuFitApi.Models;
 
 namespace CebuFitApi.Services
 {
     public class ProductService : IProductService
     {
-        public Task<ProductDTO> CreateProductAsync(ProductDTO product)
+        private readonly IProductRepository _productRepository;
+        private readonly ICategoryRepository _categoryRepository;
+        private readonly IMapper _mapper;
+        public ProductService(IProductRepository productRepository, IMapper mapper, ICategoryRepository categoryRepository)
         {
-            throw new NotImplementedException();
+            _productRepository = productRepository;
+            _categoryRepository = categoryRepository;
+            _mapper = mapper;
+        }
+        public async Task<List<ProductDTO>> GetAllProductsAsync()
+        {
+            var productsEntities = await _productRepository.GetAllAsync();
+            var productsDTOs = _mapper.Map<List<ProductDTO>>(productsEntities);
+            return productsDTOs;
+        }
+        public async Task<List<ProductWithMacroDTO>> GetAllProductsWithMacroAsync()
+        {
+            var productsEntities = await _productRepository.GetAllWithMacroAsync();
+            var productsDTOs = _mapper.Map<List<ProductWithMacroDTO>>(productsEntities);
+            return productsDTOs;
         }
 
-        public Task DeleteProductAsync(Guid productId)
+        public async Task<ProductDTO> GetProductByIdAsync(Guid productId)
         {
-            throw new NotImplementedException();
+            var productEntity = await _productRepository.GetByIdAsync(productId);
+            var productDTO = _mapper.Map<ProductDTO>(productEntity);
+            return productDTO;
         }
-
-        public Task<List<ProductDTO>> GetAllProductsAsync()
+        public async Task<ProductWithMacroDTO> GetProductByIdWithMacroAsync(Guid productId)
         {
-            throw new NotImplementedException();
+            var productEntity = await _productRepository.GetByIdWithMacroAsync(productId);
+            var productDTO = _mapper.Map<ProductWithMacroDTO>(productEntity);
+            return productDTO;
         }
-
-        public Task<ProductDTO> GetProductByIdAsync(Guid productId)
+        public async Task CreateProductAsync(ProductCreateDTO productDTO)
         {
-            throw new NotImplementedException();
+            var product = _mapper.Map<Product>(productDTO);
+            product.Id = Guid.NewGuid();
+
+            var macro = _mapper.Map<Macro>(productDTO.Macro);
+            macro.Id = Guid.NewGuid();
+            product.Macro = macro;
+
+            var category = await _categoryRepository.GetCategoryByIdAsync(productDTO.CategoryId);
+            if(category == null)
+            {
+                throw new Exception("Category not found");
+            }
+            product.Category = _mapper.Map<Category>(category);
+
+            await _productRepository.CreateAsync(product);
         }
-
-        public Task UpdateProductAsync(ProductDTO product)
+        public async Task UpdateProductAsync(ProductUpdateDTO productDTO)
         {
-            throw new NotImplementedException();
+            var product = _mapper.Map<Product>(productDTO);
+            var macro = _mapper.Map<Macro>(productDTO.Macro);
+            product.Macro = macro;
+
+            await _productRepository.UpdateAsync(product);
+        }
+        public async Task DeleteProductAsync(Guid productId)
+        {
+            await _productRepository.DeleteAsync(productId);
         }
     }
 }

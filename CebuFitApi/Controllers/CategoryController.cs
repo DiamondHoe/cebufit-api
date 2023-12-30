@@ -12,8 +12,8 @@ namespace CebuFitApi.Controllers
     {
         private readonly ILogger<CategoryController> _logger;
         private readonly IMapper _mapper;
-        private readonly ICategoryService _categoryService;
-        public CategoryController(ILogger<CategoryController> logger, ICategoryService categoryService, IMapper mapper)
+        private readonly ICategoryRepository _categoryService;
+        public CategoryController(ILogger<CategoryController> logger, ICategoryRepository categoryService, IMapper mapper)
         {
             _logger = logger;
             _mapper = mapper;
@@ -30,6 +30,7 @@ namespace CebuFitApi.Controllers
             }
             return Ok(categories);
         }
+
         [HttpGet("{categoryId}", Name = "GetCategoryById")]
         public async Task<ActionResult<CategoryDTO>> GetById(Guid categoryId)
         {
@@ -41,24 +42,33 @@ namespace CebuFitApi.Controllers
             }
             return Ok(category);
         }
+
         [HttpPost]
-        public async Task<ActionResult<CategoryDTO>> CreateCategory([FromBody] CategoryCreateDTO categoryCreateDTO)
+        public async Task<ActionResult> CreateCategory([FromBody] CategoryCreateDTO categoryCreateDTO)
         {
             if (categoryCreateDTO == null)
             {
                 return BadRequest("Category data is null.");
             }
 
-            var createdCategory = await _categoryService.CreateCategoryAsync(categoryCreateDTO);
+            await _categoryService.CreateCategoryAsync(categoryCreateDTO);
 
-            if (createdCategory == null)
+            return Ok();
+        }
+
+        [HttpPut]
+        public async Task<ActionResult> UpdateCategory(CategoryDTO categoryDTO)
+        {
+            var existingCategory = await _categoryService.GetCategoryByIdAsync(categoryDTO.Id);
+
+            if (existingCategory == null)
             {
-                return StatusCode(500, "A problem occurred while handling your request.");
+                return NotFound();
             }
 
-            var categoryDTO = _mapper.Map<CategoryDTO>(createdCategory);
+            await _categoryService.UpdateCategoryAsync(categoryDTO);
 
-            return CreatedAtRoute("GetCategoryById", new { categoryId = categoryDTO.Id, }, categoryDTO);
+            return Ok();
         }
 
         [HttpDelete("{categoryId}")]
@@ -75,20 +85,5 @@ namespace CebuFitApi.Controllers
 
             return Ok();
         }
-        [HttpPut]
-        public async Task<ActionResult<CategoryDTO>> UpdateCategory(CategoryDTO categoryDTO)
-        {
-            var existingCategory = await _categoryService.GetCategoryByIdAsync(categoryDTO.Id);
-
-            if (existingCategory == null)
-            {
-                return NotFound();
-            }
-
-            await _categoryService.UpdateCategoryAsync(categoryDTO);
-
-            return Ok(categoryDTO);
-        }
-
     }
 }

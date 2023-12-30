@@ -5,21 +5,37 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CebuFitApi.Repositories
 {
-    public class CategoryRepository : ICategoryRepository
+    public class CategoryRepository : Interfaces.ICategoryRepository
     {
         private readonly CebuFitApiDbContext _dbContext;
         public CategoryRepository(CebuFitApiDbContext dbContext)
         {
             _dbContext = dbContext;
         }
-        public async Task<Category> AddAsync(Category category)
+        public async Task<List<Category>> GetAllAsync()
         {
-            _dbContext.Categories.Add(category);
-            await _dbContext.SaveChangesAsync();
-
+            var categories = await _dbContext.Categories.ToListAsync();
+            return categories;
+        }
+        public async Task<Category> GetByIdAsync(Guid categoryId)
+        {
+            var category = await _dbContext.Categories.FindAsync(categoryId);
             return category;
         }
-
+        public async Task AddAsync(Category category)
+        {
+            await _dbContext.Categories.AddAsync(category);
+            await _dbContext.SaveChangesAsync();
+        }
+        public async Task UpdateAsync(Category category)
+        {
+            var existingCategory = await _dbContext.Categories.FindAsync(category.Id);
+            if (existingCategory != null)
+            {
+                _dbContext.Entry(existingCategory).CurrentValues.SetValues(category);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
         public async Task DeleteAsync(Guid categoryId)
         {
             var categoryToDelete = await _dbContext.Categories.FindAsync(categoryId);
@@ -28,27 +44,6 @@ namespace CebuFitApi.Repositories
                 _dbContext.Categories.Remove(categoryToDelete);
                 await _dbContext.SaveChangesAsync();
             }
-        }
-
-        public async Task<List<Category>> GetAllAsync()
-        {
-            var categories = await _dbContext.Categories.ToListAsync();
-            return categories;
-        }
-
-        public async Task<Category> GetByIdAsync(Guid categoryId)
-        {
-            var category = await _dbContext.Categories.FindAsync(categoryId);
-            return category;
-        }
-
-        public async Task UpdateAsync(Category category)
-        {
-            var existingCategory = await _dbContext.Categories.FindAsync(category.Id);
-            _dbContext.Entry(existingCategory).CurrentValues.SetValues(category);
-
-            // Save changes to the database
-            await _dbContext.SaveChangesAsync();
         }
     }
 }
