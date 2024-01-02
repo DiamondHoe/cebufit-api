@@ -31,7 +31,7 @@ namespace CebuFitApi.Controllers
         }
 
         [HttpGet("withProduct/", Name = "GetStorageItemsWithProduct")]
-        public async Task<ActionResult<List<StorageItemDTO>>> GetAllWithProduct()
+        public async Task<ActionResult<List<StorageItemWithProductDTO>>> GetAllWithProduct()
         {
             var storageItems = await _storageItemService.GetAllStorageItemsWithProductAsync();
             if (storageItems.Count == 0)
@@ -52,7 +52,7 @@ namespace CebuFitApi.Controllers
             return Ok(storageItem);
         }
         [HttpGet("withProduct/{siId}", Name = "GetStorageItemByIdWithProduct")]
-        public async Task<ActionResult<StorageItemDTO>> GetByIdWithProduct(Guid siId)
+        public async Task<ActionResult<StorageItemWithProductDTO>> GetByIdWithProduct(Guid siId)
         {
             var storageItem = await _storageItemService.GetStorageItemByIdWithProductAsync(siId);
             if (storageItem == null)

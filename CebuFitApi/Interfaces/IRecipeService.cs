@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 public interface IRecipeService
 {
-    Task<RecipeDTO> CreateRecipeAsync(RecipeDTO recipe);
-    Task<RecipeDTO> GetRecipeByIdAsync(Guid recipeId);
     Task<List<RecipeDTO>> GetAllRecipesAsync();
+    Task<List<RecipeWithDetailsDTO>> GetAllRecipesWithDetailsAsync();
+    Task<RecipeDTO> GetRecipeByIdAsync(Guid recipeId);
+    Task<RecipeWithDetailsDTO> GetRecipeByIdWithDetailsAsync(Guid recipeId);
+    Task CreateRecipeAsync(RecipeCreateDTO recipe);
     Task UpdateRecipeAsync(RecipeDTO recipe);
     Task DeleteRecipeAsync(Guid recipeId);
 }

@@ -4,15 +4,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CebuFitApi.Models
 {
-    public class StorageItem
+    public class StorageItem : BaseModel
     {
         public StorageItem()
         {
 
         }
-
-        [Key]
-        public Guid Id { get; set; }
         public DateTime expirationDate { get; set; }
         public decimal? Price { get; set; }
         public decimal? Quantity { get; set; }

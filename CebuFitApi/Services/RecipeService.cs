@@ -1,33 +1,66 @@
-﻿using CebuFitApi.DTOs;
+﻿using AutoMapper;
+using CebuFitApi.DTOs;
 using CebuFitApi.Models;
+using CebuFitApi.Repositories;
 
 namespace CebuFitApi.Services
 {
     public class RecipeService : IRecipeService
     {
-        public Task<RecipeDTO> CreateRecipeAsync(RecipeDTO recipe)
+        private readonly IRecipeRepository _recipeRepository;
+        private readonly IIngredientRepository _ingredientRepository;
+        private readonly IMapper _mapper;
+        public RecipeService(IMapper mapper, IRecipeRepository recipeRepository, IIngredientRepository ingredientRepository)
         {
-            throw new NotImplementedException();
+            _mapper = mapper;
+            _recipeRepository = recipeRepository;
+            _ingredientRepository = ingredientRepository;
         }
-
-        public Task DeleteRecipeAsync(Guid recipeId)
+        public async Task<List<RecipeDTO>> GetAllRecipesAsync()
         {
-            throw new NotImplementedException();
+            var recipesEntities = await _recipeRepository.GetAllAsync();
+            var storageItemsDTOs = _mapper.Map<List<RecipeDTO>>(recipesEntities);
+            return storageItemsDTOs;
         }
-
-        public Task<List<RecipeDTO>> GetAllRecipesAsync()
+        public async Task<List<RecipeWithDetailsDTO>> GetAllRecipesWithDetailsAsync()
         {
-            throw new NotImplementedException();
+            var recipesEntities = await _recipeRepository.GetAllWithDetailsAsync();
+            var recipesDTOs = _mapper.Map<List<RecipeWithDetailsDTO>>(recipesEntities);
+
+            return recipesDTOs;
         }
-
-        public Task<RecipeDTO> GetRecipeByIdAsync(Guid recipeId)
+        public async Task<RecipeDTO> GetRecipeByIdAsync(Guid recipeId)
         {
-            throw new NotImplementedException();
+            var recipeEntity = await _recipeRepository.GetByIdAsync(recipeId);
+            var recipeDto = _mapper.Map<RecipeDTO>(recipeEntity);
+            return recipeDto;
         }
-
-        public Task UpdateRecipeAsync(RecipeDTO recipe)
+        public async Task<RecipeWithDetailsDTO> GetRecipeByIdWithDetailsAsync(Guid recipeId)
         {
-            throw new NotImplementedException();
+            var recipeEntity = await _recipeRepository.GetByIdWithDetailsAsync(recipeId);
+            var recipeDto = _mapper.Map<RecipeWithDetailsDTO>(recipeEntity);
+            return recipeDto;
+        }
+        public async Task CreateRecipeAsync(RecipeCreateDTO recipeDTO)
+        {
+            var recipe = _mapper.Map<Recipe>(recipeDTO);
+            recipe.Id = Guid.NewGuid();
+
+            foreach(var ingredientId in recipeDTO.IngredientsId)
+            {
+                recipe.Ingredients.Add(await _ingredientRepository.GetByIdAsync(ingredientId));
+            }
+
+            await _recipeRepository.CreateAsync(recipe);
+        }
+        public async Task UpdateRecipeAsync(RecipeDTO recipeDTO)
+        {
+            var recipe = _mapper.Map<Recipe>(recipeDTO);
+            await _recipeRepository.UpdateAsync(recipe);
+        }
+        public async Task DeleteRecipeAsync(Guid recipeId)
+        {
+            await _recipeRepository.DeleteAsync(recipeId);
         }
     }
 }

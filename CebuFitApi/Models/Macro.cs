@@ -4,10 +4,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CebuFitApi.Models
 {
-    public class Macro
+    public class Macro : BaseModel
     {
-        [Key]
-        public Guid Id { get; set; }
         public int Calories { get; set; }
         public decimal? Carb { get; set; }
         public decimal? Sugar { get; set; }

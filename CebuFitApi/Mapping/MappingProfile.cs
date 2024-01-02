@@ -24,9 +24,6 @@ namespace CebuFitApi.Mapping
             CreateMap<DayDTO, Day>();
             CreateMap<Day, DayDTO>();
 
-            CreateMap<IngredientDTO, Ingredient>();
-            CreateMap<Ingredient, IngredientDTO>();
-
             CreateMap<ProductDTO, Product>();
             CreateMap<Product, ProductDTO>()
                 .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.Category.Id));
@@ -40,9 +37,6 @@ namespace CebuFitApi.Mapping
                 .ForMember(dest => dest.Macro, opt => opt.MapFrom(src => src.Macro))
                 .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.Category.Id));
 
-            CreateMap<RecipeDTO, Recipe>();
-            CreateMap<Recipe, RecipeDTO>();
-
             CreateMap<StorageItemDTO, StorageItem>();
             CreateMap<StorageItem, StorageItemDTO>();
             CreateMap<StorageItemCreateDTO, StorageItem>();
@@ -52,7 +46,31 @@ namespace CebuFitApi.Mapping
                 .ForMember(dest => dest.Product, opt => opt.MapFrom(src => src.Product))
                 .AfterMap((src, dest) => dest.Product.CategoryId = src.Product.Category.Id);
 
+            CreateMap<IngredientDTO, Ingredient>();
+            CreateMap<Ingredient, IngredientDTO>();
+            CreateMap<IngredientCreateDTO, Ingredient>();
+            CreateMap<Ingredient, IngredientCreateDTO>();
+            CreateMap<IngredientWithProductDTO, Ingredient>();
+            CreateMap<Ingredient, IngredientWithProductDTO>()
+                .ForMember(dest => dest.Product, opt => opt.MapFrom(src => src.Product))
+                .AfterMap((src, dest) => dest.Product.CategoryId = src.Product.Category.Id);
 
+            CreateMap<RecipeDTO, Recipe>();
+            CreateMap<Recipe, RecipeDTO>()
+                .ForMember(dest => dest.IngredientsId, opt => opt.MapFrom(src => src.Ingredients.Select(i => i.Id)));
+            CreateMap<RecipeCreateDTO, Recipe>();
+            CreateMap<Recipe, RecipeCreateDTO>();
+            CreateMap<RecipeWithDetailsDTO, Recipe>();
+            CreateMap<Recipe, RecipeWithDetailsDTO>()
+                .ForMember(dest => dest.Ingredients, opt => opt.MapFrom(src => src.Ingredients))
+                .AfterMap((src, dest, context) =>
+                {
+                    foreach (var ingredient in dest.Ingredients)
+                    {
+                        // Assuming Product is a property of Ingredient with type ProductWithMacroDTO
+                        ingredient.Product = context.Mapper.Map<ProductWithMacroDTO>(src.Ingredients.FirstOrDefault(i => i.Id == ingredient.Id)?.Product);
+                    }
+                });
         }
     }
 }

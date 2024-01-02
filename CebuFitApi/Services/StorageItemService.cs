@@ -9,7 +9,7 @@ namespace CebuFitApi.Services
         private readonly IStorageItemRepository _storageItemRepository;
         private readonly IProductRepository _productRepository;
         private readonly IMapper _mapper;
-        public StorageItemService(IMapper mapper,IStorageItemRepository storageItemRepository, IProductRepository productRepository)
+        public StorageItemService(IMapper mapper, IStorageItemRepository storageItemRepository, IProductRepository productRepository)
         {
             _mapper = mapper;
             _storageItemRepository = storageItemRepository;
@@ -30,9 +30,9 @@ namespace CebuFitApi.Services
 
         public async Task<StorageItemDTO> GetStorageItemByIdAsync(Guid storageItemId)
         {
-            var storageItemsEntity = await _storageItemRepository.GetByIdAsync(storageItemId);
-            var storageItemsDTO = _mapper.Map<StorageItemDTO>(storageItemsEntity);
-            return storageItemsDTO;
+            var storageItemEntity = await _storageItemRepository.GetByIdAsync(storageItemId);
+            var storageItemDTO = _mapper.Map<StorageItemDTO>(storageItemEntity);
+            return storageItemDTO;
         }
         public async Task<StorageItemWithProductDTO> GetStorageItemByIdWithProductAsync(Guid storageItemId)
         {

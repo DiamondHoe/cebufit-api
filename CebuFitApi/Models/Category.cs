@@ -4,15 +4,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CebuFitApi.Models
 {
-    public class Category
+    public class Category : BaseModel
     {
         public Category()
         {
 
         }
-
-        [Key]
-        public Guid Id { get; set; }
         public string? Name { get; set; }
         public List<Product> Products { get; set; }
     }

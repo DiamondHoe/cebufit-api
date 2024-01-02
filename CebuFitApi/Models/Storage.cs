@@ -4,15 +4,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CebuFitApi.Models
 {
-    public class Storage
+    public class Storage : BaseModel
     {
         public Storage(Guid id)
         {
             Id = id;
         }
-
-        [Key]
-        public Guid Id { get; set; }
         public List<StorageItem>? StorageItems { get; set; }
     }
     public class StorageConfiguration : IEntityTypeConfiguration<Storage>

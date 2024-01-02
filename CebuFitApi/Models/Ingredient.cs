@@ -4,14 +4,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CebuFitApi.Models
 {
-    public class Ingredient
+    public class Ingredient : BaseModel
     {
         public Ingredient()
         {
             
         }
-        [Key]
-        public Guid Id { get; set; }
         public decimal? Quantity { get; set; }
         public decimal? Weight { get; set; }
         public Product Product { get; set; }

@@ -4,15 +4,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CebuFitApi.Models
 {
-    public class Meal
+    public class Meal : BaseModel
     {
         public Meal()
         {
             
         }
-
-        [Key]
-        public Guid Id { get; set; }
         public string? Name {  get; set; }
         public bool Eaten { get; set; }
         public bool Doable { get; set; }

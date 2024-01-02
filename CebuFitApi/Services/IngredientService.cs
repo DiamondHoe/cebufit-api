@@ -1,33 +1,69 @@
-﻿using CebuFitApi.DTOs;
+﻿using AutoMapper;
+using CebuFitApi.DTOs;
 using CebuFitApi.Models;
+using CebuFitApi.Repositories;
 
 namespace CebuFitApi.Services
 {
     public class IngredientService : IIngredientService
     {
-        public Task<IngredientDTO> CreateIngredientAsync(IngredientDTO ingredient)
+        private readonly IIngredientRepository _ingredientRepository;
+        private readonly IProductRepository _productRepository;
+        private readonly IMapper _mapper;
+        public IngredientService(IMapper mapper, IIngredientRepository ingredientRepository, IProductRepository productRepository)
         {
-            throw new NotImplementedException();
+           _mapper = mapper;
+            _productRepository = productRepository;
+            _ingredientRepository = ingredientRepository;
         }
 
-        public Task DeleteIngredientAsync(Guid ingredientId)
+        public async Task<List<IngredientDTO>> GetAllIngredientsAsync()
         {
-            throw new NotImplementedException();
+            var ingredientsEntities = await _ingredientRepository.GetAllAsync();
+            var ingredientsDTOs = _mapper.Map<List<IngredientDTO>>(ingredientsEntities);
+            return ingredientsDTOs;
         }
-
-        public Task<List<IngredientDTO>> GetAllIngredientsAsync()
+        public async Task<List<IngredientWithProductDTO>> GetAllIngredientsWithProductAsync()
         {
-            throw new NotImplementedException();
+            var ingredientsEntities = await _ingredientRepository.GetAllWithProductAsync();
+            var ingredientsDTOs = _mapper.Map<List<IngredientWithProductDTO>>(ingredientsEntities);
+            return ingredientsDTOs;
         }
-
-        public Task<IngredientDTO> GetIngredientByIdAsync(Guid ingredientId)
+        public async Task<IngredientDTO> GetIngredientByIdAsync(Guid ingredientId)
         {
-            throw new NotImplementedException();
+            var ingredientEntity = await _ingredientRepository.GetByIdAsync(ingredientId);
+            var ingredientDTO = _mapper.Map<IngredientDTO>(ingredientEntity);
+            return ingredientDTO;
         }
-
-        public Task UpdateIngredientAsync(IngredientDTO ingredient)
+        public async Task<IngredientWithProductDTO> GetIngredientByIdWithProductAsync(Guid ingredientId)
         {
-            throw new NotImplementedException();
+            var ingredientEntity = await _ingredientRepository.GetByIdWithProductAsync(ingredientId);
+            var ingredientDTO = _mapper.Map<IngredientWithProductDTO>(ingredientEntity);
+            return ingredientDTO;
+        }
+        public async Task CreateIngredientAsync(IngredientCreateDTO ingredientDTO)
+        {
+            var ingredient = _mapper.Map<Ingredient>(ingredientDTO);
+            ingredient.Id = Guid.NewGuid();
+
+            var baseProduct = await _productRepository.GetByIdAsync(ingredientDTO.baseProductId);
+            if (baseProduct == null)
+            {
+                throw new Exception("Product not found");
+            }
+
+            ingredient.Product = _mapper.Map<Product>(baseProduct);
+
+            await _ingredientRepository.CreateAsync(ingredient);
+        }
+        public async Task UpdateIngredientAsync(IngredientDTO ingredientDTO)
+        {
+            var ingredient = _mapper.Map<Ingredient>(ingredientDTO);
+            await _ingredientRepository.UpdateAsync(ingredient);
+        }
+        public async Task DeleteIngredientAsync(Guid ingredientId)
+        {
+            await _ingredientRepository.DeleteAsync(ingredientId);
         }
     }
 }

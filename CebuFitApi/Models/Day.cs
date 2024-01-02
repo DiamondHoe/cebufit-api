@@ -4,10 +4,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CebuFitApi.Models
 {
-    public class Day
+    public class Day : BaseModel
     {
-        [Key]
-        public Guid Id { get; set; }
         public DateTime Date { get; set; }
         public List<Meal>? Meals { get; set;}
     }

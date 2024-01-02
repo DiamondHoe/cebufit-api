@@ -1,12 +1,10 @@
-﻿using CebuFitApi.Models;
-
-namespace CebuFitApi.DTOs
+﻿namespace CebuFitApi.DTOs
 {
-    public class RecipeDTO
+    public class RecipeWithDetailsDTO
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public List<Guid> IngredientsId { get; set; }
+        public List<IngredientWithProductDTO> Ingredients { get; set; }
     }
 }

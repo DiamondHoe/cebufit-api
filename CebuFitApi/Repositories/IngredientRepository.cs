@@ -1,32 +1,73 @@
-﻿using CebuFitApi.Models;
+﻿using CebuFitApi.Data;
+using CebuFitApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CebuFitApi.Repositories
 {
     public class IngredientRepository : IIngredientRepository
     {
-        public Task CreateAsync(Ingredient ingredient)
+        private readonly CebuFitApiDbContext _dbContext;
+        public IngredientRepository(CebuFitApiDbContext dbContext)
         {
-            throw new NotImplementedException();
+            _dbContext = dbContext;
         }
-
-        public Task DeleteAsync(Guid id)
+        public async Task<List<Ingredient>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var ingredients = await _dbContext.Ingredients.ToListAsync();
+            return ingredients;
         }
-
-        public Task<List<Ingredient>> GetAllAsync()
+        public async Task<List<Ingredient>> GetAllWithProductAsync()
         {
-            throw new NotImplementedException();
+            var ingredients = await _dbContext.Ingredients
+                .Include(x => x.Product)
+                .ThenInclude(x => x.Category)
+                .Include(x => x.Product)
+                .ThenInclude(x => x.Macro)
+                .ToListAsync();
+            return ingredients;
         }
-
-        public Task<Ingredient> GetByIdAsync(Guid id)
+        public async Task<Ingredient> GetByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var ingredient = await _dbContext.Ingredients
+                 .Where(ing => ing.Id == id)
+                 .FirstOrDefaultAsync();
+            return ingredient;
         }
-
-        public Task UpdateAsync(Ingredient ingredient)
+        public async Task<Ingredient> GetByIdWithProductAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var ingredient = await _dbContext.Ingredients
+                    .Include(x => x.Product)
+                    .ThenInclude(x => x.Category)
+                    .Include(x => x.Product)
+                    .ThenInclude(x => x.Macro)
+                    .FirstOrDefaultAsync();
+            return ingredient;
+
+        }
+        public async Task CreateAsync(Ingredient ingredient)
+        {
+            await _dbContext.Ingredients.AddAsync(ingredient);
+            await _dbContext.SaveChangesAsync();
+        }
+        public async Task UpdateAsync(Ingredient ingredient)
+        {
+            var existingIngredient = await _dbContext.Ingredients
+                .FirstOrDefaultAsync(ing => ing.Id == ingredient.Id);
+
+            if (existingIngredient != null)
+            {
+                _dbContext.Entry(existingIngredient).CurrentValues.SetValues(ingredient);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+        public async Task DeleteAsync(Guid id)
+        {
+            var IngredientToDelete = await _dbContext.StorageItems.FindAsync(id);
+            if (IngredientToDelete != null)
+            {
+                _dbContext.StorageItems.Remove(IngredientToDelete);
+                await _dbContext.SaveChangesAsync();
+            }
         }
     }
 }

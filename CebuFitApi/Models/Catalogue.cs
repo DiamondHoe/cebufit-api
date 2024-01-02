@@ -4,10 +4,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CebuFitApi.Models
 {
-    public class Catalogue
+    public class Catalogue : BaseModel
     {
-        [Key]
-        public Guid Id { get; set; }
         public List<Recipe> Recipes { get; set; }
     }
     public class CatalogueConfiguration : IEntityTypeConfiguration<Catalogue>
