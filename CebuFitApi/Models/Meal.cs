@@ -28,8 +28,7 @@ namespace CebuFitApi.Models
                 .WithMany(ing => ing.Meals);
 
             builder.HasOne(meal => meal.Recipe)
-                .WithMany(rec => rec.Meals)
-                .HasForeignKey(meal => meal.Id);
+                .WithMany(rec => rec.Meals);
         }
     }
 }

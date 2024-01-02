@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CebuFitApi.Models
 {
-    public class Ingredient : Product
+    public class Ingredient
     {
         public Ingredient()
         {
@@ -14,6 +14,7 @@ namespace CebuFitApi.Models
         public Guid Id { get; set; }
         public decimal? Quantity { get; set; }
         public decimal? Weight { get; set; }
+        public Product Product { get; set; }
         public List<Recipe> Recipes { get; set; } = new();
         public List<Meal> Meals { get; set; } = new();
     }
@@ -21,7 +22,8 @@ namespace CebuFitApi.Models
     {
         public void Configure(EntityTypeBuilder<Ingredient> builder)
         {
-            builder.ToTable(nameof(Ingredient));
+            builder.HasOne(ing => ing.Product)
+                .WithMany(prod => prod.Ingredients);
         }
     }
 }

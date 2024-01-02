@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CebuFitApi.Repositories
 {
-    public class CategoryRepository : Interfaces.ICategoryRepository
+    public class CategoryRepository : ICategoryRepository
     {
         private readonly CebuFitApiDbContext _dbContext;
         public CategoryRepository(CebuFitApiDbContext dbContext)

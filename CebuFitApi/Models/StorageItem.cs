@@ -4,11 +4,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CebuFitApi.Models
 {
-    public class StorageItem : Product
+    public class StorageItem
     {
         public StorageItem()
         {
-               
+
         }
 
         [Key]
@@ -17,14 +17,18 @@ namespace CebuFitApi.Models
         public decimal? Price { get; set; }
         public decimal? Quantity { get; set; }
         public decimal? Weight { get; set; }
-        public Storage Storage { get; set; }
+
+        //NP: for now default storage - in future storage per user
+        public Storage Storage { get; set; } = new Storage(Guid.Empty);
+        public Product Product { get; set; }
     }
 
     public class StorageItemConfiguration : IEntityTypeConfiguration<StorageItem>
     {
         public void Configure(EntityTypeBuilder<StorageItem> builder)
         {
-            builder.ToTable(nameof(StorageItem));
+            builder.HasOne(si => si.Product)
+                   .WithMany(prod => prod.StorageItems);
         }
     }
 }

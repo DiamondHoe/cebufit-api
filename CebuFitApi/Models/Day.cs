@@ -16,8 +16,7 @@ namespace CebuFitApi.Models
         public void Configure(EntityTypeBuilder<Day> builder)
         {
             builder.HasMany(day => day.Meals)
-                .WithOne(meal => meal.Day)
-                .HasForeignKey(meal => meal.Id);
+                .WithOne(meal => meal.Day);
         }
     }
 }

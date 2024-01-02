@@ -12,8 +12,8 @@ namespace CebuFitApi.Controllers
     {
         private readonly ILogger<CategoryController> _logger;
         private readonly IMapper _mapper;
-        private readonly ICategoryRepository _categoryService;
-        public CategoryController(ILogger<CategoryController> logger, ICategoryRepository categoryService, IMapper mapper)
+        private readonly ICategoryService _categoryService;
+        public CategoryController(ILogger<CategoryController> logger, ICategoryService categoryService, IMapper mapper)
         {
             _logger = logger;
             _mapper = mapper;

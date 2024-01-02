@@ -6,6 +6,11 @@ namespace CebuFitApi.Models
 {
     public class Storage
     {
+        public Storage(Guid id)
+        {
+            Id = id;
+        }
+
         [Key]
         public Guid Id { get; set; }
         public List<StorageItem>? StorageItems { get; set; }
@@ -15,8 +20,7 @@ namespace CebuFitApi.Models
         public void Configure(EntityTypeBuilder<Storage> builder)
         {
             builder.HasMany(stor => stor.StorageItems)
-                .WithOne(storI => storI.Storage)
-                .HasForeignKey(storI => storI.Id);
+                .WithOne(storI => storI.Storage);
         }
     }
 }

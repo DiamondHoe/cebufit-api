@@ -3,6 +3,7 @@ using System;
 using CebuFitApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CebuFitApi.Migrations
 {
     [DbContext(typeof(CebuFitApiDbContext))]
-    partial class CebuFitApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240101231823_changeRelationOfProduct")]
+    partial class changeRelationOfProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -79,10 +82,6 @@ namespace CebuFitApi.Migrations
             modelBuilder.Entity("CebuFitApi.Models.Ingredient", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
 
                     b.Property<decimal?>("Quantity")
@@ -92,8 +91,6 @@ namespace CebuFitApi.Migrations
                         .HasColumnType("numeric");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
 
                     b.ToTable("Ingredients");
                 });
@@ -139,10 +136,6 @@ namespace CebuFitApi.Migrations
             modelBuilder.Entity("CebuFitApi.Models.Meal", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("DayId")
                         .HasColumnType("uuid");
 
                     b.Property<bool>("Doable")
@@ -154,14 +147,7 @@ namespace CebuFitApi.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<Guid>("RecipeId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("DayId");
-
-                    b.HasIndex("RecipeId");
 
                     b.ToTable("Meals");
                 });
@@ -169,10 +155,6 @@ namespace CebuFitApi.Migrations
             modelBuilder.Entity("CebuFitApi.Models.Product", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("CategoryId")
                         .HasColumnType("uuid");
 
                     b.Property<int>("Importance")
@@ -185,8 +167,6 @@ namespace CebuFitApi.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
 
                     b.ToTable("Product", (string)null);
                 });
@@ -224,20 +204,13 @@ namespace CebuFitApi.Migrations
             modelBuilder.Entity("CebuFitApi.Models.StorageItem", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<decimal?>("Price")
                         .HasColumnType("numeric");
 
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uuid");
-
                     b.Property<decimal?>("Quantity")
                         .HasColumnType("numeric");
-
-                    b.Property<Guid>("StorageId")
-                        .HasColumnType("uuid");
 
                     b.Property<decimal?>("Weight")
                         .HasColumnType("numeric");
@@ -246,10 +219,6 @@ namespace CebuFitApi.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("StorageId");
 
                     b.ToTable("StorageItems");
                 });
@@ -303,7 +272,7 @@ namespace CebuFitApi.Migrations
                 {
                     b.HasOne("CebuFitApi.Models.Product", "Product")
                         .WithMany("Ingredients")
-                        .HasForeignKey("ProductId")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -325,13 +294,13 @@ namespace CebuFitApi.Migrations
                 {
                     b.HasOne("CebuFitApi.Models.Day", "Day")
                         .WithMany("Meals")
-                        .HasForeignKey("DayId")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CebuFitApi.Models.Recipe", "Recipe")
                         .WithMany("Meals")
-                        .HasForeignKey("RecipeId")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -344,7 +313,9 @@ namespace CebuFitApi.Migrations
                 {
                     b.HasOne("CebuFitApi.Models.Category", "Category")
                         .WithMany("Products")
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Category");
                 });
@@ -353,13 +324,13 @@ namespace CebuFitApi.Migrations
                 {
                     b.HasOne("CebuFitApi.Models.Product", "Product")
                         .WithMany("StorageItems")
-                        .HasForeignKey("ProductId")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CebuFitApi.Models.Storage", "Storage")
                         .WithMany("StorageItems")
-                        .HasForeignKey("StorageId")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 public interface IStorageItemService
 {
-    Task<StorageItemDTO> CreateStorageItemAsync(StorageItemDTO storageItem);
-    Task<StorageItemDTO> GetStorageItemByIdAsync(Guid storageItemId);
     Task<List<StorageItemDTO>> GetAllStorageItemsAsync();
+    Task<List<StorageItemWithProductDTO>> GetAllStorageItemsWithProductAsync();
+    Task<StorageItemDTO> GetStorageItemByIdAsync(Guid storageItemId);
+    Task<StorageItemWithProductDTO> GetStorageItemByIdWithProductAsync(Guid storageItemId);
+    Task CreateStorageItemAsync(StorageItemCreateDTO storageItem);
     Task UpdateStorageItemAsync(StorageItemDTO storageItem);
     Task DeleteStorageItemAsync(Guid storageItemId);
 }

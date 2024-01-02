@@ -1,32 +1,74 @@
-﻿using CebuFitApi.Models;
+﻿using CebuFitApi.Data;
+using CebuFitApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CebuFitApi.Repositories
 {
     public class StorageItemRepository : IStorageItemRepository
     {
-        public Task CreateAsync(StorageItem storageItem)
+        private readonly CebuFitApiDbContext _dbContext;
+        public StorageItemRepository(CebuFitApiDbContext dbContext)
         {
-            throw new NotImplementedException();
+            _dbContext = dbContext;
         }
-
-        public Task DeleteAsync(Guid id)
+        public async Task<List<StorageItem>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var storageItems = await _dbContext.StorageItems
+                .ToListAsync();
+            return storageItems;
         }
-
-        public Task<List<StorageItem>> GetAllAsync()
+        public async Task<List<StorageItem>> GetAllWithProductAsync()
         {
-            throw new NotImplementedException();
+            var storageItems = await _dbContext.StorageItems
+                .Include(x => x.Product)
+                .ThenInclude(x => x.Category)
+                .Include(x => x.Product)
+                .ThenInclude(x => x.Macro)
+                .ToListAsync();
+            return storageItems;
         }
-
-        public Task<StorageItem> GetByIdAsync(Guid id)
+        public async Task<StorageItem> GetByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var storageItem = await _dbContext.StorageItems
+                .Where(si => si.Id == id)
+                .FirstOrDefaultAsync();
+            return storageItem;
         }
-
-        public Task UpdateAsync(StorageItem storageItem)
+        public async Task<StorageItem> GetByIdWithProductAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var storageItem = await _dbContext.StorageItems
+                .Include(x => x.Product)
+                .ThenInclude(x => x.Category)
+                .Include(x => x.Product)
+                .ThenInclude(x => x.Macro)
+                .Where(si => si.Id == id)
+                .FirstOrDefaultAsync();
+            return storageItem;
+        }
+        public async Task CreateAsync(StorageItem storageItem)
+        {
+            await _dbContext.StorageItems.AddAsync(storageItem);
+            await _dbContext.SaveChangesAsync();
+        }
+        public async Task UpdateAsync(StorageItem storageItem)
+        {
+            var existingStorageItem = await _dbContext.StorageItems
+                .FirstOrDefaultAsync(si => si.Id == storageItem.Id);
+
+            if (existingStorageItem != null) 
+            {
+                _dbContext.Entry(existingStorageItem).CurrentValues.SetValues(storageItem);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+        public async Task DeleteAsync(Guid id)
+        {
+           var storageItemToDelete = await _dbContext.StorageItems.FindAsync(id);
+            if (storageItemToDelete != null) 
+            {
+                _dbContext.StorageItems.Remove(storageItemToDelete);
+                await _dbContext.SaveChangesAsync();
+            }
         }
     }
 }

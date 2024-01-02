@@ -15,8 +15,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IMealRepository, MealRepository>();
 builder.Services.AddScoped<IMealService, MealService>();
 
-builder.Services.AddScoped<CebuFitApi.Interfaces.ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<ICategoryRepository, CategoryService>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 builder.Services.AddScoped<IDayRepository, DayRepository>();
 builder.Services.AddScoped<IDayService, DayService>();

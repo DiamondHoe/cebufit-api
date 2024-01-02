@@ -16,6 +16,7 @@ namespace CebuFitApi.Repositories
         {
             var products = await _dbContext.Products
                 .Include(p => p.Macro)
+                .Include(c => c.Category)
                 .ToListAsync();
             return products;
         }
@@ -23,6 +24,7 @@ namespace CebuFitApi.Repositories
         {
             var productsWithMacro = await _dbContext.Products
                 .Include(p => p.Macro)
+                .Include(c => c.Category)
                 .ToListAsync();
 
             return productsWithMacro;
@@ -30,7 +32,7 @@ namespace CebuFitApi.Repositories
         public async Task<Product> GetByIdAsync(Guid productId)
         {
             var product = await _dbContext.Products
-                .Include(p => p.Macro)
+                .Include(c => c.Category)
                 .Where(p => p.Id == productId)
                 .FirstOrDefaultAsync();
 
@@ -41,6 +43,7 @@ namespace CebuFitApi.Repositories
         {
             var product = await _dbContext.Products
                 .Include(p => p.Macro)
+                .Include(c => c.Category)
                 .Where(p => p.Id == productId)
                 .FirstOrDefaultAsync();
 

@@ -28,7 +28,7 @@ namespace CebuFitApi.Controllers
             return Ok(products);
         }
         [HttpGet("withMacro/", Name ="GetProductsWithMacro")]
-        public async Task<ActionResult<List<ProductDTO>>> GetAllWithMacro()
+        public async Task<ActionResult<List<ProductWithMacroDTO>>> GetAllWithMacro()
         {
             var products = await _productService.GetAllProductsWithMacroAsync();
             if (products.Count == 0)
@@ -49,7 +49,7 @@ namespace CebuFitApi.Controllers
         }
 
         [HttpGet("withMacro/{productId}", Name = "GetProductWithMacro")]
-        public async Task<ActionResult<ProductDTO>> GetByIdWithMacro(Guid productId)
+        public async Task<ActionResult<ProductWithMacroDTO>> GetByIdWithMacro(Guid productId)
         {
             var product = await _productService.GetProductByIdWithMacroAsync(productId);
             if (product == null)

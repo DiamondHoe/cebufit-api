@@ -22,8 +22,7 @@ namespace CebuFitApi.Models
         public void Configure(EntityTypeBuilder<Category> builder)
         {
             builder.HasMany(cat => cat.Products)
-                   .WithOne(prod => prod.Category)
-                   .HasForeignKey(prod => prod.Id);
+                   .WithOne(prod => prod.Category);
         }
     }
 }

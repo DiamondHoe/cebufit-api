@@ -6,12 +6,12 @@ using CebuFitApi.Repositories;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-public class CategoryService : ICategoryRepository
+public class CategoryService : ICategoryService
 {
-    private readonly CebuFitApi.Interfaces.ICategoryRepository _categoryRepository;
+    private readonly ICategoryRepository _categoryRepository;
     private readonly IMapper _mapper;
 
-    public CategoryService(CebuFitApi.Interfaces.ICategoryRepository categoryRepository, IMapper mapper)
+    public CategoryService(ICategoryRepository categoryRepository, IMapper mapper)
     {
         _categoryRepository = categoryRepository;
         _mapper = mapper;

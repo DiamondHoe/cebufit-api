@@ -10,7 +10,7 @@ namespace CebuFitApi.Services
         private readonly IProductRepository _productRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly IMapper _mapper;
-        public ProductService(IProductRepository productRepository, IMapper mapper, ICategoryRepository categoryRepository)
+        public ProductService(IMapper mapper, IProductRepository productRepository, ICategoryRepository categoryRepository)
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
@@ -50,7 +50,7 @@ namespace CebuFitApi.Services
             macro.Id = Guid.NewGuid();
             product.Macro = macro;
 
-            var category = await _categoryRepository.GetCategoryByIdAsync(productDTO.CategoryId);
+            var category = await _categoryRepository.GetByIdAsync(productDTO.CategoryId);
             if(category == null)
             {
                 throw new Exception("Category not found");
