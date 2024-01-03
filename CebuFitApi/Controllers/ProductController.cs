@@ -19,7 +19,6 @@ namespace CebuFitApi.Controllers
             _productService = productService;
         }
         
-        [EnableCors]
         [HttpGet(Name = "GetProducts")]
         public async Task<ActionResult<List<ProductDTO>>> GetAll()
         {
