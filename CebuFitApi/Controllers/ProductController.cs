@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using CebuFitApi.DTOs;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CebuFitApi.Controllers
 {
     [ApiController]
+    [EnableCors]
     [Route("/api/products")]
     public class ProductController : Controller
     {
@@ -17,6 +19,7 @@ namespace CebuFitApi.Controllers
             _mapper = mapper;
             _productService = productService;
         }
+        
         [HttpGet(Name = "GetProducts")]
         public async Task<ActionResult<List<ProductDTO>>> GetAll()
         {
@@ -25,8 +28,10 @@ namespace CebuFitApi.Controllers
             {
                 return NoContent();
             }
+            Response.Headers.Add("Access-Control-Allow-Origin", "*");
             return Ok(products);
         }
+        
         [HttpGet("withMacro/", Name ="GetProductsWithMacro")]
         public async Task<ActionResult<List<ProductWithMacroDTO>>> GetAllWithMacro()
         {
