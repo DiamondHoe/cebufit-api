@@ -41,6 +41,26 @@ namespace CebuFitApi.Controllers
             }
             return Ok(products);
         }
+        [HttpGet("withCategory/", Name = "GetProductsWithCategory")]
+        public async Task<ActionResult<List<ProductWithCategoryDTO>>> GetAllWithCategory()
+        {
+            var products = await _productService.GetAllProductsWithCategoryAsync();
+            if (products.Count == 0)
+            {
+                return NoContent();
+            }
+            return Ok(products);
+        }
+        [HttpGet("withDetails/", Name = "GetProductsWithDetails")]
+        public async Task<ActionResult<List<ProductWithDetailsDTO>>> GetAllWithDetails()
+        {
+            var products = await _productService.GetAllProductsWithDetailsAsync();
+            if (products.Count == 0)
+            {
+                return NoContent();
+            }
+            return Ok(products);
+        }
         [HttpGet("{productId}", Name = "GetProduct")]
         public async Task<ActionResult<ProductDTO>> GetById(Guid productId)
         {
@@ -56,6 +76,26 @@ namespace CebuFitApi.Controllers
         public async Task<ActionResult<ProductWithMacroDTO>> GetByIdWithMacro(Guid productId)
         {
             var product = await _productService.GetProductByIdWithMacroAsync(productId);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return Ok(product);
+        }
+        [HttpGet("withCategory/{productId}", Name = "GetProductWithCategory")]
+        public async Task<ActionResult<ProductWithCategoryDTO>> GetByIdWithCategory(Guid productId)
+        {
+            var product = await _productService.GetProductByIdWithCategoryAsync(productId);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return Ok(product);
+        }
+        [HttpGet("withDetails/{productId}", Name = "GetProductWithDetails")]
+        public async Task<ActionResult<ProductWithDetailsDTO>> GetByIdWithDetails(Guid productId)
+        {
+            var product = await _productService.GetProductByIdWithDetailsAsync(productId);
             if (product == null)
             {
                 return NotFound();
