@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CebuFitApi.DTOs;
+using CebuFitApi.Helpers.Enums;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -143,5 +144,25 @@ namespace CebuFitApi.Controllers
 
             return Ok();
         }
+
+        #region Importance
+        [HttpGet("getImportances")]
+        public async Task<ActionResult<Dictionary<string, int>>> GetImportances()
+        {
+            Dictionary<string, int> importanceDict = new Dictionary<string, int>();
+            var importanceValues = Enum.GetValues(typeof(ImportanceEnum));
+
+            foreach (var value in importanceValues)
+            {
+                // Assuming the enum values are strings, you can convert them to string
+                var stringValue = value.ToString();
+
+                // Assign each enum value to a corresponding key in the dictionary
+                importanceDict[stringValue] = (int)value;
+            }
+
+            return Ok(importanceDict);
+        }
+        #endregion
     }
 }
