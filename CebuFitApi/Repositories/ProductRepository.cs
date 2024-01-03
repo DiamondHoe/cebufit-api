@@ -29,6 +29,24 @@ namespace CebuFitApi.Repositories
 
             return productsWithMacro;
         }
+        public async Task<List<Product>> GetAllWithCategoryAsync()
+        {
+            var productsWithMacro = await _dbContext.Products
+                .Include(p => p.Macro)
+                .Include(c => c.Category)
+                .ToListAsync();
+
+            return productsWithMacro;
+        }
+        public async Task<List<Product>> GetAllWithDetailsAsync()
+        {
+            var productsWithMacro = await _dbContext.Products
+                .Include(p => p.Macro)
+                .Include(c => c.Category)
+                .ToListAsync();
+
+            return productsWithMacro;
+        }
         public async Task<Product> GetByIdAsync(Guid productId)
         {
             var product = await _dbContext.Products
@@ -40,6 +58,26 @@ namespace CebuFitApi.Repositories
         }
 
         public async Task<Product> GetByIdWithMacroAsync(Guid productId)
+        {
+            var product = await _dbContext.Products
+                .Include(p => p.Macro)
+                .Include(c => c.Category)
+                .Where(p => p.Id == productId)
+                .FirstOrDefaultAsync();
+
+            return product;
+        }
+        public async Task<Product> GetByIdWithCategoryAsync(Guid productId)
+        {
+            var product = await _dbContext.Products
+                .Include(p => p.Macro)
+                .Include(c => c.Category)
+                .Where(p => p.Id == productId)
+                .FirstOrDefaultAsync();
+
+            return product;
+        }
+        public async Task<Product> GetByIdWithDetailsAsync(Guid productId)
         {
             var product = await _dbContext.Products
                 .Include(p => p.Macro)
@@ -83,5 +121,6 @@ namespace CebuFitApi.Repositories
                 await _dbContext.SaveChangesAsync();
             }
         }
+
     }
 }
