@@ -3,6 +3,7 @@ using System;
 using CebuFitApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CebuFitApi.Migrations
 {
     [DbContext(typeof(CebuFitApiDbContext))]
-    partial class CebuFitApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240103202844_StorageNullable")]
+    partial class StorageNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -145,14 +148,16 @@ namespace CebuFitApi.Migrations
                     b.Property<Guid>("DayId")
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("Doable")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("Eaten")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("RecipeId")
+                    b.Property<Guid>("RecipeId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
@@ -327,11 +332,15 @@ namespace CebuFitApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CebuFitApi.Models.Recipe", null)
+                    b.HasOne("CebuFitApi.Models.Recipe", "Recipe")
                         .WithMany("Meals")
-                        .HasForeignKey("RecipeId");
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Day");
+
+                    b.Navigation("Recipe");
                 });
 
             modelBuilder.Entity("CebuFitApi.Models.Product", b =>

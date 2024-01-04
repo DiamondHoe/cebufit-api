@@ -14,9 +14,7 @@ namespace CebuFitApi.Models
         public decimal? Price { get; set; }
         public decimal? Quantity { get; set; }
         public decimal? Weight { get; set; }
-
-        //NP: for now default storage - in future storage per user
-        public Storage Storage { get; set; } = new Storage(Guid.Empty);
+        public Storage? Storage { get; set; }
         public Product Product { get; set; }
     }
 
