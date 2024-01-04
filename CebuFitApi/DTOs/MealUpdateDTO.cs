@@ -1,8 +1,6 @@
-﻿using CebuFitApi.Models;
-
-namespace CebuFitApi.DTOs
+﻿namespace CebuFitApi.DTOs
 {
-    public class MealDTO
+    public class MealUpdateDTO
     {
         public Guid Id { get; set; }
         public string? Name { get; set; }

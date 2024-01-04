@@ -1,35 +1,88 @@
-﻿using CebuFitApi.DTOs;
+﻿using CebuFitApi.Data;
+using CebuFitApi.DTOs;
 using CebuFitApi.Interfaces;
 using CebuFitApi.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Xml.Linq;
 
 namespace CebuFitApi.Repositories
 {
     public class MealRepository : IMealRepository
     {
-        public Task CreateAsync(Meal blogPost)
+        private readonly CebuFitApiDbContext _dbContext;
+        public MealRepository(CebuFitApiDbContext dbContext)
         {
-            throw new NotImplementedException();
+            _dbContext = dbContext;
+        }
+        public async Task<List<Meal>> GetAllAsync()
+        {
+            var meals = await _dbContext.Meals
+                .Include(m => m.Ingredients)
+                .ToListAsync();
+            return meals;
         }
 
-        public Task DeleteAsync(Guid id)
+        public async Task<List<Meal>> GetAllWithDetailsAsync()
         {
-            throw new NotImplementedException();
+            var meals = await _dbContext.Meals
+                .Include(m => m.Ingredients)
+                .ThenInclude(i => i.Product)
+                .ThenInclude(p => p.Category)
+                 .Include(m => m.Ingredients)
+                .ThenInclude(i => i.Product)
+                .ThenInclude(p => p.Macro)
+                .ToListAsync();
+            return meals;
         }
 
-        public Task<List<Meal>> GetAllAsync()
+        public async Task<Meal> GetByIdAsync(Guid mealId)
         {
-            throw new NotImplementedException();
+            var meals = await _dbContext.Meals
+                .Include(m => m.Ingredients)
+                .Where(m => m.Id == mealId)
+                .FirstOrDefaultAsync();
+            return meals;
         }
 
-        public Task<Meal> GetByIdAsync(Guid id)
+        public async Task<Meal> GetByIdWithDetailsAsync(Guid mealId)
         {
-            throw new NotImplementedException();
+            var meals = await _dbContext.Meals
+                .Include(m => m.Ingredients)
+                .ThenInclude(i => i.Product)
+                .ThenInclude(p => p.Category)
+                .Include(m => m.Ingredients)
+                .ThenInclude(i => i.Product)
+                .ThenInclude(p => p.Macro)
+                .Where(m => m.Id == mealId)
+                .FirstOrDefaultAsync();
+            return meals;
+        }
+        public async Task CreateAsync(Meal meal)
+        {
+            await _dbContext.Meals.AddAsync(meal);
+            await _dbContext.SaveChangesAsync();
         }
 
-        public Task UpdateAsync(Meal blogPost)
+        public async Task UpdateAsync(Meal meal)
         {
-            throw new NotImplementedException();
+            var existingMeal = await _dbContext.Meals.FirstOrDefaultAsync(m => m.Id == meal.Id);
+
+            if (existingMeal != null)
+            {
+                _dbContext.Entry(existingMeal).CurrentValues.SetValues(meal);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+
+
+        public async Task DeleteAsync(Guid mealId)
+        {
+            var mealToDelete = await _dbContext.Meals.FindAsync(mealId);
+            if (mealToDelete != null)
+            {
+                _dbContext.Meals.Remove(mealToDelete);
+                await _dbContext.SaveChangesAsync();
+            }
         }
     }
 }
