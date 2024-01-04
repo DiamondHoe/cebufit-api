@@ -60,7 +60,7 @@ namespace CebuFitApi.Mapping
             CreateMap<StorageItemWithProductDTO, StorageItem>();
             CreateMap<StorageItem, StorageItemWithProductDTO>()
                 .ForMember(dest => dest.Product, opt => opt.MapFrom(src => src.Product))
-                .AfterMap((src, dest) => dest.Product.CategoryId = src.Product.Category.Id);
+                .AfterMap((src, dest, context) => dest.Product.Category = context.Mapper.Map<CategoryDTO>(src.Product.Category));
 
             CreateMap<IngredientDTO, Ingredient>();
             CreateMap<Ingredient, IngredientDTO>();
