@@ -6,9 +6,11 @@ namespace CebuFitApi.Interfaces
     public interface IMealRepository
     {
         Task<List<Meal>> GetAllAsync();
-        Task<Meal> GetByIdAsync(Guid id);
-        Task CreateAsync(Meal blogPost);
-        Task UpdateAsync(Meal blogPost);
-        Task DeleteAsync(Guid id);
+        Task<List<Meal>> GetAllWithDetailsAsync();
+        Task<Meal> GetByIdAsync(Guid mealId);
+        Task<Meal> GetByIdWithDetailsAsync(Guid mealId);
+        Task CreateAsync(Meal meal);
+        Task UpdateAsync(Meal meal);
+        Task DeleteAsync(Guid mealId);
     }
 }
