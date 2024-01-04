@@ -96,20 +96,25 @@ namespace CebuFitApi.Repositories
         {
             var existingProduct = await _dbContext.Products
                 .Include(p => p.Macro)
+                .Include(p => p.Category)
                 .FirstOrDefaultAsync(p => p.Id == product.Id);
 
             if (existingProduct != null)
             {
+                _dbContext.Entry(existingProduct).State = EntityState.Detached;
                 _dbContext.Entry(existingProduct).CurrentValues.SetValues(product);
-                if(existingProduct.Macro != null)
-                {
-                    product.Macro.Id = existingProduct.Macro.Id;
-                    _dbContext.Entry(existingProduct.Macro).CurrentValues.SetValues(product.Macro);
-                }
+                existingProduct.Category = product.Category;
+                _dbContext.Attach(existingProduct);
+                _dbContext.Entry(existingProduct).State = EntityState.Modified;
+
+                product.Macro.Id = existingProduct.Macro.Id;
+                _dbContext.Entry(existingProduct.Macro).CurrentValues.SetValues(product.Macro);
+
 
                 await _dbContext.SaveChangesAsync();
             }
         }
+
 
 
         public async Task DeleteAsync(Guid id)
