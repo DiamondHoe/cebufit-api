@@ -30,7 +30,14 @@ namespace CebuFitApi.Mapping
             CreateMap<Category, CategoryCreateDTO>();
 
             CreateMap<DayDTO, Day>();
-            CreateMap<Day, DayDTO>();
+            CreateMap<Day, DayDTO>()
+                .ForMember(dest => dest.MealsId, opt => opt.MapFrom(src => src.Meals.Select(meal => meal.Id).ToList()));
+            CreateMap<DayWithMealsDTO, Day>();
+            CreateMap<Day, DayWithMealsDTO>();
+            CreateMap<DayCreateDTO, Day>();
+            CreateMap<Day, DayCreateDTO>();
+            CreateMap<DayUpdateDTO, Day>();
+            CreateMap<Day, DayUpdateDTO>();
 
             CreateMap<ProductDTO, Product>();
             CreateMap<Product, ProductDTO>()
@@ -83,7 +90,6 @@ namespace CebuFitApi.Mapping
                 {
                     foreach (var ingredient in dest.Ingredients)
                     {
-                        // Assuming Product is a property of Ingredient with type ProductWithMacroDTO
                         ingredient.Product = context.Mapper.Map<ProductWithMacroDTO>(src.Ingredients.FirstOrDefault(i => i.Id == ingredient.Id)?.Product);
                     }
                 });

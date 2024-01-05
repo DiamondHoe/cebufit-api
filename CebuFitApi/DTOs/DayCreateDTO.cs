@@ -2,10 +2,8 @@
 
 namespace CebuFitApi.DTOs
 {
-    public class DayDTO
+    public class DayCreateDTO
     {
-        public Guid Id { get; set; }
         public DateTime Date { get; set; }
-        public List<Guid> MealsId { get; set; }
     }
 }

@@ -7,7 +7,7 @@ namespace CebuFitApi.Models
     public class Day : BaseModel
     {
         public DateTime Date { get; set; }
-        public List<Meal>? Meals { get; set;}
+        public List<Meal> Meals { get; set;}
     }
     public class DayConfiguration : IEntityTypeConfiguration<Day>
     {

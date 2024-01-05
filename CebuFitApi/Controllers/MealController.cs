@@ -64,11 +64,11 @@ namespace CebuFitApi.Controllers
             return Ok(meal);
         }
         [HttpPost]
-        public async Task<ActionResult> CreateProduct(MealCreateDTO mealDTO)
+        public async Task<ActionResult> CreateMeal(MealCreateDTO mealDTO)
         {
             if (mealDTO == null)
             {
-                return BadRequest("Product data is null.");
+                return BadRequest("Meal data is null.");
             }
 
             await _mealService.CreateMealAsync(mealDTO);
@@ -78,9 +78,9 @@ namespace CebuFitApi.Controllers
         [HttpPut]
         public async Task<ActionResult> UpdateMeal(MealUpdateDTO mealDTO)
         {
-            var existingProduct = await _mealService.GetMealByIdAsync(mealDTO.Id);
+            var existingMeal = await _mealService.GetMealByIdAsync(mealDTO.Id);
 
-            if (existingProduct == null)
+            if (existingMeal == null)
             {
                 return NotFound();
             }
@@ -90,7 +90,7 @@ namespace CebuFitApi.Controllers
             return Ok();
         }
         [HttpDelete("{mealId}")]
-        public async Task<ActionResult> DeleteProduct(Guid mealId)
+        public async Task<ActionResult> DeleteMeal(Guid mealId)
         {
             var existingMeal = await _mealService.GetMealByIdAsync(mealId);
 
