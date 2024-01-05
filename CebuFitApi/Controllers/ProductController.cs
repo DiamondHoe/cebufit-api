@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using CebuFitApi.DTOs;
 using CebuFitApi.Helpers.Enums;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CebuFitApi.Controllers
@@ -19,6 +18,7 @@ namespace CebuFitApi.Controllers
             _mapper = mapper;
             _productService = productService;
         }
+        
         [HttpGet(Name = "GetProducts")]
         public async Task<ActionResult<List<ProductDTO>>> GetAll()
         {
@@ -29,6 +29,7 @@ namespace CebuFitApi.Controllers
             }
             return Ok(products);
         }
+        
         [HttpGet("withMacro/", Name ="GetProductsWithMacro")]
         public async Task<ActionResult<List<ProductWithMacroDTO>>> GetAllWithMacro()
         {
