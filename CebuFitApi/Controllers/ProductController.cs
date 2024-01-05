@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace CebuFitApi.Controllers
 {
     [ApiController]
-    [EnableCors]
     [Route("/api/products")]
     public class ProductController : Controller
     {
