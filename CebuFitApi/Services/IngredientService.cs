@@ -9,12 +9,14 @@ namespace CebuFitApi.Services
     {
         private readonly IIngredientRepository _ingredientRepository;
         private readonly IProductRepository _productRepository;
+        private readonly IStorageItemService _storageItemService;
         private readonly IMapper _mapper;
-        public IngredientService(IMapper mapper, IIngredientRepository ingredientRepository, IProductRepository productRepository)
+        public IngredientService(IMapper mapper, IIngredientRepository ingredientRepository, IProductRepository productRepository, IStorageItemService storageItemService)
         {
            _mapper = mapper;
             _productRepository = productRepository;
             _ingredientRepository = ingredientRepository;
+            _storageItemService = storageItemService;
         }
 
         public async Task<List<IngredientDTO>> GetAllIngredientsAsync()
@@ -64,6 +66,23 @@ namespace CebuFitApi.Services
         public async Task DeleteIngredientAsync(Guid ingredientId)
         {
             await _ingredientRepository.DeleteAsync(ingredientId);
+        }
+
+        public async Task<bool> IsIngredientAvailable(IngredientCreateDTO ingredientDTO)
+        {
+            if (ingredientDTO.Quantity.HasValue || ingredientDTO.Weight.HasValue)
+            {
+                var storageItems = await _storageItemService.GetAllStorageItemsWithProductAsync();
+
+                bool isAvailable = storageItems.Any(storageItem =>
+                    storageItem.Product.Id == ingredientDTO.baseProductId &&
+                    (ingredientDTO.Quantity.HasValue
+                        ? storageItem.Quantity >= ingredientDTO.Quantity
+                        : storageItem.Weight >= ingredientDTO.Weight));
+
+                return isAvailable;
+            }
+            return false;
         }
     }
 }

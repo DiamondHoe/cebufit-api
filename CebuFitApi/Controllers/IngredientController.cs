@@ -103,5 +103,10 @@ namespace CebuFitApi.Controllers
 
             return Ok();
         }
+        [HttpGet("IsIngredientAvailable", Name = "IsIngredientAvailable")]
+        public async Task<ActionResult<bool>> IsIngredientAvailable(IngredientCreateDTO ingredientDTO)
+        {
+            return await _ingredientService.IsIngredientAvailable(ingredientDTO);
+        }
     }
 }

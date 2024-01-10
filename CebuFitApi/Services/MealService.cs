@@ -97,12 +97,15 @@ namespace CebuFitApi.Services
 
         private async Task<bool> AreIngredientsAvailable(List<IngredientWithProductDTO> ingredients)
         {
-            var storageItemsDTOs = await _storageItemService.GetAllStorageItemsWithProductAsync(); 
+            var storageItemsDTOs = await _storageItemService.GetAllStorageItemsWithProductAsync();
 
             return ingredients.All(ingredient =>
+                (ingredient.Quantity.HasValue || ingredient.Weight.HasValue) &&
                 storageItemsDTOs.Any(storageItem =>
                     storageItem.Product.Id == ingredient.Product.Id &&
-                    storageItem.Quantity >= ingredient.Quantity));
+                    (ingredient.Quantity.HasValue
+                        ? storageItem.Quantity >= ingredient.Quantity
+                        : storageItem.Weight >= ingredient.Weight)));
         }
     }
 }

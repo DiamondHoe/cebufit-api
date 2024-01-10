@@ -10,4 +10,5 @@ public interface IIngredientService
     Task CreateIngredientAsync(IngredientCreateDTO ingredient);
     Task UpdateIngredientAsync(IngredientDTO ingredient);
     Task DeleteIngredientAsync(Guid ingredientId);
+    Task<bool> IsIngredientAvailable(IngredientCreateDTO ingredientDTO);
 }
