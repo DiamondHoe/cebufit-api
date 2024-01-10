@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CebuFitApi.DTOs;
+using CebuFitApi.Interfaces;
 using CebuFitApi.Models;
 
 namespace CebuFitApi.Services

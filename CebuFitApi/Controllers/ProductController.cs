@@ -147,7 +147,7 @@ namespace CebuFitApi.Controllers
         }
 
         #region Importance
-        [HttpGet("getImportances")]
+        [HttpGet("importances", Name = "GetImportances")]
         public async Task<ActionResult<Dictionary<string, int>>> GetImportances()
         {
             Dictionary<string, int> importanceDict = new Dictionary<string, int>();

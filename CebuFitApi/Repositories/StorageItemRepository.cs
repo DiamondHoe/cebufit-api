@@ -1,4 +1,5 @@
 ﻿using CebuFitApi.Data;
+using CebuFitApi.Interfaces;
 using CebuFitApi.Models;
 using Microsoft.EntityFrameworkCore;
 

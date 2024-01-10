@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CebuFitApi.DTOs;
+using CebuFitApi.Helpers.Enums;
 using CebuFitApi.Interfaces;
 using CebuFitApi.Models;
 using CebuFitApi.Services;
@@ -102,6 +103,24 @@ namespace CebuFitApi.Controllers
             await _mealService.DeleteMealAsync(mealId);
 
             return Ok();
+        }
+
+        [HttpGet("mealTimes", Name = "GetMealTimes")]
+        public async Task<ActionResult<Dictionary<string, int>>> GetMealTimes()
+        {
+            Dictionary<string, int> mealTimeDict = new Dictionary<string, int>();
+            var mealValues = Enum.GetValues(typeof(MealTimesEnum));
+
+            foreach (var value in mealValues)
+            {
+                // Assuming the enum values are strings, you can convert them to string
+                var stringValue = value.ToString();
+
+                // Assign each enum value to a corresponding key in the dictionary
+                mealTimeDict[stringValue] = (int)value;
+            }
+
+            return Ok(mealTimeDict);
         }
     }
 }

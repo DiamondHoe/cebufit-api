@@ -9,12 +9,21 @@ namespace CebuFitApi.Services
     public class MealService : IMealService
     {
         private readonly IMealRepository _mealRepository;
+        private readonly IIngredientService _ingredientService;
         private readonly IIngredientRepository _ingredientRepository;
+        private readonly IStorageItemService _storageItemService;
         private readonly IMapper _mapper;
-        public MealService(IMealRepository mealRepository, IIngredientRepository ingredientRepository, IMapper mapper)
+        public MealService(
+            IMealRepository mealRepository,
+            IIngredientService ingredientService,
+            IIngredientRepository ingredientRepository,
+            IStorageItemService storageItemRepository,
+            IMapper mapper)
         {
             _mealRepository = mealRepository;
+            _ingredientService = ingredientService;
             _ingredientRepository = ingredientRepository;
+            _storageItemService = storageItemRepository;
             _mapper = mapper;
         }
         public async Task<List<MealDTO>> GetAllMealsAsync()
@@ -28,6 +37,12 @@ namespace CebuFitApi.Services
         {
             var mealsEntities = await _mealRepository.GetAllWithDetailsAsync();
             var mealsDTOs = _mapper.Map<List<MealWithDetailsDTO>>(mealsEntities);
+
+            foreach (var meal in mealsDTOs)
+            {
+                meal.Doable = await AreIngredientsAvailable(meal.Ingredients);
+            }
+
             return mealsDTOs;
         }
 
@@ -65,7 +80,7 @@ namespace CebuFitApi.Services
             var meal = _mapper.Map<Meal>(mealDTO);
 
             List<Ingredient> ingredients = new List<Ingredient>();
-            foreach(var ing in mealDTO.IngredientsId)
+            foreach (var ing in mealDTO.IngredientsId)
             {
                 ingredients.Add(await _ingredientRepository.GetByIdAsync(ing));
             }
@@ -77,6 +92,16 @@ namespace CebuFitApi.Services
         public async Task DeleteMealAsync(Guid mealId)
         {
             await _mealRepository.DeleteAsync(mealId);
+        }
+
+        private async Task<bool> AreIngredientsAvailable(List<IngredientWithProductDTO> ingredients)
+        {
+            var storageItemsDTOs = await _storageItemService.GetAllStorageItemsWithProductAsync(); 
+
+            return ingredients.All(ingredient =>
+                storageItemsDTOs.Any(storageItem =>
+                    storageItem.Product.Id == ingredient.Product.Id &&
+                    storageItem.Quantity >= ingredient.Quantity));
         }
     }
 }
