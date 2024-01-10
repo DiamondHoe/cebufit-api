@@ -57,6 +57,7 @@ namespace CebuFitApi.Services
         {
             var mealEntity = await _mealRepository.GetByIdWithDetailsAsync(mealId);
             var mealDTO = _mapper.Map<MealWithDetailsDTO>(mealEntity);
+            mealDTO.Doable = await AreIngredientsAvailable(mealDTO.Ingredients);
             return mealDTO;
         }
 
