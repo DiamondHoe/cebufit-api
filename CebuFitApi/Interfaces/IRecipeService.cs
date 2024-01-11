@@ -11,6 +11,6 @@ public interface IRecipeService
     Task<RecipeDTO> GetRecipeByIdAsync(Guid recipeId);
     Task<RecipeWithDetailsDTO> GetRecipeByIdWithDetailsAsync(Guid recipeId);
     Task CreateRecipeAsync(RecipeCreateDTO recipe);
-    Task UpdateRecipeAsync(RecipeDTO recipe);
+    Task UpdateRecipeAsync(RecipeUpdateDTO recipe);
     Task DeleteRecipeAsync(Guid recipeId);
 }

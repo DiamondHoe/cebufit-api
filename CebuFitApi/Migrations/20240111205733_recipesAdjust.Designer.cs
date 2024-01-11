@@ -3,6 +3,7 @@ using System;
 using CebuFitApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CebuFitApi.Migrations
 {
     [DbContext(typeof(CebuFitApiDbContext))]
-    partial class CebuFitApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240111205733_recipesAdjust")]
+    partial class recipesAdjust
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -88,7 +91,7 @@ namespace CebuFitApi.Migrations
                     b.Property<decimal?>("Quantity")
                         .HasColumnType("numeric");
 
-                    b.Property<Guid?>("RecipeId")
+                    b.Property<Guid>("RecipeId")
                         .HasColumnType("uuid");
 
                     b.Property<decimal?>("Weight")
@@ -300,7 +303,9 @@ namespace CebuFitApi.Migrations
 
                     b.HasOne("CebuFitApi.Models.Recipe", "Recipe")
                         .WithMany("Ingredients")
-                        .HasForeignKey("RecipeId");
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Product");
 

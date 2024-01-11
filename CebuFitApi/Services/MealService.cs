@@ -65,11 +65,13 @@ namespace CebuFitApi.Services
         {
             var meal = _mapper.Map<Meal>(mealDTO);
             meal.Id = Guid.NewGuid();
+            meal.Ingredients.Clear();
 
             List<Ingredient> ingredients = new List<Ingredient>();
-            foreach (var ing in mealDTO.IngredientsId)
+            foreach (var ing in mealDTO.Ingredients)
             {
-                ingredients.Add(await _ingredientRepository.GetByIdAsync(ing));
+                var ingredientId = await _ingredientService.CreateIngredientAsync(ing);
+                ingredients.Add(await _ingredientRepository.GetByIdAsync(ingredientId));
             }
             meal.Ingredients = ingredients;
 

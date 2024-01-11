@@ -73,7 +73,7 @@ namespace CebuFitApi.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> UpdateProduct(RecipeDTO recipeDTO)
+        public async Task<ActionResult> UpdateProduct(RecipeUpdateDTO recipeDTO)
         {
             var existingRecipe = await _recipeService.GetRecipeByIdAsync(recipeDTO.Id);
 

@@ -83,6 +83,10 @@ namespace CebuFitApi.Mapping
                 .ForMember(dest => dest.IngredientsId, opt => opt.MapFrom(src => src.Ingredients.Select(i => i.Id)));
             CreateMap<RecipeCreateDTO, Recipe>();
             CreateMap<Recipe, RecipeCreateDTO>();
+            CreateMap<RecipeUpdateDTO, Recipe>()
+                 .ForMember(dest => dest.Ingredients, opt => opt.MapFrom(src => src.Ingredients));
+            CreateMap<Recipe, RecipeUpdateDTO>()
+                 .ForMember(dest => dest.Ingredients, opt => opt.MapFrom(src => src.Ingredients));
             CreateMap<RecipeWithDetailsDTO, Recipe>();
             CreateMap<Recipe, RecipeWithDetailsDTO>()
                 .ForMember(dest => dest.Ingredients, opt => opt.MapFrom(src => src.Ingredients))

@@ -22,7 +22,7 @@ namespace CebuFitApi.Models
         public void Configure(EntityTypeBuilder<Recipe> builder)
         {
             builder.HasMany(rec => rec.Ingredients)
-                .WithMany(ing => ing.Recipes);
+                .WithOne(ing => ing.Recipe);
         }
     }
 }

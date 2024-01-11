@@ -59,11 +59,13 @@ namespace CebuFitApi.Repositories
         public async Task UpdateAsync(Recipe recipe)
         {
             var existingRecipe = await _dbContext.Recipes
+                .Include (x => x.Ingredients)
                 .FirstOrDefaultAsync(si => si.Id == recipe.Id);
 
             if (existingRecipe != null)
             {
                 _dbContext.Entry(existingRecipe).CurrentValues.SetValues(recipe);
+                existingRecipe.Ingredients = recipe.Ingredients;
                 await _dbContext.SaveChangesAsync();
             }
         }
