@@ -62,10 +62,10 @@ namespace CebuFitApi.Repositories
         }
         public async Task DeleteAsync(Guid id)
         {
-            var IngredientToDelete = await _dbContext.StorageItems.FindAsync(id);
+            var IngredientToDelete = await _dbContext.Ingredients.FindAsync(id);
             if (IngredientToDelete != null)
             {
-                _dbContext.StorageItems.Remove(IngredientToDelete);
+                _dbContext.Ingredients.Remove(IngredientToDelete);
                 await _dbContext.SaveChangesAsync();
             }
         }

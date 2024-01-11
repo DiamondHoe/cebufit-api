@@ -14,7 +14,7 @@ namespace CebuFitApi.Models
         public decimal? Weight { get; set; }
         public Product Product { get; set; }
         public Recipe? Recipe { get; set; }
-        public List<Meal> Meals { get; set; } = new();
+        public Meal? Meal { get; set; }
     }
     public class IngredientConfiguration : IEntityTypeConfiguration<Ingredient>
     {

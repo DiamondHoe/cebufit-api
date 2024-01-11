@@ -22,7 +22,8 @@ namespace CebuFitApi.Models
         public void Configure(EntityTypeBuilder<Recipe> builder)
         {
             builder.HasMany(rec => rec.Ingredients)
-                .WithOne(ing => ing.Recipe);
+                .WithOne(ing => ing.Recipe)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

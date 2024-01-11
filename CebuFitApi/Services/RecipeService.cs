@@ -63,14 +63,33 @@ namespace CebuFitApi.Services
             var recipe = _mapper.Map<Recipe>(recipeDTO);
             recipe.Ingredients.Clear();
 
-            foreach (var ingredient in recipeDTO.Ingredients)
+            var existingRecipe = await _recipeRepository.GetByIdAsync(recipeDTO.Id);
+
+            // Create tasks for adding new ingredients
+            var addIngredientTasks = new List<Task<Ingredient>>();
+            foreach (var ingredientDTO in recipeDTO.Ingredients)
             {
-                var ingredientId = await _ingredientService.CreateIngredientAsync(ingredient);
-                recipe.Ingredients.Add(await _ingredientRepository.GetByIdAsync(ingredientId));
+                var ingredientId = await _ingredientService.CreateIngredientAsync(ingredientDTO);
+                var newIngredient = await _ingredientRepository.GetByIdAsync(ingredientId);
+                addIngredientTasks.Add(Task.FromResult(newIngredient));
             }
 
+            // Wait for all tasks to complete
+            var addedIngredients = await Task.WhenAll(addIngredientTasks);
+
+            // Add the new ingredients to the recipe
+            recipe.Ingredients.AddRange(addedIngredients);
+
+            // Delete existing ingredients using a copy of the list
+            foreach (var ingredient in existingRecipe.Ingredients.ToList())
+            {
+                await _ingredientRepository.DeleteAsync(ingredient.Id);
+            }
+
+            // Update the recipe
             await _recipeRepository.UpdateAsync(recipe);
         }
+
         public async Task DeleteRecipeAsync(Guid recipeId)
         {
             await _recipeRepository.DeleteAsync(recipeId);

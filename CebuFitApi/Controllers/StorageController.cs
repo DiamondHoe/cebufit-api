@@ -25,6 +25,9 @@ namespace CebuFitApi.Controllers
             var ingredients = await _dbContext.Ingredients.ToListAsync();
             _dbContext.Ingredients.RemoveRange(ingredients);
 
+            var meals = await _dbContext.Meals.ToListAsync();
+            _dbContext.Meals.RemoveRange(meals);
+
             await _dbContext.SaveChangesAsync();  // Wait for SaveChanges to complete
         }
 

@@ -65,11 +65,14 @@ namespace CebuFitApi.Repositories
 
         public async Task UpdateAsync(Meal meal)
         {
-            var existingMeal = await _dbContext.Meals.FirstOrDefaultAsync(m => m.Id == meal.Id);
+            var existingMeal = await _dbContext.Meals
+                .Include(x => x.Ingredients)
+                .FirstOrDefaultAsync(m => m.Id == meal.Id);
 
             if (existingMeal != null)
             {
                 _dbContext.Entry(existingMeal).CurrentValues.SetValues(meal);
+                existingMeal.Ingredients = meal.Ingredients;
                 await _dbContext.SaveChangesAsync();
             }
         }
