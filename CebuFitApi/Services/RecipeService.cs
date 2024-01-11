@@ -9,12 +9,15 @@ namespace CebuFitApi.Services
     {
         private readonly IRecipeRepository _recipeRepository;
         private readonly IIngredientRepository _ingredientRepository;
+        private readonly IIngredientService _ingredientService;
         private readonly IMapper _mapper;
-        public RecipeService(IMapper mapper, IRecipeRepository recipeRepository, IIngredientRepository ingredientRepository)
+        public RecipeService(IMapper mapper, IRecipeRepository recipeRepository, IIngredientRepository ingredientRepository, IIngredientService ingredientService)
         {
             _mapper = mapper;
             _recipeRepository = recipeRepository;
             _ingredientRepository = ingredientRepository;
+            _ingredientService = ingredientService;
+
         }
         public async Task<List<RecipeDTO>> GetAllRecipesAsync()
         {
@@ -45,9 +48,11 @@ namespace CebuFitApi.Services
         {
             var recipe = _mapper.Map<Recipe>(recipeDTO);
             recipe.Id = Guid.NewGuid();
+            recipe.Ingredients.Clear();
 
-            foreach(var ingredientId in recipeDTO.IngredientsId)
+            foreach(var ingredient in recipeDTO.Ingredients)
             {
+                var ingredientId = await _ingredientService.CreateIngredientAsync(ingredient);
                 recipe.Ingredients.Add(await _ingredientRepository.GetByIdAsync(ingredientId));
             }
 

@@ -43,7 +43,7 @@ namespace CebuFitApi.Services
             var ingredientDTO = _mapper.Map<IngredientWithProductDTO>(ingredientEntity);
             return ingredientDTO;
         }
-        public async Task CreateIngredientAsync(IngredientCreateDTO ingredientDTO)
+        public async Task<Guid> CreateIngredientAsync(IngredientCreateDTO ingredientDTO)
         {
             var ingredient = _mapper.Map<Ingredient>(ingredientDTO);
             ingredient.Id = Guid.NewGuid();
@@ -57,6 +57,7 @@ namespace CebuFitApi.Services
             ingredient.Product = _mapper.Map<Product>(baseProduct);
 
             await _ingredientRepository.CreateAsync(ingredient);
+            return ingredient.Id;
         }
         public async Task UpdateIngredientAsync(IngredientDTO ingredientDTO)
         {
