@@ -107,8 +107,8 @@ namespace CebuFitApi.Controllers
         [HttpPut("manageDayMeals/{dayId}", Name = "AddMealToDay")]
         public async Task<ActionResult<DayDTO>> AddMealToDay(Guid dayId, Guid mealId)
         {
-            var existingDay = _dayService.GetDayByIdAsync(dayId);
-            var existingMeal = _mealService.GetMealByIdAsync(mealId);
+            var existingDay = await _dayService.GetDayByIdAsync(dayId);
+            var existingMeal = await _mealService.GetMealByIdAsync(mealId);
 
             if (existingDay == null || existingMeal == null)
             {
@@ -121,8 +121,8 @@ namespace CebuFitApi.Controllers
         [HttpDelete("manageDayMeals/{dayId}", Name = "RemoveMealFromDay")]
         public async Task<ActionResult> RemoveMealFromDay(Guid dayId, Guid mealId)
         {
-            var existingDay = _dayService.GetDayByIdAsync(dayId);
-            var existingMeal = _mealService.GetMealByIdAsync(mealId);
+            var existingDay = await _dayService.GetDayByIdAsync(dayId);
+            var existingMeal = await _mealService.GetMealByIdAsync(mealId);
 
             if (existingDay == null || existingMeal == null)
             {
