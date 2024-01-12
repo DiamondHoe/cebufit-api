@@ -67,7 +67,7 @@ namespace CebuFitApi.Services
             meal.Id = Guid.NewGuid();
             meal.Ingredients.Clear();
 
-            List<Ingredient> ingredients = new List<Ingredient>();
+            var ingredients = new List<Ingredient>();
             foreach (var ing in mealDTO.Ingredients)
             {
                 var ingredientId = await _ingredientService.CreateIngredientAsync(ing);
