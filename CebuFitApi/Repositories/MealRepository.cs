@@ -57,10 +57,11 @@ namespace CebuFitApi.Repositories
                 .FirstOrDefaultAsync();
             return meals;
         }
-        public async Task CreateAsync(Meal meal)
+        public async Task<Guid> CreateAsync(Meal meal)
         {
             await _dbContext.Meals.AddAsync(meal);
             await _dbContext.SaveChangesAsync();
+            return meal.Id;
         }
 
         public async Task UpdateAsync(Meal meal)

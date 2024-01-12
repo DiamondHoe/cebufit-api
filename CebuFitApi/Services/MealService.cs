@@ -61,7 +61,7 @@ namespace CebuFitApi.Services
             return mealDTO;
         }
 
-        public async Task CreateMealAsync(MealCreateDTO mealDTO)
+        public async Task<Guid> CreateMealAsync(MealCreateDTO mealDTO)
         {
             var meal = _mapper.Map<Meal>(mealDTO);
             meal.Id = Guid.NewGuid();
@@ -75,7 +75,8 @@ namespace CebuFitApi.Services
             }
             meal.Ingredients = ingredients;
 
-            await _mealRepository.CreateAsync(meal);
+            var mealID = await _mealRepository.CreateAsync(meal);
+            return mealID;
         }
 
         public async Task UpdateMealAsync(MealUpdateDTO mealDTO)

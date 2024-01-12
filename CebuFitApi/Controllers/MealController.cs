@@ -65,16 +65,16 @@ namespace CebuFitApi.Controllers
             return Ok(meal);
         }
         [HttpPost]
-        public async Task<ActionResult> CreateMeal(MealCreateDTO mealDTO)
+        public async Task<ActionResult<Guid>> CreateMeal(MealCreateDTO mealDTO)
         {
             if (mealDTO == null)
             {
                 return BadRequest("Meal data is null.");
             }
 
-            await _mealService.CreateMealAsync(mealDTO);
+            var mealid = await _mealService.CreateMealAsync(mealDTO);
 
-            return Ok();
+            return Ok(mealid);
         }
         [HttpPut]
         public async Task<ActionResult> UpdateMeal(MealUpdateDTO mealDTO)

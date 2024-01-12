@@ -6,10 +6,6 @@ namespace CebuFitApi.Models
 {
     public class Recipe : BaseModel
     {
-        public Recipe()
-        {
-              
-        }
         public string Name { get; set; }
         public string Description { get; set; }
         public List<Ingredient> Ingredients { get; set; } = new();

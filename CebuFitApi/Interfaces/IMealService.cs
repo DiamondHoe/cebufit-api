@@ -8,7 +8,7 @@ namespace CebuFitApi.Interfaces
         Task<List<MealWithDetailsDTO>> GetAllMealsWithDetailsAsync();
         Task<MealDTO> GetMealByIdAsync(Guid id);
         Task<MealWithDetailsDTO> GetMealByIdWithDetailsAsync(Guid id);
-        Task CreateMealAsync(MealCreateDTO mealDTO);
+        Task<Guid> CreateMealAsync(MealCreateDTO mealDTO);
         Task UpdateMealAsync(MealUpdateDTO mealDTO);
         Task DeleteMealAsync(Guid id);
     }
