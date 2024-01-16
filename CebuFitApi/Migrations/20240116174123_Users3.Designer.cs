@@ -3,6 +3,7 @@ using System;
 using CebuFitApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CebuFitApi.Migrations
 {
     [DbContext(typeof(CebuFitApiDbContext))]
-    partial class CebuFitApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240116174123_Users3")]
+    partial class Users3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,7 +37,7 @@ namespace CebuFitApi.Migrations
 
                     b.HasIndex("RecipesId");
 
-                    b.ToTable("CatalogueRecipe", (string)null);
+                    b.ToTable("CatalogueRecipe");
                 });
 
             modelBuilder.Entity("CebuFitApi.Models.Catalogue", b =>
@@ -45,7 +48,7 @@ namespace CebuFitApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Catalogues", (string)null);
+                    b.ToTable("Catalogues");
                 });
 
             modelBuilder.Entity("CebuFitApi.Models.Category", b =>
@@ -64,7 +67,7 @@ namespace CebuFitApi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("CebuFitApi.Models.Day", b =>
@@ -83,7 +86,7 @@ namespace CebuFitApi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Days", (string)null);
+                    b.ToTable("Days");
                 });
 
             modelBuilder.Entity("CebuFitApi.Models.Ingredient", b =>
@@ -120,7 +123,7 @@ namespace CebuFitApi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Ingredients", (string)null);
+                    b.ToTable("Ingredients");
                 });
 
             modelBuilder.Entity("CebuFitApi.Models.Macro", b =>
@@ -158,7 +161,7 @@ namespace CebuFitApi.Migrations
                     b.HasIndex("ProductId")
                         .IsUnique();
 
-                    b.ToTable("Macros", (string)null);
+                    b.ToTable("Macros");
                 });
 
             modelBuilder.Entity("CebuFitApi.Models.Meal", b =>
@@ -194,7 +197,7 @@ namespace CebuFitApi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Meals", (string)null);
+                    b.ToTable("Meals");
                 });
 
             modelBuilder.Entity("CebuFitApi.Models.Product", b =>
@@ -248,7 +251,7 @@ namespace CebuFitApi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Recipes", (string)null);
+                    b.ToTable("Recipes");
                 });
 
             modelBuilder.Entity("CebuFitApi.Models.Storage", b =>
@@ -259,7 +262,7 @@ namespace CebuFitApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Storages", (string)null);
+                    b.ToTable("Storages");
                 });
 
             modelBuilder.Entity("CebuFitApi.Models.StorageItem", b =>
@@ -297,7 +300,7 @@ namespace CebuFitApi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("StorageItems", (string)null);
+                    b.ToTable("StorageItems");
                 });
 
             modelBuilder.Entity("CebuFitApi.Models.User", b =>
@@ -310,9 +313,6 @@ namespace CebuFitApi.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("Gender")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsAdmin")
                         .HasColumnType("boolean");
 
                     b.Property<int>("KcalDemand")
@@ -332,7 +332,7 @@ namespace CebuFitApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("CatalogueRecipe", b =>

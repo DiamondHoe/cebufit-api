@@ -8,6 +8,13 @@ namespace CebuFitApi.Mapping
     {
         public MappingProfile()
         {
+            CreateMap<UserDTO, User>();
+            CreateMap<User, UserDTO>();
+            CreateMap<UserCreateDTO, User>();
+            CreateMap<User, UserCreateDTO>();
+            CreateMap<UserLoginDTO, User>();
+            CreateMap<User, UserLoginDTO>();
+
             CreateMap<MealDTO, Meal>();
             CreateMap<Meal, MealDTO>()
                 .ForMember(dest => dest.IngredientsId, opt => opt.MapFrom(src => src.Ingredients.Select(i => i.Id).ToList()));

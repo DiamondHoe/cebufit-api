@@ -10,6 +10,7 @@ namespace CebuFitApi.Models
         {
             
         }
+        public User? User { get; set; }
         public decimal? Quantity { get; set; }
         public decimal? Weight { get; set; }
         public Product Product { get; set; }

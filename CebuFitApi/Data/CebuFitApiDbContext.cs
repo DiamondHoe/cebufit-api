@@ -17,6 +17,7 @@ namespace CebuFitApi.Data
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new CategoryConfiguration());
             modelBuilder.ApplyConfiguration(new MacroConfiguration());
             modelBuilder.ApplyConfiguration(new MealConfiguration());
@@ -30,7 +31,7 @@ namespace CebuFitApi.Data
             modelBuilder.ApplyConfiguration(new DayConfiguration());
             modelBuilder.ApplyConfiguration(new RecipeConfiguration()); 
         }
-
+        public DbSet<User> Users { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Macro> Macros { get; set; }
         public DbSet<Meal> Meals { get; set; }

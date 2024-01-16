@@ -3,6 +3,7 @@ using System;
 using CebuFitApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CebuFitApi.Migrations
 {
     [DbContext(typeof(CebuFitApiDbContext))]
-    partial class CebuFitApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240116173402_Users2")]
+    partial class Users2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,7 +37,7 @@ namespace CebuFitApi.Migrations
 
                     b.HasIndex("RecipesId");
 
-                    b.ToTable("CatalogueRecipe", (string)null);
+                    b.ToTable("CatalogueRecipe");
                 });
 
             modelBuilder.Entity("CebuFitApi.Models.Catalogue", b =>
@@ -45,7 +48,7 @@ namespace CebuFitApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Catalogues", (string)null);
+                    b.ToTable("Catalogues");
                 });
 
             modelBuilder.Entity("CebuFitApi.Models.Category", b =>
@@ -57,14 +60,9 @@ namespace CebuFitApi.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("CebuFitApi.Models.Day", b =>
@@ -76,14 +74,9 @@ namespace CebuFitApi.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Days", (string)null);
+                    b.ToTable("Days");
                 });
 
             modelBuilder.Entity("CebuFitApi.Models.Ingredient", b =>
@@ -104,9 +97,6 @@ namespace CebuFitApi.Migrations
                     b.Property<Guid?>("RecipeId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
                     b.Property<decimal?>("Weight")
                         .HasColumnType("numeric");
 
@@ -118,9 +108,7 @@ namespace CebuFitApi.Migrations
 
                     b.HasIndex("RecipeId");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Ingredients", (string)null);
+                    b.ToTable("Ingredients");
                 });
 
             modelBuilder.Entity("CebuFitApi.Models.Macro", b =>
@@ -158,7 +146,7 @@ namespace CebuFitApi.Migrations
                     b.HasIndex("ProductId")
                         .IsUnique();
 
-                    b.ToTable("Macros", (string)null);
+                    b.ToTable("Macros");
                 });
 
             modelBuilder.Entity("CebuFitApi.Models.Meal", b =>
@@ -183,18 +171,13 @@ namespace CebuFitApi.Migrations
                     b.Property<Guid?>("RecipeId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
                     b.HasIndex("DayId");
 
                     b.HasIndex("RecipeId");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Meals", (string)null);
+                    b.ToTable("Meals");
                 });
 
             modelBuilder.Entity("CebuFitApi.Models.Product", b =>
@@ -241,14 +224,9 @@ namespace CebuFitApi.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Recipes", (string)null);
+                    b.ToTable("Recipes");
                 });
 
             modelBuilder.Entity("CebuFitApi.Models.Storage", b =>
@@ -259,7 +237,7 @@ namespace CebuFitApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Storages", (string)null);
+                    b.ToTable("Storages");
                 });
 
             modelBuilder.Entity("CebuFitApi.Models.StorageItem", b =>
@@ -280,9 +258,6 @@ namespace CebuFitApi.Migrations
                     b.Property<Guid?>("StorageId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
                     b.Property<decimal?>("Weight")
                         .HasColumnType("numeric");
 
@@ -295,9 +270,7 @@ namespace CebuFitApi.Migrations
 
                     b.HasIndex("StorageId");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("StorageItems", (string)null);
+                    b.ToTable("StorageItems");
                 });
 
             modelBuilder.Entity("CebuFitApi.Models.User", b =>
@@ -310,9 +283,6 @@ namespace CebuFitApi.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("Gender")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsAdmin")
                         .HasColumnType("boolean");
 
                     b.Property<int>("KcalDemand")
@@ -332,7 +302,7 @@ namespace CebuFitApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("CatalogueRecipe", b =>
@@ -348,24 +318,6 @@ namespace CebuFitApi.Migrations
                         .HasForeignKey("RecipesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("CebuFitApi.Models.Category", b =>
-                {
-                    b.HasOne("CebuFitApi.Models.User", "User")
-                        .WithMany("Categories")
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("CebuFitApi.Models.Day", b =>
-                {
-                    b.HasOne("CebuFitApi.Models.User", "User")
-                        .WithMany("Days")
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CebuFitApi.Models.Ingredient", b =>
@@ -385,17 +337,11 @@ namespace CebuFitApi.Migrations
                         .HasForeignKey("RecipeId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("CebuFitApi.Models.User", "User")
-                        .WithMany("Ingredients")
-                        .HasForeignKey("UserId");
-
                     b.Navigation("Meal");
 
                     b.Navigation("Product");
 
                     b.Navigation("Recipe");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CebuFitApi.Models.Macro", b =>
@@ -419,13 +365,7 @@ namespace CebuFitApi.Migrations
                         .WithMany("Meals")
                         .HasForeignKey("RecipeId");
 
-                    b.HasOne("CebuFitApi.Models.User", "User")
-                        .WithMany("Meals")
-                        .HasForeignKey("UserId");
-
                     b.Navigation("Day");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CebuFitApi.Models.Product", b =>
@@ -443,15 +383,6 @@ namespace CebuFitApi.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("CebuFitApi.Models.Recipe", b =>
-                {
-                    b.HasOne("CebuFitApi.Models.User", "User")
-                        .WithMany("Recipes")
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("CebuFitApi.Models.StorageItem", b =>
                 {
                     b.HasOne("CebuFitApi.Models.Product", "Product")
@@ -464,15 +395,9 @@ namespace CebuFitApi.Migrations
                         .WithMany("StorageItems")
                         .HasForeignKey("StorageId");
 
-                    b.HasOne("CebuFitApi.Models.User", "User")
-                        .WithMany("StorageItems")
-                        .HasForeignKey("UserId");
-
                     b.Navigation("Product");
 
                     b.Navigation("Storage");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CebuFitApi.Models.Category", b =>
@@ -513,19 +438,7 @@ namespace CebuFitApi.Migrations
 
             modelBuilder.Entity("CebuFitApi.Models.User", b =>
                 {
-                    b.Navigation("Categories");
-
-                    b.Navigation("Days");
-
-                    b.Navigation("Ingredients");
-
-                    b.Navigation("Meals");
-
                     b.Navigation("Products");
-
-                    b.Navigation("Recipes");
-
-                    b.Navigation("StorageItems");
                 });
 #pragma warning restore 612, 618
         }

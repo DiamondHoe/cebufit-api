@@ -7,6 +7,11 @@ namespace CebuFitApi.Models
 {
     public class Product : BaseModel
     {
+        public Product()
+        {
+         
+        }
+        public User? User { get; set; }
         public string? Name { get; set; }
         public ImportanceEnum Importance { get; set; }
         public int UnitWeight { get; set; }

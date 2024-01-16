@@ -10,6 +10,7 @@ namespace CebuFitApi.Models
         {
 
         }
+        public User? User { get; set; }
         public DateTime expirationDate { get; set; }
         public decimal? Price { get; set; }
         public decimal? Quantity { get; set; }

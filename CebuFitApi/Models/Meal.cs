@@ -11,6 +11,7 @@ namespace CebuFitApi.Models
         {
             
         }
+        public User? User { get; set; }
         public string Name {  get; set; }
         public bool Eaten { get; set; }
         public MealTimesEnum MealTime { get; set; }

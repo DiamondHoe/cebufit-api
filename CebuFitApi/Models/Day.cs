@@ -6,6 +6,7 @@ namespace CebuFitApi.Models
 {
     public class Day : BaseModel
     {
+        public User? User { get; set; }
         public DateTime Date { get; set; }
         public List<Meal> Meals { get; set;}
     }

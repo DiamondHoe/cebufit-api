@@ -1,4 +1,5 @@
 using CebuFitApi.Data;
+using CebuFitApi.Helpers;
 using CebuFitApi.Interfaces;
 using CebuFitApi.Mapping;
 using CebuFitApi.Repositories;
@@ -22,6 +23,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 #region repositories and services
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddScoped<IJwtTokenHelper, JwtTokenHelper>();
+
 builder.Services.AddScoped<IMealRepository, MealRepository>();
 builder.Services.AddScoped<IMealService, MealService>();
 
