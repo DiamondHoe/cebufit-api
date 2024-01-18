@@ -2,10 +2,12 @@
 using CebuFitApi.DTOs;
 using CebuFitApi.Interfaces;
 using CebuFitApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CebuFitApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("/api/days")]
     public class DayController : Controller

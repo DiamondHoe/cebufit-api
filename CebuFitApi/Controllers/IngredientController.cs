@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using CebuFitApi.DTOs;
 using CebuFitApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CebuFitApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("/api/ingredients")]
     public class IngredientController : Controller

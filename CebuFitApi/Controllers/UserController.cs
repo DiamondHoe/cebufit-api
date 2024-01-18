@@ -28,7 +28,7 @@ namespace CebuFitApi.Controllers
             {
                 return Unauthorized("Invalid credentials");
             }
-            var token = _jwtTokenHelper.GenerateJwtToken(loggedUser.Id, loggedUser.Name);
+            var token = await _jwtTokenHelper.GenerateJwtToken(loggedUser.Id, loggedUser.Name);
 
             return Ok(new { Token = token });
         }
@@ -50,12 +50,14 @@ namespace CebuFitApi.Controllers
             return BadRequest();
         }
 
-        [HttpPost("logout")]
+        //NP: Can be implemented, but for now we do it on client side - if needed i'll add blacklisting
         //[Authorize]
-        public IActionResult Logout()
-        {
-            // You can add additional logout logic here if needed
-            return Ok("Logout successful");
-        }
+        //[HttpPost("logout")]
+        ////[Authorize]
+        //public IActionResult Logout()
+        //{
+        //    // You can add additional logout logic here if needed
+        //    return Ok("Logout successful");
+        //}
     }
 }

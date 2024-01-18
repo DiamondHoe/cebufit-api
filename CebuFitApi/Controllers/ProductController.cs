@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using CebuFitApi.DTOs;
 using CebuFitApi.Helpers.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CebuFitApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("/api/products")]
     public class ProductController : Controller

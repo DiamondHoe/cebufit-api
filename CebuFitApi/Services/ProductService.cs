@@ -73,7 +73,7 @@ namespace CebuFitApi.Services
             macro.Id = Guid.NewGuid();
             product.Macro = macro;
 
-            var category = await _categoryRepository.GetByIdAsync(productDTO.CategoryId);
+            var category = await _categoryRepository.GetByIdAsync(productDTO.CategoryId, Guid.Empty);
             if(category == null)
             {
                 throw new Exception("Category not found");
@@ -86,7 +86,7 @@ namespace CebuFitApi.Services
         {
             var product = _mapper.Map<Product>(productDTO);
             var macro = _mapper.Map<Macro>(productDTO.Macro);
-            var category = await _categoryRepository.GetByIdAsync(productDTO.CategoryId);
+            var category = await _categoryRepository.GetByIdAsync(productDTO.CategoryId, Guid.Empty);
 
             product.Macro = macro;
             product.Category = category;

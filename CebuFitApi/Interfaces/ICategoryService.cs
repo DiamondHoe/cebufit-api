@@ -5,10 +5,10 @@ namespace CebuFitApi.Interfaces
 {
     public interface ICategoryService
     {
-        Task<List<CategoryDTO>> GetAllCategoriesAsync();
-        Task<CategoryDTO> GetCategoryByIdAsync(Guid categoryId);
-        Task CreateCategoryAsync(CategoryCreateDTO categoryDTO);
-        Task UpdateCategoryAsync(CategoryDTO categoryDTO);
-        Task DeleteCategoryAsync(Guid categoryId);
+        Task<List<CategoryDTO>> GetAllCategoriesAsync(Guid userIdClaim);
+        Task<CategoryDTO> GetCategoryByIdAsync(Guid categoryId, Guid userIdClaim);
+        Task CreateCategoryAsync(CategoryCreateDTO categoryDTO, Guid userIdClaim);
+        Task UpdateCategoryAsync(CategoryDTO categoryDTO, Guid userIdClaim);
+        Task DeleteCategoryAsync(Guid categoryId, Guid userIdClaim);
     }
 }

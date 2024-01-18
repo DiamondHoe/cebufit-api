@@ -3,5 +3,7 @@
     public interface IJwtTokenHelper
     {
         public Task<string> GenerateJwtToken(Guid userId, string username);
+        public Guid GetCurrentUserId();
+
     }
 }

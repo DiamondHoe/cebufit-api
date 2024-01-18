@@ -4,7 +4,10 @@ using CebuFitApi.Interfaces;
 using CebuFitApi.Mapping;
 using CebuFitApi.Repositories;
 using CebuFitApi.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +24,22 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = "cebufit",
+            ValidAudience = "cebufitEater",
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("NorbsonIRobsonToQCuryNoIPiwoPiwoPiwoPiwooooooXD"))
+        };
+    });
 
 #region repositories and services
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -60,6 +79,9 @@ builder.Services.AddDbContext<CebuFitApiDbContext>(options =>
 
 
 var app = builder.Build();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

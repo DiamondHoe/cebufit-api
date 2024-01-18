@@ -7,7 +7,7 @@ namespace CebuFitApi.Models
     {
         public User()
         {
-
+               
         }
         public bool IsAdmin { get; set; }
         public string Login { get; set; }

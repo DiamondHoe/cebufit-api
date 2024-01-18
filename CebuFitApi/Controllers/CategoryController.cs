@@ -1,11 +1,15 @@
 ﻿using AutoMapper;
 using CebuFitApi.DTOs;
+using CebuFitApi.Helpers;
 using CebuFitApi.Interfaces;
 using CebuFitApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace CebuFitApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("/api/categories")]
     public class CategoryController : Controller
@@ -13,77 +17,109 @@ namespace CebuFitApi.Controllers
         private readonly ILogger<CategoryController> _logger;
         private readonly IMapper _mapper;
         private readonly ICategoryService _categoryService;
-        public CategoryController(ILogger<CategoryController> logger, ICategoryService categoryService, IMapper mapper)
+        private readonly IJwtTokenHelper _jwtTokenHelper;
+        public CategoryController(ILogger<CategoryController> logger, ICategoryService categoryService, IMapper mapper, IJwtTokenHelper jwtTokenHelper)
         {
             _logger = logger;
             _mapper = mapper;
             _categoryService = categoryService;
+            _jwtTokenHelper = jwtTokenHelper;
         }
 
         [HttpGet(Name = "GetCategories")]
         public async Task<ActionResult<CategoryDTO>> GetAll()
         {
-            var categories = await _categoryService.GetAllCategoriesAsync();
-            if (categories.Count == 0) 
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+
+            if(userIdClaim != Guid.Empty)
             {
-                return NoContent();
+                var categories = await _categoryService.GetAllCategoriesAsync(userIdClaim);
+                if (categories.Count == 0)
+                {
+                    return NoContent();
+                }
+                return Ok(categories);
             }
-            return Ok(categories);
+            return NotFound("Username not found");
         }
 
         [HttpGet("{categoryId}", Name = "GetCategoryById")]
         public async Task<ActionResult<CategoryDTO>> GetById(Guid categoryId)
         {
-            var category = await _categoryService.GetCategoryByIdAsync(categoryId);
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
 
-            if (category == null)
+            if (userIdClaim != Guid.Empty)
             {
-                return NotFound();
+                var category = await _categoryService.GetCategoryByIdAsync(categoryId, userIdClaim);
+
+                if (category == null)
+                {
+                    return NotFound();
+                }
+                return Ok(category);
             }
-            return Ok(category);
+            return NotFound("User not found");
         }
 
         [HttpPost]
         public async Task<ActionResult> CreateCategory([FromBody] CategoryCreateDTO categoryCreateDTO)
         {
-            if (categoryCreateDTO == null)
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+
+            if (userIdClaim != Guid.Empty)
             {
-                return BadRequest("Category data is null.");
+                if (categoryCreateDTO == null)
+                {
+                    return BadRequest("Category data is null.");
+                }
+
+                await _categoryService.CreateCategoryAsync(categoryCreateDTO, userIdClaim);
+
+                return Ok();
             }
-
-            await _categoryService.CreateCategoryAsync(categoryCreateDTO);
-
-            return Ok();
+            return NotFound("User not found");
         }
 
         [HttpPut]
         public async Task<ActionResult> UpdateCategory(CategoryDTO categoryDTO)
         {
-            var existingCategory = await _categoryService.GetCategoryByIdAsync(categoryDTO.Id);
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
 
-            if (existingCategory == null)
+            if (userIdClaim != Guid.Empty)
             {
-                return NotFound();
+                var existingCategory = await _categoryService.GetCategoryByIdAsync(categoryDTO.Id, userIdClaim);
+
+                if (existingCategory == null)
+                {
+                    return NotFound();
+                }
+
+                await _categoryService.UpdateCategoryAsync(categoryDTO, userIdClaim);
+
+                return Ok();
             }
-
-            await _categoryService.UpdateCategoryAsync(categoryDTO);
-
-            return Ok();
+            return NotFound("User not found");
         }
 
         [HttpDelete("{categoryId}")]
         public async Task<ActionResult> DeleteCategory(Guid categoryId)
         {
-            var existingCategory = await _categoryService.GetCategoryByIdAsync(categoryId);
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
 
-            if (existingCategory == null)
+            if (userIdClaim != Guid.Empty)
             {
-                return NotFound();
+                var existingCategory = await _categoryService.GetCategoryByIdAsync(categoryId, userIdClaim);
+
+                if (existingCategory == null)
+                {
+                    return NotFound();
+                }
+
+                await _categoryService.DeleteCategoryAsync(categoryId, userIdClaim);
+
+                return Ok();
             }
-
-            await _categoryService.DeleteCategoryAsync(categoryId);
-
-            return Ok();
+            return NotFound("User not found");
         }
     }
 }

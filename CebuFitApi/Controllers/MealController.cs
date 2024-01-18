@@ -4,12 +4,14 @@ using CebuFitApi.Helpers.Enums;
 using CebuFitApi.Interfaces;
 using CebuFitApi.Models;
 using CebuFitApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace CebuFitApi.Controllers
-{    
+{
+    [Authorize]
     [ApiController]
     [Route("/api/meals")]
     public class MealController : Controller

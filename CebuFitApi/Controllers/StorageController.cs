@@ -1,10 +1,12 @@
 ﻿using CebuFitApi.Data;
 using CebuFitApi.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace CebuFitApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("/api/storages")]
     public class StorageController : Controller

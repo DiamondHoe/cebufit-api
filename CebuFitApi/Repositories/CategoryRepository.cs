@@ -12,14 +12,16 @@ namespace CebuFitApi.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task<List<Category>> GetAllAsync()
+        public async Task<List<Category>> GetAllAsync(Guid userIdClaim)
         {
-            var categories = await _dbContext.Categories.ToListAsync();
+            var categories = await _dbContext.Categories.Where(x => x.User.Id == userIdClaim).ToListAsync();
             return categories;
         }
-        public async Task<Category> GetByIdAsync(Guid categoryId)
+        public async Task<Category> GetByIdAsync(Guid categoryId, Guid userIdClaim)
         {
-            var category = await _dbContext.Categories.FindAsync(categoryId);
+            var category = await _dbContext.Categories
+                .Where(x => x.Id == categoryId && x.User.Id == userIdClaim)
+                .FirstOrDefaultAsync();
             return category;
         }
         public async Task AddAsync(Category category)
@@ -27,18 +29,22 @@ namespace CebuFitApi.Repositories
             await _dbContext.Categories.AddAsync(category);
             await _dbContext.SaveChangesAsync();
         }
-        public async Task UpdateAsync(Category category)
+        public async Task UpdateAsync(Category category, Guid userIdClaim)
         {
-            var existingCategory = await _dbContext.Categories.FindAsync(category.Id);
+            var existingCategory = await _dbContext.Categories
+                .Where(x => x.Id == category.Id && x.User.Id == userIdClaim)
+                .FirstOrDefaultAsync();
             if (existingCategory != null)
             {
                 _dbContext.Entry(existingCategory).CurrentValues.SetValues(category);
                 await _dbContext.SaveChangesAsync();
             }
         }
-        public async Task DeleteAsync(Guid categoryId)
+        public async Task DeleteAsync(Guid categoryId, Guid userIdClaim)
         {
-            var categoryToDelete = await _dbContext.Categories.FindAsync(categoryId);
+            var categoryToDelete = await _dbContext.Categories
+                .Where(x => x.Id == categoryId && x.User.Id == userIdClaim)
+                .FirstOrDefaultAsync();
             if (categoryToDelete != null)
             {
                 _dbContext.Categories.Remove(categoryToDelete);
