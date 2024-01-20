@@ -2,11 +2,11 @@
 
 public interface IIngredientRepository
 {
-    Task<List<Ingredient>> GetAllAsync();
-    Task<List<Ingredient>> GetAllWithProductAsync();
-    Task<Ingredient> GetByIdAsync(Guid id);
-    Task<Ingredient> GetByIdWithProductAsync(Guid id);
-    Task CreateAsync(Ingredient ingredient);
-    Task UpdateAsync(Ingredient ingredient);
-    Task DeleteAsync(Guid id);
+    Task<List<Ingredient>> GetAllAsync(Guid userIdClaim);
+    Task<List<Ingredient>> GetAllWithProductAsync(Guid userIdClaim);
+    Task<Ingredient> GetByIdAsync(Guid id, Guid userIdClaim);
+    Task<Ingredient> GetByIdWithProductAsync(Guid id, Guid userIdClaim);
+    Task CreateAsync(Ingredient ingredient, Guid userIdClaim);
+    Task UpdateAsync(Ingredient ingredient, Guid userIdClaim);
+    Task DeleteAsync(Guid id, Guid userIdClaim);
 }

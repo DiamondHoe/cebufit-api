@@ -14,7 +14,9 @@ namespace CebuFitApi.Repositories
         }
         public async Task<List<Category>> GetAllAsync(Guid userIdClaim)
         {
-            var categories = await _dbContext.Categories.Where(x => x.User.Id == userIdClaim).ToListAsync();
+            var categories = await _dbContext.Categories
+                .Where(x => x.User.Id == userIdClaim)
+                .ToListAsync();
             return categories;
         }
         public async Task<Category> GetByIdAsync(Guid categoryId, Guid userIdClaim)
@@ -32,8 +34,7 @@ namespace CebuFitApi.Repositories
         public async Task UpdateAsync(Category category, Guid userIdClaim)
         {
             var existingCategory = await _dbContext.Categories
-                .Where(x => x.Id == category.Id && x.User.Id == userIdClaim)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(x => x.Id == category.Id && x.User.Id == userIdClaim);
             if (existingCategory != null)
             {
                 _dbContext.Entry(existingCategory).CurrentValues.SetValues(category);
@@ -44,7 +45,7 @@ namespace CebuFitApi.Repositories
         {
             var categoryToDelete = await _dbContext.Categories
                 .Where(x => x.Id == categoryId && x.User.Id == userIdClaim)
-                .FirstOrDefaultAsync();
+                .FirstAsync();
             if (categoryToDelete != null)
             {
                 _dbContext.Categories.Remove(categoryToDelete);

@@ -2,11 +2,11 @@
 
 public interface IStorageItemService
 {
-    Task<List<StorageItemDTO>> GetAllStorageItemsAsync();
-    Task<List<StorageItemWithProductDTO>> GetAllStorageItemsWithProductAsync();
-    Task<StorageItemDTO> GetStorageItemByIdAsync(Guid storageItemId);
-    Task<StorageItemWithProductDTO> GetStorageItemByIdWithProductAsync(Guid storageItemId);
-    Task CreateStorageItemAsync(StorageItemCreateDTO storageItem);
-    Task UpdateStorageItemAsync(StorageItemDTO storageItem);
-    Task DeleteStorageItemAsync(Guid storageItemId);
+    Task<List<StorageItemDTO>> GetAllStorageItemsAsync(Guid userIdClaim);
+    Task<List<StorageItemWithProductDTO>> GetAllStorageItemsWithProductAsync(Guid userIdClaim);
+    Task<StorageItemDTO> GetStorageItemByIdAsync(Guid storageItemId, Guid userIdClaim);
+    Task<StorageItemWithProductDTO> GetStorageItemByIdWithProductAsync(Guid storageItemId, Guid userIdClaim);
+    Task CreateStorageItemAsync(StorageItemCreateDTO storageItem, Guid userIdClaim);
+    Task UpdateStorageItemAsync(StorageItemDTO storageItem, Guid userIdClaim);
+    Task DeleteStorageItemAsync(Guid storageItemId, Guid userIdClaim);
 }

@@ -3,15 +3,15 @@ using CebuFitApi.Models;
 
 public interface IProductRepository
 {
-    Task<List<Product>> GetAllAsync();
-    Task<List<Product>> GetAllWithMacroAsync();
-    Task<List<Product>> GetAllWithCategoryAsync();
-    Task<List<Product>> GetAllWithDetailsAsync();
-    Task<Product> GetByIdAsync(Guid id);
-    Task<Product> GetByIdWithMacroAsync(Guid id);
-    Task<Product> GetByIdWithCategoryAsync(Guid id);
-    Task<Product> GetByIdWithDetailsAsync(Guid id);
-    Task CreateAsync(Product product);
-    Task UpdateAsync(Product product);
-    Task DeleteAsync(Guid id);
+    Task<List<Product>> GetAllAsync(Guid userIdClaim);
+    Task<List<Product>> GetAllWithMacroAsync(Guid userIdClaim);
+    Task<List<Product>> GetAllWithCategoryAsync(Guid userIdClaim);
+    Task<List<Product>> GetAllWithDetailsAsync(Guid userIdClaim);
+    Task<Product> GetByIdAsync(Guid id, Guid userIdClaim);
+    Task<Product> GetByIdWithMacroAsync(Guid id, Guid userIdClaim);
+    Task<Product> GetByIdWithCategoryAsync(Guid id, Guid userIdClaim);
+    Task<Product> GetByIdWithDetailsAsync(Guid id, Guid userIdClaim);
+    Task CreateAsync(Product product, Guid userIdClaim);
+    Task UpdateAsync(Product product, Guid userIdClaim);
+    Task DeleteAsync(Guid id, Guid userIdClaim);
 }

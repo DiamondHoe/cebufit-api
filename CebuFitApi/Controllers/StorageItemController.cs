@@ -1,110 +1,171 @@
 ﻿using AutoMapper;
 using CebuFitApi.DTOs;
-using CebuFitApi.Services;
+using CebuFitApi.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CebuFitApi.Controllers
 {
     [Authorize]
     [ApiController]
     [Route("/api/storageitems")]
-    public class StorageItemController : Controller
+    public class StorageItemController : ControllerBase
     {
         private readonly ILogger<StorageItemController> _logger;
         private readonly IMapper _mapper;
         private readonly IStorageItemService _storageItemService;
-        public StorageItemController(ILogger<StorageItemController> logger, IMapper mapper, IStorageItemService storageItemService)
+        private readonly IJwtTokenHelper _jwtTokenHelper;
+
+        public StorageItemController(
+            ILogger<StorageItemController> logger,
+            IMapper mapper,
+            IStorageItemService storageItemService,
+            IJwtTokenHelper jwtTokenHelper)
         {
             _logger = logger;
             _mapper = mapper;
             _storageItemService = storageItemService;
+            _jwtTokenHelper = jwtTokenHelper;
         }
 
         [HttpGet(Name = "GetStorageItems")]
         public async Task<ActionResult<List<StorageItemDTO>>> GetAll()
         {
-            var storageItems = await _storageItemService.GetAllStorageItemsAsync();
-            if(storageItems.Count == 0)
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+
+            if (userIdClaim != Guid.Empty)
             {
-                return NoContent();
+                var storageItems = await _storageItemService.GetAllStorageItemsAsync(userIdClaim);
+                if (storageItems.Count == 0)
+                {
+                    return NoContent();
+                }
+                return Ok(storageItems);
             }
-            return Ok(storageItems);
+
+            return NotFound("User not found");
         }
 
         [HttpGet("withProduct/", Name = "GetStorageItemsWithProduct")]
         public async Task<ActionResult<List<StorageItemWithProductDTO>>> GetAllWithProduct()
         {
-            var storageItems = await _storageItemService.GetAllStorageItemsWithProductAsync();
-            if (storageItems.Count == 0)
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+
+            if (userIdClaim != Guid.Empty)
             {
-                return NoContent();
+                var storageItems = await _storageItemService.GetAllStorageItemsWithProductAsync(userIdClaim);
+                if (storageItems.Count == 0)
+                {
+                    return NoContent();
+                }
+                return Ok(storageItems);
             }
-            return Ok(storageItems);
+
+            return NotFound("User not found");
         }
 
         [HttpGet("{siId}", Name = "GetStorageItemById")]
         public async Task<ActionResult<StorageItemDTO>> GetById(Guid siId)
         {
-            var storageItem = await _storageItemService.GetStorageItemByIdAsync(siId);
-            if (storageItem == null)
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+
+            if (userIdClaim != Guid.Empty)
             {
-                return NotFound();
+                var storageItem = await _storageItemService.GetStorageItemByIdAsync(siId, userIdClaim);
+                if (storageItem == null)
+                {
+                    return NotFound();
+                }
+                return Ok(storageItem);
             }
-            return Ok(storageItem);
+
+            return NotFound("User not found");
         }
+
         [HttpGet("withProduct/{siId}", Name = "GetStorageItemByIdWithProduct")]
         public async Task<ActionResult<StorageItemWithProductDTO>> GetByIdWithProduct(Guid siId)
         {
-            var storageItem = await _storageItemService.GetStorageItemByIdWithProductAsync(siId);
-            if (storageItem == null)
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+
+            if (userIdClaim != Guid.Empty)
             {
-                return NotFound();
+                var storageItem = await _storageItemService.GetStorageItemByIdWithProductAsync(siId, userIdClaim);
+                if (storageItem == null)
+                {
+                    return NotFound();
+                }
+                return Ok(storageItem);
             }
-            return Ok(storageItem);
+
+            return NotFound("User not found");
         }
-        
+
         [HttpPost]
         public async Task<ActionResult> CreateStorageItem(StorageItemCreateDTO storageItemDTO)
         {
-            if (storageItemDTO == null)
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+
+            if (userIdClaim != Guid.Empty)
             {
-                return BadRequest("Product data is null.");
+                if (storageItemDTO == null)
+                {
+                    return BadRequest("Storage item data is null.");
+                }
+
+                await _storageItemService.CreateStorageItemAsync(storageItemDTO, userIdClaim);
+
+                return Ok();
             }
 
-            await _storageItemService.CreateStorageItemAsync(storageItemDTO);
-
-            return Ok();
+            return NotFound("User not found");
         }
 
         [HttpPut]
-        public async Task<ActionResult> UpdateProduct(StorageItemDTO storageItemDTO)
+        public async Task<ActionResult> UpdateStorageItem(StorageItemDTO storageItemDTO)
         {
-            var existingStorageItem = await _storageItemService.GetStorageItemByIdAsync(storageItemDTO.Id);
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
 
-            if (existingStorageItem == null)
+            if (userIdClaim != Guid.Empty)
             {
-                return NotFound();
+                var existingStorageItem = await _storageItemService.GetStorageItemByIdAsync(storageItemDTO.Id, userIdClaim);
+
+                if (existingStorageItem == null)
+                {
+                    return NotFound();
+                }
+
+                await _storageItemService.UpdateStorageItemAsync(storageItemDTO, userIdClaim);
+
+                return Ok();
             }
 
-            await _storageItemService.UpdateStorageItemAsync(storageItemDTO);
-
-            return Ok();
+            return NotFound("User not found");
         }
 
         [HttpDelete("{storageItemId}")]
-        public async Task<ActionResult> DeleteProduct(Guid storageItemId)
+        public async Task<ActionResult> DeleteStorageItem(Guid storageItemId)
         {
-            var existingStorageItem = await _storageItemService.GetStorageItemByIdAsync(storageItemId);
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
 
-            if (existingStorageItem == null)
+            if (userIdClaim != Guid.Empty)
             {
-                return NotFound();
+                var existingStorageItem = await _storageItemService.GetStorageItemByIdAsync(storageItemId, userIdClaim);
+
+                if (existingStorageItem == null)
+                {
+                    return NotFound();
+                }
+
+                await _storageItemService.DeleteStorageItemAsync(storageItemId, userIdClaim);
+
+                return Ok();
             }
 
-            await _storageItemService.DeleteStorageItemAsync(storageItemId);
-
-            return Ok();
+            return NotFound("User not found");
         }
     }
 }

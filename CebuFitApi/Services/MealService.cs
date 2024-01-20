@@ -12,86 +12,97 @@ namespace CebuFitApi.Services
         private readonly IIngredientService _ingredientService;
         private readonly IIngredientRepository _ingredientRepository;
         private readonly IStorageItemService _storageItemService;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         public MealService(
             IMealRepository mealRepository,
             IIngredientService ingredientService,
             IIngredientRepository ingredientRepository,
             IStorageItemService storageItemRepository,
+            IUserRepository userRepository,
             IMapper mapper)
         {
             _mealRepository = mealRepository;
             _ingredientService = ingredientService;
             _ingredientRepository = ingredientRepository;
             _storageItemService = storageItemRepository;
+            _userRepository = userRepository;
             _mapper = mapper;
         }
-        public async Task<List<MealDTO>> GetAllMealsAsync()
+        public async Task<List<MealDTO>> GetAllMealsAsync(Guid userIdClaim)
         {
-            var mealsEntities = await _mealRepository.GetAllAsync();
+            var mealsEntities = await _mealRepository.GetAllAsync(userIdClaim);
             var mealsDTOs = _mapper.Map<List<MealDTO>>(mealsEntities);
             return mealsDTOs;
         }
 
-        public async Task<List<MealWithDetailsDTO>> GetAllMealsWithDetailsAsync()
+        public async Task<List<MealWithDetailsDTO>> GetAllMealsWithDetailsAsync(Guid userIdClaim)
         {
-            var mealsEntities = await _mealRepository.GetAllWithDetailsAsync();
+            var mealsEntities = await _mealRepository.GetAllWithDetailsAsync(userIdClaim);
             var mealsDTOs = _mapper.Map<List<MealWithDetailsDTO>>(mealsEntities);
 
             foreach (var meal in mealsDTOs)
             {
-                meal.Doable = await AreIngredientsAvailable(meal.Ingredients);
+                meal.Doable = await AreIngredientsAvailable(meal.Ingredients, userIdClaim);
             }
 
             return mealsDTOs;
         }
 
-        public async Task<MealDTO> GetMealByIdAsync(Guid mealId)
+        public async Task<MealDTO> GetMealByIdAsync(Guid mealId, Guid userIdClaim)
         {
-            var mealEntity = await _mealRepository.GetByIdAsync(mealId);
+            var mealEntity = await _mealRepository.GetByIdAsync(mealId, userIdClaim);
             var mealDTO = _mapper.Map<MealDTO>(mealEntity);
             return mealDTO;
         }
 
-        public async Task<MealWithDetailsDTO> GetMealByIdWithDetailsAsync(Guid mealId)
+        public async Task<MealWithDetailsDTO> GetMealByIdWithDetailsAsync(Guid mealId, Guid userIdClaim)
         {
-            var mealEntity = await _mealRepository.GetByIdWithDetailsAsync(mealId);
+            var mealEntity = await _mealRepository.GetByIdWithDetailsAsync(mealId, userIdClaim);
             var mealDTO = _mapper.Map<MealWithDetailsDTO>(mealEntity);
-            mealDTO.Doable = await AreIngredientsAvailable(mealDTO.Ingredients);
+            mealDTO.Doable = await AreIngredientsAvailable(mealDTO.Ingredients, userIdClaim);
             return mealDTO;
         }
 
-        public async Task<Guid> CreateMealAsync(MealCreateDTO mealDTO)
+        public async Task<Guid> CreateMealAsync(MealCreateDTO mealDTO, Guid userIdClaim)
         {
             var meal = _mapper.Map<Meal>(mealDTO);
             meal.Id = Guid.NewGuid();
-            meal.Ingredients.Clear();
 
-            var ingredients = new List<Ingredient>();
-            foreach (var ing in mealDTO.Ingredients)
+            var foundUser = await _userRepository.GetById(userIdClaim);
+            if (foundUser != null)
             {
-                var ingredientId = await _ingredientService.CreateIngredientAsync(ing);
-                ingredients.Add(await _ingredientRepository.GetByIdAsync(ingredientId));
-            }
-            meal.Ingredients = ingredients;
+                meal.User = foundUser;
 
-            var mealID = await _mealRepository.CreateAsync(meal);
-            return mealID;
+                meal.Ingredients.Clear();
+
+                var ingredients = new List<Ingredient>();
+                foreach (var ing in mealDTO.Ingredients)
+                {
+                    var ingredientId = await _ingredientService.CreateIngredientAsync(ing, userIdClaim);
+                    ingredients.Add(await _ingredientRepository.GetByIdAsync(ingredientId, userIdClaim));
+                }
+                meal.Ingredients = ingredients;
+
+                var mealID = await _mealRepository.CreateAsync(meal, userIdClaim);
+                return mealID;
+            }
+            return Guid.Empty;
         }
 
-        public async Task UpdateMealAsync(MealUpdateDTO mealDTO)
+        public async Task UpdateMealAsync(MealUpdateDTO mealDTO, Guid userIdClaim)
         {
             var meal = _mapper.Map<Meal>(mealDTO);
             meal.Ingredients.Clear();
 
-            var existingMeal = await _mealRepository.GetByIdAsync(mealDTO.Id);
+            var existingMeal = await _mealRepository.GetByIdAsync(mealDTO.Id, userIdClaim);
 
             // Create tasks for adding new ingredients
             var addIngredientTasks = new List<Task<Ingredient>>();
             foreach (var ingredientDTO in mealDTO.Ingredients)
             {
-                var ingredientId = await _ingredientService.CreateIngredientAsync(ingredientDTO);
-                var newIngredient = await _ingredientRepository.GetByIdAsync(ingredientId);
+                var ingredientId = await _ingredientService.CreateIngredientAsync(ingredientDTO, userIdClaim);
+                var newIngredient = await _ingredientRepository.GetByIdAsync(ingredientId, userIdClaim);
                 addIngredientTasks.Add(Task.FromResult(newIngredient));
             }
 
@@ -104,23 +115,27 @@ namespace CebuFitApi.Services
             // Delete existing ingredients using a copy of the list
             foreach (var ingredient in existingMeal.Ingredients.ToList())
             {
-                await _ingredientRepository.DeleteAsync(ingredient.Id);
+                await _ingredientRepository.DeleteAsync(ingredient.Id, userIdClaim);
             }
 
             // Update the meal
-            await _mealRepository.UpdateAsync(meal);
+            await _mealRepository.UpdateAsync(meal, userIdClaim);
         }
 
 
 
-        public async Task DeleteMealAsync(Guid mealId)
+        public async Task DeleteMealAsync(Guid mealId, Guid userIdClaim)
         {
-            await _mealRepository.DeleteAsync(mealId);
+            var foundUser = await _userRepository.GetById(userIdClaim);
+            if (foundUser != null)
+            {
+                await _mealRepository.DeleteAsync(mealId, userIdClaim);
+            }
         }
 
-        private async Task<bool> AreIngredientsAvailable(List<IngredientWithProductDTO> ingredients)
+        private async Task<bool> AreIngredientsAvailable(List<IngredientWithProductDTO> ingredients, Guid userIdClaim)
         {
-            var storageItemsDTOs = await _storageItemService.GetAllStorageItemsWithProductAsync();
+            var storageItemsDTOs = await _storageItemService.GetAllStorageItemsWithProductAsync(userIdClaim);
 
             return ingredients.All(ingredient =>
                 (ingredient.Quantity.HasValue || ingredient.Weight.HasValue) &&

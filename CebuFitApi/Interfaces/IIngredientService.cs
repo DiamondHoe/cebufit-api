@@ -3,12 +3,12 @@ using CebuFitApi.Models;
 
 public interface IIngredientService
 {
-    Task<List<IngredientDTO>> GetAllIngredientsAsync();
-    Task<List<IngredientWithProductDTO>> GetAllIngredientsWithProductAsync();
-    Task<IngredientDTO> GetIngredientByIdAsync(Guid ingredientId);
-    Task<IngredientWithProductDTO> GetIngredientByIdWithProductAsync(Guid ingredientId);
-    Task<Guid> CreateIngredientAsync(IngredientCreateDTO ingredient);
-    Task UpdateIngredientAsync(IngredientDTO ingredient);
-    Task DeleteIngredientAsync(Guid ingredientId);
-    Task<bool> IsIngredientAvailable(IngredientCreateDTO ingredientDTO);
+    Task<List<IngredientDTO>> GetAllIngredientsAsync(Guid userIdClaim);
+    Task<List<IngredientWithProductDTO>> GetAllIngredientsWithProductAsync(Guid userIdClaim);
+    Task<IngredientDTO> GetIngredientByIdAsync(Guid ingredientId, Guid userIdClaim);
+    Task<IngredientWithProductDTO> GetIngredientByIdWithProductAsync(Guid ingredientId, Guid userIdClaim);
+    Task<Guid> CreateIngredientAsync(IngredientCreateDTO ingredient, Guid userIdClaim);
+    Task UpdateIngredientAsync(IngredientDTO ingredient, Guid userIdClaim);
+    Task DeleteIngredientAsync(Guid ingredientId, Guid userIdClaim);
+    Task<bool> IsIngredientAvailable(IngredientCreateDTO ingredientDTO, Guid userIdClaim);
 }

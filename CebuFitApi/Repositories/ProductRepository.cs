@@ -12,92 +12,101 @@ namespace CebuFitApi.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task<List<Product>> GetAllAsync()
+        public async Task<List<Product>> GetAllAsync(Guid userIdClaim)
         {
             var products = await _dbContext.Products
+                .Where(x => x.User.Id == userIdClaim)
                 .Include(p => p.Macro)
                 .Include(c => c.Category)
                 .ToListAsync();
             return products;
         }
-        public async Task<List<Product>> GetAllWithMacroAsync()
+        public async Task<List<Product>> GetAllWithMacroAsync(Guid userIdClaim)
         {
             var productsWithMacro = await _dbContext.Products
+                .Where(x => x.User.Id == userIdClaim)
                 .Include(p => p.Macro)
                 .Include(c => c.Category)
                 .ToListAsync();
 
             return productsWithMacro;
         }
-        public async Task<List<Product>> GetAllWithCategoryAsync()
+        public async Task<List<Product>> GetAllWithCategoryAsync(Guid userIdClaim)
         {
             var productsWithMacro = await _dbContext.Products
+                .Where(x => x.User.Id == userIdClaim)
                 .Include(p => p.Macro)
                 .Include(c => c.Category)
                 .ToListAsync();
 
             return productsWithMacro;
         }
-        public async Task<List<Product>> GetAllWithDetailsAsync()
+        public async Task<List<Product>> GetAllWithDetailsAsync(Guid userIdClaim)
         {
             var productsWithMacro = await _dbContext.Products
+                .Where(x => x.User.Id == userIdClaim)
                 .Include(p => p.Macro)
                 .Include(c => c.Category)
                 .ToListAsync();
 
             return productsWithMacro;
         }
-        public async Task<Product> GetByIdAsync(Guid productId)
+        public async Task<Product> GetByIdAsync(Guid productId, Guid userIdClaim)
         {
             var product = await _dbContext.Products
+                .Where(x => x.User.Id == userIdClaim)
                 .Include(c => c.Category)
                 .Where(p => p.Id == productId)
-                .FirstOrDefaultAsync();
+                .FirstAsync();
 
             return product;
         }
 
-        public async Task<Product> GetByIdWithMacroAsync(Guid productId)
+        public async Task<Product> GetByIdWithMacroAsync(Guid productId, Guid userIdClaim)
         {
             var product = await _dbContext.Products
+                .Where(x => x.User.Id == userIdClaim)
                 .Include(p => p.Macro)
                 .Include(c => c.Category)
                 .Where(p => p.Id == productId)
-                .FirstOrDefaultAsync();
+                .FirstAsync();
 
             return product;
         }
-        public async Task<Product> GetByIdWithCategoryAsync(Guid productId)
+        public async Task<Product> GetByIdWithCategoryAsync(Guid productId, Guid userIdClaim)
         {
             var product = await _dbContext.Products
+                .Where(x => x.User.Id == userIdClaim)
                 .Include(p => p.Macro)
                 .Include(c => c.Category)
                 .Where(p => p.Id == productId)
-                .FirstOrDefaultAsync();
+                .FirstAsync();
 
             return product;
         }
-        public async Task<Product> GetByIdWithDetailsAsync(Guid productId)
+        public async Task<Product> GetByIdWithDetailsAsync(Guid productId, Guid userIdClaim)
         {
             var product = await _dbContext.Products
+                .Where(x => x.User.Id == userIdClaim)
                 .Include(p => p.Macro)
                 .Include(c => c.Category)
                 .Where(p => p.Id == productId)
-                .FirstOrDefaultAsync();
+                .FirstAsync();
 
             return product;
         }
-        public async Task CreateAsync(Product product)
+        public async Task CreateAsync(Product product, Guid userIdClaim)
         {
             await _dbContext.Products.AddAsync(product);
             await _dbContext.SaveChangesAsync();
         }
-        public async Task UpdateAsync(Product product)
+        public async Task UpdateAsync(Product product, Guid userIdClaim)
         {
             var existingProduct = await _dbContext.Products
+                .Where(x => x.User.Id == userIdClaim)
                 .Include(p => p.Macro)
                 .Include(p => p.Category)
-                .FirstOrDefaultAsync(p => p.Id == product.Id);
+                .FirstAsync(p => p.Id == product.Id);
 
             if (existingProduct != null)
             {
@@ -117,9 +126,11 @@ namespace CebuFitApi.Repositories
 
 
 
-        public async Task DeleteAsync(Guid id)
+        public async Task DeleteAsync(Guid id, Guid userIdClaim)
         {
-            var productToDelete = await _dbContext.Products.FindAsync(id);
+            var productToDelete = await _dbContext.Products
+                .Where(p => p.Id == id && p.User.Id == userIdClaim)
+                .FirstAsync();
             if (productToDelete != null)
             {
                 _dbContext.Products.Remove(productToDelete);

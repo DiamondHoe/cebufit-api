@@ -11,16 +11,18 @@ namespace CebuFitApi.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task<List<Recipe>> GetAllAsync()
+        public async Task<List<Recipe>> GetAllAsync(Guid userIdClaim)
         {
             var recipes = await _dbContext.Recipes
+                .Where(x => x.User.Id == userIdClaim)
                 .Include(x => x.Ingredients)
                 .ToListAsync();
             return recipes;
         }
-        public async Task<List<Recipe>> GetAllWithDetailsAsync()
+        public async Task<List<Recipe>> GetAllWithDetailsAsync(Guid userIdClaim)
         {
             var recipes = await _dbContext.Recipes
+                .Where(x => x.User.Id == userIdClaim)
                 .Include(x => x.Ingredients)
                 .ThenInclude(x => x.Product)
                 .ThenInclude(x => x.Category)
@@ -30,15 +32,16 @@ namespace CebuFitApi.Repositories
                 .ToListAsync();
             return recipes;
         }
-        public async Task<Recipe> GetByIdAsync(Guid id)
+        public async Task<Recipe> GetByIdAsync(Guid id, Guid userIdClaim)
         {
             var recipe = await _dbContext.Recipes
                 .Include(x => x.Ingredients)
+                .Where(x => x.User.Id == userIdClaim)
                 .Where(rec => rec.Id == id)
-                .FirstOrDefaultAsync();
+                .FirstAsync();
             return recipe;
         }
-        public async Task<Recipe> GetByIdWithDetailsAsync(Guid id)
+        public async Task<Recipe> GetByIdWithDetailsAsync(Guid id, Guid userIdClaim)
         {
             var recipe = await _dbContext.Recipes
                 .Include(x => x.Ingredients)
@@ -47,20 +50,22 @@ namespace CebuFitApi.Repositories
                 .Include(x => x.Ingredients)
                 .ThenInclude(x => x.Product)
                 .ThenInclude(x => x.Macro)
+                .Where(x => x.User.Id == userIdClaim)
                 .Where(rec => rec.Id == id)
-                .FirstOrDefaultAsync();
+                .FirstAsync();
             return recipe;
         }
-        public async Task CreateAsync(Recipe recipe)
+        public async Task CreateAsync(Recipe recipe, Guid userIdClaim)
         {
             await _dbContext.Recipes.AddAsync(recipe);
             await _dbContext.SaveChangesAsync();
         }
-        public async Task UpdateAsync(Recipe recipe)
+        public async Task UpdateAsync(Recipe recipe, Guid userIdClaim)
         {
             var existingRecipe = await _dbContext.Recipes
                 .Include (x => x.Ingredients)
-                .FirstOrDefaultAsync(si => si.Id == recipe.Id);
+                .Where(si => si.Id == recipe.Id && si.User.Id == userIdClaim)
+                .FirstAsync();
 
             if (existingRecipe != null)
             {
@@ -69,9 +74,11 @@ namespace CebuFitApi.Repositories
                 await _dbContext.SaveChangesAsync();
             }
         }
-        public async Task DeleteAsync(Guid id)
+        public async Task DeleteAsync(Guid id, Guid userIdClaim)
         {
-            var recipeToDelete = await _dbContext.Recipes.FindAsync(id);
+            var recipeToDelete = await _dbContext.Recipes
+                .Where(x =>x.Id == id && x.User.Id == userIdClaim)
+                .FirstAsync();
             if (recipeToDelete != null)
             {
                 _dbContext.Recipes.Remove(recipeToDelete);

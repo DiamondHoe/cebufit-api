@@ -1,107 +1,171 @@
 ﻿using AutoMapper;
 using CebuFitApi.DTOs;
-using CebuFitApi.Models;
-using CebuFitApi.Services;
+using CebuFitApi.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CebuFitApi.Controllers
 {
     [Authorize]
     [ApiController]
     [Route("/api/recipes")]
-    public class RecipeController : Controller
+    public class RecipeController : ControllerBase
     {
         private readonly ILogger<RecipeController> _logger;
         private readonly IMapper _mapper;
         private readonly IRecipeService _recipeService;
-        public RecipeController(ILogger<RecipeController> logger, IMapper mapper, IRecipeService recipeService)
+        private readonly IJwtTokenHelper _jwtTokenHelper;
+
+        public RecipeController(
+            ILogger<RecipeController> logger,
+            IMapper mapper,
+            IRecipeService recipeService,
+            IJwtTokenHelper jwtTokenHelper)
         {
             _logger = logger;
             _mapper = mapper;
             _recipeService = recipeService;
+            _jwtTokenHelper = jwtTokenHelper;
         }
+
         [HttpGet(Name = "GetRecipes")]
         public async Task<ActionResult<List<RecipeDTO>>> GetAll()
         {
-            var recipes = await _recipeService.GetAllRecipesAsync();
-            if(recipes.Count == 0)
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+
+            if (userIdClaim != Guid.Empty)
             {
-                return NoContent();
+                var recipes = await _recipeService.GetAllRecipesAsync(userIdClaim);
+                if (recipes.Count == 0)
+                {
+                    return NoContent();
+                }
+                return Ok(recipes);
             }
-            return Ok(recipes);
+
+            return NotFound("User not found");
         }
+
         [HttpGet("withDetails/", Name = "GetRecipesWithDetails")]
         public async Task<ActionResult<List<RecipeWithDetailsDTO>>> GetAllWithDetails()
         {
-            var recipes = await _recipeService.GetAllRecipesWithDetailsAsync();
-            if (recipes.Count == 0)
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+
+            if (userIdClaim != Guid.Empty)
             {
-                return NoContent();
+                var recipes = await _recipeService.GetAllRecipesWithDetailsAsync(userIdClaim);
+                if (recipes.Count == 0)
+                {
+                    return NoContent();
+                }
+                return Ok(recipes);
             }
-            return Ok(recipes);
+
+            return NotFound("User not found");
         }
+
         [HttpGet("{recipeId}", Name = "GetRecipeById")]
         public async Task<ActionResult<RecipeDTO>> GetById(Guid recipeId)
         {
-            var recipe = await _recipeService.GetRecipeByIdAsync(recipeId);
-            if (recipe == null)
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+
+            if (userIdClaim != Guid.Empty)
             {
-                return NotFound();
+                var recipe = await _recipeService.GetRecipeByIdAsync(recipeId, userIdClaim);
+                if (recipe == null)
+                {
+                    return NotFound();
+                }
+                return Ok(recipe);
             }
-            return Ok(recipe);
+
+            return NotFound("User not found");
         }
+
         [HttpGet("withDetails/{recipeId}", Name = "GetRecipeByIdWithDetails")]
         public async Task<ActionResult<RecipeWithDetailsDTO>> GetByIdWithDetails(Guid recipeId)
         {
-            var recipe = await _recipeService.GetRecipeByIdWithDetailsAsync(recipeId);
-            if (recipe == null)
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+
+            if (userIdClaim != Guid.Empty)
             {
-                return NotFound();
+                var recipe = await _recipeService.GetRecipeByIdWithDetailsAsync(recipeId, userIdClaim);
+                if (recipe == null)
+                {
+                    return NotFound();
+                }
+                return Ok(recipe);
             }
-            return Ok(recipe);
+
+            return NotFound("User not found");
         }
+
         [HttpPost]
         public async Task<ActionResult> CreateRecipe(RecipeCreateDTO recipeDTO)
         {
-            if (recipeDTO == null)
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+
+            if (userIdClaim != Guid.Empty)
             {
-                return BadRequest("Product data is null.");
+                if (recipeDTO == null)
+                {
+                    return BadRequest("Recipe data is null.");
+                }
+
+                await _recipeService.CreateRecipeAsync(recipeDTO, userIdClaim);
+
+                return Ok();
             }
 
-            await _recipeService.CreateRecipeAsync(recipeDTO);
-
-            return Ok();
+            return NotFound("User not found");
         }
 
         [HttpPut]
-        public async Task<ActionResult> UpdateProduct(RecipeUpdateDTO recipeDTO)
+        public async Task<ActionResult> UpdateRecipe(RecipeUpdateDTO recipeDTO)
         {
-            var existingRecipe = await _recipeService.GetRecipeByIdAsync(recipeDTO.Id);
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
 
-            if (existingRecipe == null)
+            if (userIdClaim != Guid.Empty)
             {
-                return NotFound();
+                var existingRecipe = await _recipeService.GetRecipeByIdAsync(recipeDTO.Id, userIdClaim);
+
+                if (existingRecipe == null)
+                {
+                    return NotFound();
+                }
+
+                await _recipeService.UpdateRecipeAsync(recipeDTO, userIdClaim);
+
+                return Ok();
             }
 
-            await _recipeService.UpdateRecipeAsync(recipeDTO);
-
-            return Ok();
+            return NotFound("User not found");
         }
 
         [HttpDelete("{recipeId}")]
-        public async Task<ActionResult> DeleteProduct(Guid recipeId)
+        public async Task<ActionResult> DeleteRecipe(Guid recipeId)
         {
-            var existingRecipe = await _recipeService.GetRecipeByIdAsync(recipeId);
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
 
-            if (existingRecipe == null)
+            if (userIdClaim != Guid.Empty)
             {
-                return NotFound();
+                var existingRecipe = await _recipeService.GetRecipeByIdAsync(recipeId, userIdClaim);
+
+                if (existingRecipe == null)
+                {
+                    return NotFound();
+                }
+
+                await _recipeService.DeleteRecipeAsync(recipeId, userIdClaim);
+
+                return Ok();
             }
 
-            await _recipeService.DeleteRecipeAsync(recipeId);
-
-            return Ok();
+            return NotFound("User not found");
         }
     }
 }

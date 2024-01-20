@@ -2,6 +2,7 @@
 using CebuFitApi.DTOs;
 using CebuFitApi.Interfaces;
 using CebuFitApi.Models;
+using CebuFitApi.Repositories;
 
 namespace CebuFitApi.Services
 {
@@ -9,56 +10,68 @@ namespace CebuFitApi.Services
     {
         private readonly IDayRepository _dayRepository;
         private readonly IMealService _mealService;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-        public DayService(IMapper mapper, IDayRepository dayRepository, IMealService mealService)
+        public DayService(IMapper mapper, IDayRepository dayRepository, IMealService mealService, IUserRepository userRepository)
         {
             _mapper = mapper;
             _dayRepository = dayRepository;
             _mealService = mealService;
+            _userRepository = userRepository;
+
         }
-        public async Task<List<DayDTO>> GetAllDaysAsync()
+        public async Task<List<DayDTO>> GetAllDaysAsync(Guid userIdClaim)
         {
-            var daysEntities = await _dayRepository.GetAllAsync();
+            var daysEntities = await _dayRepository.GetAllAsync(userIdClaim);
             var daysDTOs = _mapper.Map<List<DayDTO>>(daysEntities);
             return daysDTOs;
         }
 
-        public async Task<List<DayWithMealsDTO>> GetAllDaysWithMealsAsync()
+        public async Task<List<DayWithMealsDTO>> GetAllDaysWithMealsAsync(Guid userIdClaim)
         {
-            var daysEntities = await _dayRepository.GetAllWithMealsAsync();
+            var daysEntities = await _dayRepository.GetAllWithMealsAsync(userIdClaim);
             var daysDTOs = _mapper.Map<List<DayWithMealsDTO>>(daysEntities);
             return daysDTOs;
         }
 
-        public async Task<DayDTO> GetDayByIdAsync(Guid dayId)
+        public async Task<DayDTO> GetDayByIdAsync(Guid dayId, Guid userIdClaim)
         {
-            var dayEntity = await _dayRepository.GetByIdAsync(dayId);
+            var dayEntity = await _dayRepository.GetByIdAsync(dayId, userIdClaim);
             var dayDTO = _mapper.Map<DayDTO>(dayEntity);
             return dayDTO;
         }
 
-        public async Task<DayWithMealsDTO> GetDayByIdWithMealsAsync(Guid dayId)
+        public async Task<DayWithMealsDTO> GetDayByIdWithMealsAsync(Guid dayId, Guid userIdClaim)
         {
-            var dayEntity = await _dayRepository.GetByIdWithMealsAsync(dayId);
+            var dayEntity = await _dayRepository.GetByIdWithMealsAsync(dayId, userIdClaim);
             var dayDTO = _mapper.Map<DayWithMealsDTO>(dayEntity);
             return dayDTO;
         }
-        public async Task<Guid> CreateDayAsync(DayCreateDTO dayDTO)
+        public async Task<Guid> CreateDayAsync(DayCreateDTO dayDTO, Guid userIdClaim)
         {
             var day = _mapper.Map<Day>(dayDTO);
             day.Id = Guid.NewGuid();
-            await _dayRepository.CreateAsync(day);
+            var foundUser = await _userRepository.GetById(userIdClaim);
+            if (foundUser != null)
+            {
+                day.User = foundUser;
+            }
+            await _dayRepository.CreateAsync(day, userIdClaim);
             return day.Id;
         }
 
-        public async Task UpdateDayAsync(DayUpdateDTO dayDto)
+        public async Task UpdateDayAsync(DayUpdateDTO dayDto, Guid userIdClaim)
         {
             var day = _mapper.Map<Day>(dayDto);
-            await _dayRepository.CreateAsync(day);
+            var foundUser = await _userRepository.GetById(userIdClaim);
+            if (foundUser != null)
+            {
+                await _dayRepository.CreateAsync(day, userIdClaim);
+            }
         }
-        public async Task DeleteDayAsync(Guid dayId)
+        public async Task DeleteDayAsync(Guid dayId, Guid userIdClaim)
         {
-            await _dayRepository.DeleteAsync(dayId);
+            await _dayRepository.DeleteAsync(dayId, userIdClaim);
         }
 
         #region Meals management in days

@@ -2,109 +2,171 @@
 using CebuFitApi.DTOs;
 using CebuFitApi.Helpers.Enums;
 using CebuFitApi.Interfaces;
-using CebuFitApi.Models;
-using CebuFitApi.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CebuFitApi.Controllers
 {
     [Authorize]
     [ApiController]
     [Route("/api/meals")]
-    public class MealController : Controller
+    public class MealController : ControllerBase
     {
         private readonly ILogger<MealController> _logger;
         private readonly IMapper _mapper;
         private readonly IMealService _mealService;
-        public MealController(ILogger<MealController> logger, IMealService mealService, IMapper mapper)
+        private readonly IJwtTokenHelper _jwtTokenHelper;
+
+        public MealController(
+            ILogger<MealController> logger,
+            IMealService mealService,
+            IMapper mapper,
+            IJwtTokenHelper jwtTokenHelper)
         {
             _logger = logger;
             _mealService = mealService;
             _mapper = mapper;
+            _jwtTokenHelper = jwtTokenHelper;
         }
 
         [HttpGet(Name = "GetMeals")]
         public async Task<ActionResult<List<MealDTO>>> GetAll()
         {
-            var meals = await _mealService.GetAllMealsAsync();
-            if (meals.Count == 0)
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+
+            if (userIdClaim != Guid.Empty)
             {
-                return NoContent();
+                var meals = await _mealService.GetAllMealsAsync(userIdClaim);
+                if (meals.Count == 0)
+                {
+                    return NoContent();
+                }
+                return Ok(meals);
             }
-            return Ok(meals);
+
+            return NotFound("User not found");
         }
+
         [HttpGet("withDetails/", Name = "GetMealsWithDetails")]
         public async Task<ActionResult<List<MealWithDetailsDTO>>> GetAllWithDetails()
         {
-            var meals = await _mealService.GetAllMealsWithDetailsAsync();
-            if (meals.Count == 0)
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+
+            if (userIdClaim != Guid.Empty)
             {
-                return NoContent();
+                var meals = await _mealService.GetAllMealsWithDetailsAsync(userIdClaim);
+                if (meals.Count == 0)
+                {
+                    return NoContent();
+                }
+                return Ok(meals);
             }
-            return Ok(meals);
+
+            return NotFound("User not found");
         }
+
         [HttpGet("{mealId}", Name = "GetMeal")]
         public async Task<ActionResult<List<MealDTO>>> GetById(Guid mealId)
         {
-            var meal = await _mealService.GetMealByIdAsync(mealId);
-            if (meal == null)
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+
+            if (userIdClaim != Guid.Empty)
             {
-                return NotFound();
+                var meal = await _mealService.GetMealByIdAsync(mealId, userIdClaim);
+                if (meal == null)
+                {
+                    return NotFound();
+                }
+                return Ok(meal);
             }
-            return Ok(meal);
+
+            return NotFound("User not found");
         }
+
         [HttpGet("withDetails/{mealId}", Name = "GetMealWithDetails")]
         public async Task<ActionResult<List<MealWithDetailsDTO>>> GetByIdWithDetails(Guid mealId)
         {
-            var meal = await _mealService.GetMealByIdWithDetailsAsync(mealId);
-            if (meal == null)
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+
+            if (userIdClaim != Guid.Empty)
             {
-                return NotFound();
+                var meal = await _mealService.GetMealByIdWithDetailsAsync(mealId, userIdClaim);
+                if (meal == null)
+                {
+                    return NotFound();
+                }
+                return Ok(meal);
             }
-            return Ok(meal);
+
+            return NotFound("User not found");
         }
+
         [HttpPost]
         public async Task<ActionResult<Guid>> CreateMeal(MealCreateDTO mealDTO)
         {
-            if (mealDTO == null)
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+
+            if (userIdClaim != Guid.Empty)
             {
-                return BadRequest("Meal data is null.");
+                if (mealDTO == null)
+                {
+                    return BadRequest("Meal data is null.");
+                }
+
+                var mealId = await _mealService.CreateMealAsync(mealDTO, userIdClaim);
+
+                return Ok(mealId);
             }
 
-            var mealid = await _mealService.CreateMealAsync(mealDTO);
-
-            return Ok(mealid);
+            return NotFound("User not found");
         }
+
         [HttpPut]
         public async Task<ActionResult> UpdateMeal(MealUpdateDTO mealDTO)
         {
-            var existingMeal = await _mealService.GetMealByIdAsync(mealDTO.Id);
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
 
-            if (existingMeal == null)
+            if (userIdClaim != Guid.Empty)
             {
-                return NotFound();
+                var existingMeal = await _mealService.GetMealByIdAsync(mealDTO.Id, userIdClaim);
+
+                if (existingMeal == null)
+                {
+                    return NotFound();
+                }
+
+                await _mealService.UpdateMealAsync(mealDTO, userIdClaim);
+
+                return Ok();
             }
 
-            await _mealService.UpdateMealAsync(mealDTO);
-
-            return Ok();
+            return NotFound("User not found");
         }
+
         [HttpDelete("{mealId}")]
         public async Task<ActionResult> DeleteMeal(Guid mealId)
         {
-            var existingMeal = await _mealService.GetMealByIdAsync(mealId);
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
 
-            if (existingMeal == null)
+            if (userIdClaim != Guid.Empty)
             {
-                return NotFound();
+                var existingMeal = await _mealService.GetMealByIdAsync(mealId, userIdClaim);
+
+                if (existingMeal == null)
+                {
+                    return NotFound();
+                }
+
+                await _mealService.DeleteMealAsync(mealId, userIdClaim);
+
+                return Ok();
             }
 
-            await _mealService.DeleteMealAsync(mealId);
-
-            return Ok();
+            return NotFound("User not found");
         }
 
         [HttpGet("mealTimes", Name = "GetMealTimes")]

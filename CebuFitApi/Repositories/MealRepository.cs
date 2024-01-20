@@ -14,59 +14,63 @@ namespace CebuFitApi.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task<List<Meal>> GetAllAsync()
+        public async Task<List<Meal>> GetAllAsync(Guid userIdClaim)
         {
             var meals = await _dbContext.Meals
+                .Where(x => x.User.Id == userIdClaim)
                 .Include(m => m.Ingredients)
                 .ToListAsync();
             return meals;
         }
 
-        public async Task<List<Meal>> GetAllWithDetailsAsync()
+        public async Task<List<Meal>> GetAllWithDetailsAsync(Guid userIdClaim)
         {
             var meals = await _dbContext.Meals
-                .Include(m => m.Ingredients)
-                .ThenInclude(i => i.Product)
-                .ThenInclude(p => p.Category)
-                 .Include(m => m.Ingredients)
-                .ThenInclude(i => i.Product)
-                .ThenInclude(p => p.Macro)
-                .ToListAsync();
-            return meals;
-        }
-
-        public async Task<Meal> GetByIdAsync(Guid mealId)
-        {
-            var meals = await _dbContext.Meals
-                .Include(m => m.Ingredients)
-                .Where(m => m.Id == mealId)
-                .FirstOrDefaultAsync();
-            return meals;
-        }
-
-        public async Task<Meal> GetByIdWithDetailsAsync(Guid mealId)
-        {
-            var meals = await _dbContext.Meals
+                .Where(x => x.User.Id == userIdClaim)
                 .Include(m => m.Ingredients)
                 .ThenInclude(i => i.Product)
                 .ThenInclude(p => p.Category)
                 .Include(m => m.Ingredients)
                 .ThenInclude(i => i.Product)
                 .ThenInclude(p => p.Macro)
+                .ToListAsync();
+            return meals;
+        }
+
+        public async Task<Meal> GetByIdAsync(Guid mealId, Guid userIdClaim)
+        {
+            var meals = await _dbContext.Meals
+                .Include(m => m.Ingredients)
+                .Where(m => m.Id == mealId && m.User.Id == userIdClaim)
+                .FirstAsync();
+            return meals;
+        }
+
+        public async Task<Meal> GetByIdWithDetailsAsync(Guid mealId, Guid userIdClaim)
+        {
+            var meals = await _dbContext.Meals
+                .Include(m => m.Ingredients)
+                .ThenInclude(i => i.Product)
+                .ThenInclude(p => p.Category)
+                .Include(m => m.Ingredients)
+                .ThenInclude(i => i.Product)
+                .ThenInclude(p => p.Macro)
                 .Where(m => m.Id == mealId)
+                .Where(x => x.User.Id == userIdClaim)
                 .FirstOrDefaultAsync();
             return meals;
         }
-        public async Task<Guid> CreateAsync(Meal meal)
+        public async Task<Guid> CreateAsync(Meal meal, Guid userIdClaim)
         {
             await _dbContext.Meals.AddAsync(meal);
             await _dbContext.SaveChangesAsync();
             return meal.Id;
         }
 
-        public async Task UpdateAsync(Meal meal)
+        public async Task UpdateAsync(Meal meal, Guid userIdClaim)
         {
             var existingMeal = await _dbContext.Meals
+                 .Where(x => x.User.Id == userIdClaim)
                 .Include(x => x.Ingredients)
                 .FirstOrDefaultAsync(m => m.Id == meal.Id);
 
@@ -79,9 +83,11 @@ namespace CebuFitApi.Repositories
         }
 
 
-        public async Task DeleteAsync(Guid mealId)
+        public async Task DeleteAsync(Guid mealId, Guid userIdClaim)
         {
-            var mealToDelete = await _dbContext.Meals.FindAsync(mealId);
+            var mealToDelete = await _dbContext.Meals
+                .Where(x => x.Id == mealId && x.User.Id == userIdClaim)
+                .FirstAsync();
             if (mealToDelete != null)
             {
                 _dbContext.Meals.Remove(mealToDelete);

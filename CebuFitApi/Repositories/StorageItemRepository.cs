@@ -12,30 +12,33 @@ namespace CebuFitApi.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task<List<StorageItem>> GetAllAsync()
+        public async Task<List<StorageItem>> GetAllAsync(Guid userIdClaim)
         {
             var storageItems = await _dbContext.StorageItems
+                .Where(x => x.User.Id == userIdClaim)
                 .ToListAsync();
             return storageItems;
         }
-        public async Task<List<StorageItem>> GetAllWithProductAsync()
+        public async Task<List<StorageItem>> GetAllWithProductAsync(Guid userIdClaim)
         {
             var storageItems = await _dbContext.StorageItems
                 .Include(x => x.Product)
                 .ThenInclude(x => x.Category)
                 .Include(x => x.Product)
                 .ThenInclude(x => x.Macro)
+                .Where(x => x.User.Id == userIdClaim)
                 .ToListAsync();
             return storageItems;
         }
-        public async Task<StorageItem> GetByIdAsync(Guid id)
+        public async Task<StorageItem> GetByIdAsync(Guid id, Guid userIdClaim)
         {
             var storageItem = await _dbContext.StorageItems
                 .Where(si => si.Id == id)
+                .Where(x => x.User.Id == userIdClaim)
                 .FirstOrDefaultAsync();
             return storageItem;
         }
-        public async Task<StorageItem> GetByIdWithProductAsync(Guid id)
+        public async Task<StorageItem> GetByIdWithProductAsync(Guid id, Guid userIdClaim)
         {
             var storageItem = await _dbContext.StorageItems
                 .Include(x => x.Product)
@@ -43,18 +46,19 @@ namespace CebuFitApi.Repositories
                 .Include(x => x.Product)
                 .ThenInclude(x => x.Macro)
                 .Where(si => si.Id == id)
+                .Where(x => x.User.Id == userIdClaim)
                 .FirstOrDefaultAsync();
             return storageItem;
         }
-        public async Task CreateAsync(StorageItem storageItem)
+        public async Task CreateAsync(StorageItem storageItem, Guid userIdClaim)
         {
             await _dbContext.StorageItems.AddAsync(storageItem);
             await _dbContext.SaveChangesAsync();
         }
-        public async Task UpdateAsync(StorageItem storageItem)
+        public async Task UpdateAsync(StorageItem storageItem, Guid userIdClaim)
         {
             var existingStorageItem = await _dbContext.StorageItems
-                .FirstOrDefaultAsync(si => si.Id == storageItem.Id);
+                .FirstOrDefaultAsync(si => si.Id == storageItem.Id && si.User.Id == userIdClaim);
 
             if (existingStorageItem != null) 
             {
@@ -62,9 +66,11 @@ namespace CebuFitApi.Repositories
                 await _dbContext.SaveChangesAsync();
             }
         }
-        public async Task DeleteAsync(Guid id)
+        public async Task DeleteAsync(Guid id, Guid userIdClaim)
         {
-           var storageItemToDelete = await _dbContext.StorageItems.FindAsync(id);
+            var storageItemToDelete = await _dbContext.StorageItems
+                 .Where(x => x.Id == id && x.User.Id == userIdClaim)
+                 .FirstAsync();
             if (storageItemToDelete != null) 
             {
                 _dbContext.StorageItems.Remove(storageItemToDelete);

@@ -5,12 +5,12 @@ namespace CebuFitApi.Interfaces
 {
     public interface IStorageItemRepository
     {
-        Task<List<StorageItem>> GetAllAsync();
-        Task<List<StorageItem>> GetAllWithProductAsync();
-        Task<StorageItem> GetByIdAsync(Guid storageItemId);
-        Task<StorageItem> GetByIdWithProductAsync(Guid storageItemId);
-        Task CreateAsync(StorageItem storageItem);
-        Task UpdateAsync(StorageItem storageItem);
-        Task DeleteAsync(Guid storageItemId);
+        Task<List<StorageItem>> GetAllAsync(Guid userIdClaim);
+        Task<List<StorageItem>> GetAllWithProductAsync(Guid userIdClaim);
+        Task<StorageItem> GetByIdAsync(Guid storageItemId, Guid userIdClaim);
+        Task<StorageItem> GetByIdWithProductAsync(Guid storageItemId, Guid userIdClaim);
+        Task CreateAsync(StorageItem storageItem, Guid userIdClaim);
+        Task UpdateAsync(StorageItem storageItem, Guid userIdClaim);
+        Task DeleteAsync(Guid storageItemId, Guid userIdClaim);
     }
 }

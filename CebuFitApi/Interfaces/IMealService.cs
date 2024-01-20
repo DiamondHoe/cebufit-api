@@ -4,12 +4,12 @@ namespace CebuFitApi.Interfaces
 {
     public interface IMealService
     {
-        Task<List<MealDTO>> GetAllMealsAsync();
-        Task<List<MealWithDetailsDTO>> GetAllMealsWithDetailsAsync();
-        Task<MealDTO> GetMealByIdAsync(Guid id);
-        Task<MealWithDetailsDTO> GetMealByIdWithDetailsAsync(Guid id);
-        Task<Guid> CreateMealAsync(MealCreateDTO mealDTO);
-        Task UpdateMealAsync(MealUpdateDTO mealDTO);
-        Task DeleteMealAsync(Guid id);
+        Task<List<MealDTO>> GetAllMealsAsync(Guid userIdClaim);
+        Task<List<MealWithDetailsDTO>> GetAllMealsWithDetailsAsync(Guid userIdClaim);
+        Task<MealDTO> GetMealByIdAsync(Guid id, Guid userIdClaim);
+        Task<MealWithDetailsDTO> GetMealByIdWithDetailsAsync(Guid id, Guid userIdClaim);
+        Task<Guid> CreateMealAsync(MealCreateDTO mealDTO, Guid userIdClaim);
+        Task UpdateMealAsync(MealUpdateDTO mealDTO, Guid userIdClaim);
+        Task DeleteMealAsync(Guid id, Guid userIdClaim);
     }
 }

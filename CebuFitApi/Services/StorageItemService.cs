@@ -9,62 +9,69 @@ namespace CebuFitApi.Services
     {
         private readonly IStorageItemRepository _storageItemRepository;
         private readonly IProductRepository _productRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-        public StorageItemService(IMapper mapper, IStorageItemRepository storageItemRepository, IProductRepository productRepository)
+        public StorageItemService(IMapper mapper, IStorageItemRepository storageItemRepository, IProductRepository productRepository, IUserRepository userRepository)
         {
             _mapper = mapper;
             _storageItemRepository = storageItemRepository;
             _productRepository = productRepository;
+            _userRepository = userRepository;
+
         }
-        public async Task<List<StorageItemDTO>> GetAllStorageItemsAsync()
+        public async Task<List<StorageItemDTO>> GetAllStorageItemsAsync(Guid userIdClaim)
         {
-            var storageItemsEntities = await _storageItemRepository.GetAllAsync();
+            var storageItemsEntities = await _storageItemRepository.GetAllAsync(userIdClaim);
             var storageItemsDTOs = _mapper.Map<List<StorageItemDTO>>(storageItemsEntities);
             return storageItemsDTOs;
         }
-        public async Task<List<StorageItemWithProductDTO>> GetAllStorageItemsWithProductAsync()
+        public async Task<List<StorageItemWithProductDTO>> GetAllStorageItemsWithProductAsync(Guid userIdClaim)
         {
-            var storageItemsEntities = await _storageItemRepository.GetAllWithProductAsync();
+            var storageItemsEntities = await _storageItemRepository.GetAllWithProductAsync(userIdClaim);
             var storageItemsDTOs = _mapper.Map<List<StorageItemWithProductDTO>>(storageItemsEntities);
             return storageItemsDTOs;
         }
 
-        public async Task<StorageItemDTO> GetStorageItemByIdAsync(Guid storageItemId)
+        public async Task<StorageItemDTO> GetStorageItemByIdAsync(Guid storageItemId, Guid userIdClaim)
         {
-            var storageItemEntity = await _storageItemRepository.GetByIdAsync(storageItemId);
+            var storageItemEntity = await _storageItemRepository.GetByIdAsync(storageItemId, userIdClaim);
             var storageItemDTO = _mapper.Map<StorageItemDTO>(storageItemEntity);
             return storageItemDTO;
         }
-        public async Task<StorageItemWithProductDTO> GetStorageItemByIdWithProductAsync(Guid storageItemId)
+        public async Task<StorageItemWithProductDTO> GetStorageItemByIdWithProductAsync(Guid storageItemId, Guid userIdClaim)
         {
-            var storageItemsEntity = await _storageItemRepository.GetByIdWithProductAsync(storageItemId);
+            var storageItemsEntity = await _storageItemRepository.GetByIdWithProductAsync(storageItemId, userIdClaim);
             var storageItemsDTO = _mapper.Map<StorageItemWithProductDTO>(storageItemsEntity);
             return storageItemsDTO;
         }
-        public async Task CreateStorageItemAsync(StorageItemCreateDTO storageItemDTO)
+        public async Task CreateStorageItemAsync(StorageItemCreateDTO storageItemDTO, Guid userIdClaim)
         {
             var storageItem = _mapper.Map<StorageItem>(storageItemDTO);
             storageItem.Id = Guid.NewGuid();
 
-            var baseProduct = await _productRepository.GetByIdAsync(storageItemDTO.baseProductId);
-            if (baseProduct == null)
+            var foundUser = await _userRepository.GetById(userIdClaim);
+            var baseProduct = await _productRepository.GetByIdAsync(storageItemDTO.baseProductId, userIdClaim);
+            if (baseProduct != null && foundUser != null)
             {
-                throw new Exception("Product not found");
+                storageItem.User = foundUser;
+                storageItem.Product = _mapper.Map<Product>(baseProduct);
+
+                await _storageItemRepository.CreateAsync(storageItem, userIdClaim);
             }
-
-            storageItem.Product = _mapper.Map<Product>(baseProduct);
-
-            await _storageItemRepository.CreateAsync(storageItem);
         }
 
-        public async Task UpdateStorageItemAsync(StorageItemDTO storageItemDTO)
+        public async Task UpdateStorageItemAsync(StorageItemDTO storageItemDTO, Guid userIdClaim)
         {
             var storageItem = _mapper.Map<StorageItem>(storageItemDTO);
-            await _storageItemRepository.UpdateAsync(storageItem);
+            var foundUser = await _userRepository.GetById(userIdClaim);
+            if (foundUser != null)
+            {
+                await _storageItemRepository.UpdateAsync(storageItem, userIdClaim);
+            }
         }
-        public async Task DeleteStorageItemAsync(Guid storageItemId)
+        public async Task DeleteStorageItemAsync(Guid storageItemId, Guid userIdClaim)
         {
-            await _storageItemRepository.DeleteAsync(storageItemId);
+            await _storageItemRepository.DeleteAsync(storageItemId, userIdClaim);
         }
     }
 }
