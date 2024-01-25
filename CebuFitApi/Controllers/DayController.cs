@@ -211,5 +211,8 @@ namespace CebuFitApi.Controllers
 
             return NotFound("User not found");
         }
+
+        //[HttpGet("manageDayMeals/", Name = "RemoveMealFromDay")]
+        //public async Task<ActionResult<>> GetShoppingList()
     }
 }

@@ -56,6 +56,7 @@ namespace CebuFitApi.Services
             if (baseProduct != null && foundUser != null)
             {
                 ingredient.Product = _mapper.Map<Product>(baseProduct);
+                ingredient.User = foundUser;
 
                 await _ingredientRepository.CreateAsync(ingredient, userIdClaim);
                 return ingredient.Id;
