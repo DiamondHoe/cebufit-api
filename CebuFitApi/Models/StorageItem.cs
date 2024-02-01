@@ -11,10 +11,12 @@ namespace CebuFitApi.Models
 
         }
         public User? User { get; set; }
-        public DateTime expirationDate { get; set; }
+        public DateTime DateOfPurchase { get; set; } = DateTime.Now;
+        public DateTime ExpirationDate { get; set; }
         public decimal? Price { get; set; }
         public decimal? Quantity { get; set; }
         public decimal? Weight { get; set; }
+        public bool Eaten { get; set; }
         public Storage? Storage { get; set; }
         public Product Product { get; set; }
     }
