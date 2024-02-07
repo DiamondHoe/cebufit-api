@@ -49,14 +49,13 @@ namespace CebuFitApi.Repositories
         public async Task<Meal> GetByIdWithDetailsAsync(Guid mealId, Guid userIdClaim)
         {
             var meals = await _dbContext.Meals
+                .Where(m => m.Id == mealId && m.User.Id == userIdClaim)
                 .Include(m => m.Ingredients)
                 .ThenInclude(i => i.Product)
                 .ThenInclude(p => p.Category)
                 .Include(m => m.Ingredients)
                 .ThenInclude(i => i.Product)
                 .ThenInclude(p => p.Macro)
-                .Where(m => m.Id == mealId)
-                .Where(x => x.User.Id == userIdClaim)
                 .FirstOrDefaultAsync();
             return meals;
         }
@@ -70,7 +69,7 @@ namespace CebuFitApi.Repositories
         public async Task UpdateAsync(Meal meal, Guid userIdClaim)
         {
             var existingMeal = await _dbContext.Meals
-                 .Where(x => x.User.Id == userIdClaim)
+                .Where(x => x.User.Id == userIdClaim)
                 .Include(x => x.Ingredients)
                 .FirstOrDefaultAsync(m => m.Id == meal.Id);
 

@@ -22,31 +22,40 @@ namespace CebuFitApi.Repositories
         public async Task<List<StorageItem>> GetAllWithProductAsync(Guid userIdClaim)
         {
             var storageItems = await _dbContext.StorageItems
-                .Include(x => x.Product)
-                .ThenInclude(x => x.Category)
-                .Include(x => x.Product)
-                .ThenInclude(x => x.Macro)
                 .Where(x => x.User.Id == userIdClaim)
+                .Include(x => x.Product)
+                    .ThenInclude(x => x.Category)
+                .Include(x => x.Product)
+                    .ThenInclude(x => x.Macro)
+                .ToListAsync();
+            return storageItems;
+        }
+        public async Task<List<StorageItem>> GetAllByProductIdWithProductAsync(Guid productId, Guid userIdClaim)
+        {
+            var storageItems = await _dbContext.StorageItems
+                .Where(x => x.User.Id == userIdClaim && x.Product.Id == productId)
+                .Include(x => x.Product)
+                    .ThenInclude(x => x.Category)
+                .Include(x => x.Product)
+                    .ThenInclude(x => x.Macro)
                 .ToListAsync();
             return storageItems;
         }
         public async Task<StorageItem> GetByIdAsync(Guid id, Guid userIdClaim)
         {
             var storageItem = await _dbContext.StorageItems
-                .Where(si => si.Id == id)
-                .Where(x => x.User.Id == userIdClaim)
+                .Where(si => si.Id == id && si.User.Id == userIdClaim)
                 .FirstOrDefaultAsync();
             return storageItem;
         }
         public async Task<StorageItem> GetByIdWithProductAsync(Guid id, Guid userIdClaim)
         {
             var storageItem = await _dbContext.StorageItems
+                .Where(si => si.Id == id && si.User.Id == userIdClaim)
                 .Include(x => x.Product)
-                .ThenInclude(x => x.Category)
+                    .ThenInclude(x => x.Category)
                 .Include(x => x.Product)
-                .ThenInclude(x => x.Macro)
-                .Where(si => si.Id == id)
-                .Where(x => x.User.Id == userIdClaim)
+                    .ThenInclude(x => x.Macro)
                 .FirstOrDefaultAsync();
             return storageItem;
         }

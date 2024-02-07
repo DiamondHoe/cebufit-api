@@ -54,9 +54,8 @@ namespace CebuFitApi.Repositories
         public async Task<Product> GetByIdAsync(Guid productId, Guid userIdClaim)
         {
             var product = await _dbContext.Products
-                .Where(x => x.User.Id == userIdClaim)
+                .Where(x => x.User.Id == userIdClaim && x.Id == productId)
                 .Include(c => c.Category)
-                .Where(p => p.Id == productId)
                 .FirstAsync();
 
             return product;
@@ -65,10 +64,9 @@ namespace CebuFitApi.Repositories
         public async Task<Product> GetByIdWithMacroAsync(Guid productId, Guid userIdClaim)
         {
             var product = await _dbContext.Products
-                .Where(x => x.User.Id == userIdClaim)
+                .Where(x => x.User.Id == userIdClaim && x.Id == productId)
                 .Include(p => p.Macro)
                 .Include(c => c.Category)
-                .Where(p => p.Id == productId)
                 .FirstAsync();
 
             return product;
@@ -76,10 +74,9 @@ namespace CebuFitApi.Repositories
         public async Task<Product> GetByIdWithCategoryAsync(Guid productId, Guid userIdClaim)
         {
             var product = await _dbContext.Products
-                .Where(x => x.User.Id == userIdClaim)
+                .Where(x => x.User.Id == userIdClaim && x.Id == productId)
                 .Include(p => p.Macro)
                 .Include(c => c.Category)
-                .Where(p => p.Id == productId)
                 .FirstAsync();
 
             return product;
@@ -87,10 +84,9 @@ namespace CebuFitApi.Repositories
         public async Task<Product> GetByIdWithDetailsAsync(Guid productId, Guid userIdClaim)
         {
             var product = await _dbContext.Products
-                .Where(x => x.User.Id == userIdClaim)
+                .Where(x => x.User.Id == userIdClaim && x.Id == productId)
                 .Include(p => p.Macro)
                 .Include(c => c.Category)
-                .Where(p => p.Id == productId)
                 .FirstAsync();
 
             return product;
@@ -103,10 +99,10 @@ namespace CebuFitApi.Repositories
         public async Task UpdateAsync(Product product, Guid userIdClaim)
         {
             var existingProduct = await _dbContext.Products
-                .Where(x => x.User.Id == userIdClaim)
+                .Where(x => x.User.Id == userIdClaim && x.Id == product.Id)
                 .Include(p => p.Macro)
                 .Include(p => p.Category)
-                .FirstAsync(p => p.Id == product.Id);
+                .FirstAsync();
 
             if (existingProduct != null)
             {

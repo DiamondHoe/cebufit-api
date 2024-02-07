@@ -24,34 +24,32 @@ namespace CebuFitApi.Repositories
             var recipes = await _dbContext.Recipes
                 .Where(x => x.User.Id == userIdClaim)
                 .Include(x => x.Ingredients)
-                .ThenInclude(x => x.Product)
-                .ThenInclude(x => x.Category)
+                    .ThenInclude(x => x.Product)
+                    .ThenInclude(x => x.Category)
                 .Include(x => x.Ingredients)
-                .ThenInclude(x => x.Product)
-                .ThenInclude(x => x.Macro)
+                    .ThenInclude(x => x.Product)
+                    .ThenInclude(x => x.Macro)
                 .ToListAsync();
             return recipes;
         }
         public async Task<Recipe> GetByIdAsync(Guid id, Guid userIdClaim)
         {
             var recipe = await _dbContext.Recipes
+                .Where(x => x.User.Id == userIdClaim && x.Id == id)
                 .Include(x => x.Ingredients)
-                .Where(x => x.User.Id == userIdClaim)
-                .Where(rec => rec.Id == id)
                 .FirstAsync();
             return recipe;
         }
         public async Task<Recipe> GetByIdWithDetailsAsync(Guid id, Guid userIdClaim)
         {
             var recipe = await _dbContext.Recipes
+                .Where(x => x.User.Id == userIdClaim && x.Id == id)
                 .Include(x => x.Ingredients)
-                .ThenInclude(x => x.Product)
-                .ThenInclude(x => x.Category)
+                    .ThenInclude(x => x.Product)
+                    .ThenInclude(x => x.Category)
                 .Include(x => x.Ingredients)
-                .ThenInclude(x => x.Product)
-                .ThenInclude(x => x.Macro)
-                .Where(x => x.User.Id == userIdClaim)
-                .Where(rec => rec.Id == id)
+                    .ThenInclude(x => x.Product)
+                    .ThenInclude(x => x.Macro)
                 .FirstAsync();
             return recipe;
         }
@@ -63,8 +61,8 @@ namespace CebuFitApi.Repositories
         public async Task UpdateAsync(Recipe recipe, Guid userIdClaim)
         {
             var existingRecipe = await _dbContext.Recipes
-                .Include (x => x.Ingredients)
                 .Where(si => si.Id == recipe.Id && si.User.Id == userIdClaim)
+                .Include (x => x.Ingredients)
                 .FirstAsync();
 
             if (existingRecipe != null)

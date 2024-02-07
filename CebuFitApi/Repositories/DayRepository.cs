@@ -27,13 +27,13 @@ namespace CebuFitApi.Repositories
             var days = await _dbContext.Days
                  .Where(x => x.User.Id == userIdClaim)
                  .Include(d => d.Meals)
-                 .ThenInclude(m => m.Ingredients)
-                 .ThenInclude(i => i.Product)
-                 .ThenInclude(p => p.Macro)
+                     .ThenInclude(m => m.Ingredients)
+                     .ThenInclude(i => i.Product)
+                     .ThenInclude(p => p.Macro)
                  .Include(d => d.Meals)
-                 .ThenInclude(m => m.Ingredients)
-                 .ThenInclude(i => i.Product)
-                 .ThenInclude(p => p.Category)
+                     .ThenInclude(m => m.Ingredients)
+                     .ThenInclude(i => i.Product)
+                     .ThenInclude(p => p.Category)
                  .ToListAsync();
             return days;
         }
@@ -41,9 +41,8 @@ namespace CebuFitApi.Repositories
         public async Task<Day> GetByIdAsync(Guid dayId, Guid userIdClaim)
         {
             var day = await _dbContext.Days
-                .Where(x => x.User.Id == userIdClaim)
+                .Where(x => x.User.Id == userIdClaim && x.Id == dayId)
                 .Include(d => d.Meals)
-                .Where(p => p.Id == dayId)
                 .FirstAsync();
             return day;
         }
@@ -51,16 +50,15 @@ namespace CebuFitApi.Repositories
         public async Task<Day> GetByIdWithMealsAsync(Guid dayId, Guid userIdClaim)
         {
             var day = await _dbContext.Days
-                 .Where(x => x.User.Id == userIdClaim)
+                 .Where(x => x.User.Id == userIdClaim && x.Id == dayId)
                  .Include(d => d.Meals)
-                 .ThenInclude(m => m.Ingredients)
-                 .ThenInclude(i => i.Product)
-                 .ThenInclude(p => p.Macro)
+                     .ThenInclude(m => m.Ingredients)
+                     .ThenInclude(i => i.Product)
+                     .ThenInclude(p => p.Macro)
                  .Include(d => d.Meals)
-                 .ThenInclude(m => m.Ingredients)
-                 .ThenInclude(i => i.Product)
-                 .ThenInclude(p => p.Category)
-                 .Where(p => p.Id == dayId)
+                     .ThenInclude(m => m.Ingredients)
+                     .ThenInclude(i => i.Product)
+                     .ThenInclude(p => p.Category)
                  .FirstAsync();
             return day;
         }
@@ -74,12 +72,11 @@ namespace CebuFitApi.Repositories
         public async Task UpdateAsync(Day day, Guid userIdClaim)
         {
             var existingDay = await _dbContext.Days
-                  .Where(x => x.User.Id == userIdClaim)
+                 .Where(x => x.User.Id == userIdClaim && x.Id == day.Id)
                  .Include(d => d.Meals)
-                 .ThenInclude(m => m.Ingredients)
-                 .ThenInclude(i => i.Product)
-                 .ThenInclude(p => p.Macro)
-                 .Where(p => p.Id == day.Id)
+                     .ThenInclude(m => m.Ingredients)
+                     .ThenInclude(i => i.Product)
+                     .ThenInclude(p => p.Macro)
                  .FirstAsync();
 
             if(existingDay != null)

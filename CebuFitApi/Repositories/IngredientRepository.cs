@@ -23,9 +23,9 @@ namespace CebuFitApi.Repositories
             var ingredients = await _dbContext.Ingredients
                 .Where(x => x.User.Id == userIdClaim)
                 .Include(x => x.Product)
-                .ThenInclude(x => x.Category)
+                    .ThenInclude(x => x.Category)
                 .Include(x => x.Product)
-                .ThenInclude(x => x.Macro)
+                    .ThenInclude(x => x.Macro)
                 .ToListAsync();
             return ingredients;
         }
@@ -41,9 +41,9 @@ namespace CebuFitApi.Repositories
             var ingredient = await _dbContext.Ingredients
                     .Where(x => x.User.Id == userIdClaim)
                     .Include(x => x.Product)
-                    .ThenInclude(x => x.Category)
+                        .ThenInclude(x => x.Category)
                     .Include(x => x.Product)
-                    .ThenInclude(x => x.Macro)
+                        .ThenInclude(x => x.Macro)
                     .FirstAsync();
             return ingredient;
 
