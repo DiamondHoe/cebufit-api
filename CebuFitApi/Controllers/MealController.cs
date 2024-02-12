@@ -169,7 +169,7 @@ namespace CebuFitApi.Controllers
 
             return NotFound("User not found");
         }
-        [HttpPut(Name = "PrepareMeal")]
+        [HttpPut("PrepareMeal")]
         public async Task<ActionResult> PrepareMeal(MealPrepareDTO preparedMeal)
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();

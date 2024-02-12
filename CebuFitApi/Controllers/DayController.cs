@@ -216,7 +216,7 @@ namespace CebuFitApi.Controllers
             return NotFound("User not found");
         }
 
-        [HttpGet(Name = "GetCostsForDateRange")]
+        [HttpGet("GetCostsForDateRange")]
         public async Task<ActionResult<decimal?>> GetCostsForDateRange(DateTime start, DateTime end)
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
@@ -230,7 +230,7 @@ namespace CebuFitApi.Controllers
             return NotFound("User not found");
         }
 
-        [HttpGet(Name = "GetShoppingListForDateRange")]
+        [HttpGet("GetShoppingListForDateRange")]
         public async Task<ActionResult> GetShoppingList(DateTime start, DateTime end)
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
