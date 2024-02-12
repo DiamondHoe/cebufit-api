@@ -26,9 +26,6 @@ namespace CebuFitApi.Models
         {
             builder.HasMany(meal => meal.Ingredients)
                 .WithOne(ing => ing.Meal);
-
-            builder.HasMany(meal => meal.StorageItems)
-                .WithOne(si => si.Meal);
         }
     }
 }
