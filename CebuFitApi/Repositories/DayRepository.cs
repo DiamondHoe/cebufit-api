@@ -172,6 +172,7 @@ namespace CebuFitApi.Repositories
                  .Include(d => d.Meals)
                      .ThenInclude(m => m.Ingredients)
                      .ThenInclude(i => i.Product)
+                     .ThenInclude(p => p.Category)
                 .ToListAsync();
 
             return days;
