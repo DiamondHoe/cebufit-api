@@ -217,13 +217,13 @@ namespace CebuFitApi.Controllers
         }
 
         [HttpGet("GetCostsForDateRange")]
-        public async Task<ActionResult<decimal?>> GetCostsForDateRange(DateRangeDTO dateRangeDTO)
+        public async Task<ActionResult<decimal?>> GetCostsForDateRange(DateTime start, DateTime end)
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
 
             if (userIdClaim != Guid.Empty)
             {
-                var costs = await _dayService.GetCostsForDateRangeAsync(dateRangeDTO.Start, dateRangeDTO.End, userIdClaim);
+                var costs = await _dayService.GetCostsForDateRangeAsync(start, end, userIdClaim);
                 return Ok(costs);
             }
 
@@ -231,13 +231,13 @@ namespace CebuFitApi.Controllers
         }
 
         [HttpGet("GetShoppingListForDateRange")]
-        public async Task<ActionResult> GetShoppingList(DateRangeDTO dateRangeDTO)
+        public async Task<ActionResult> GetShoppingList(DateTime start, DateTime end)
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
 
             if (userIdClaim != Guid.Empty)
             {
-                var days = await _dayService.GetShoppingForDateRangeAsync(dateRangeDTO.Start, dateRangeDTO.End, userIdClaim);
+                var days = await _dayService.GetShoppingForDateRangeAsync(start, end, userIdClaim);
 
                 var excelBytes = await _excelHelper.GenerateExcel(days);
 
