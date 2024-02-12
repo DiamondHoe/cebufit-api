@@ -17,4 +17,8 @@ public interface IDayService
 
     Task<DayDTO> AddMealToDayAsync(Guid dayId, Guid mealId);
     Task<DayDTO> RemoveMealFromDayAsync(Guid dayId, Guid mealId);
+
+    
+    Task<decimal?> GetCostsForDateRangeAsync(DateTime start, DateTime end, Guid userIdClaim);
+    Task<List<Day>> GetShoppingForDateRangeAsync(DateTime start, DateTime end, Guid userIdClaim);
 }

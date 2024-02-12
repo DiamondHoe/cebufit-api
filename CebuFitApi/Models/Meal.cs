@@ -17,6 +17,7 @@ namespace CebuFitApi.Models
         public bool Prepared { get; set; }
         public MealTimesEnum MealTime { get; set; }
         public List<Ingredient> Ingredients { get; set; } = new();
+        public List<StorageItem> StorageItems { get; set; } = new();
         public Day? Day { get; set; }
     }
     public class MealConfiguration : IEntityTypeConfiguration<Meal>
@@ -25,6 +26,9 @@ namespace CebuFitApi.Models
         {
             builder.HasMany(meal => meal.Ingredients)
                 .WithOne(ing => ing.Meal);
+
+            builder.HasMany(meal => meal.StorageItems)
+                .WithOne(si => si.Meal);
         }
     }
 }

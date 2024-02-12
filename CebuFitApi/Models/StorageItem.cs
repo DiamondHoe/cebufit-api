@@ -19,6 +19,7 @@ namespace CebuFitApi.Models
         public bool Eaten { get; set; }
         public Storage? Storage { get; set; }
         public Product Product { get; set; }
+        public Meal? Meal { get; set; }
     }
 
     public class StorageItemConfiguration : IEntityTypeConfiguration<StorageItem>

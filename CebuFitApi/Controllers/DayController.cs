@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -20,19 +21,22 @@ namespace CebuFitApi.Controllers
         private readonly IDayService _dayService;
         private readonly IMealService _mealService;
         private readonly IJwtTokenHelper _jwtTokenHelper;
+        private readonly IExcelHelper _excelHelper;
 
         public DayController(
             ILogger<DayController> logger,
             IDayService dayService,
             IMealService mealService,
             IMapper mapper,
-            IJwtTokenHelper jwtTokenHelper)
+            IJwtTokenHelper jwtTokenHelper,
+            IExcelHelper excelHelper)
         {
             _logger = logger;
             _dayService = dayService;
             _mealService = mealService;
             _mapper = mapper;
             _jwtTokenHelper = jwtTokenHelper;
+            _excelHelper = excelHelper;
         }
 
         [HttpGet(Name = "GetDays")]
@@ -212,7 +216,35 @@ namespace CebuFitApi.Controllers
             return NotFound("User not found");
         }
 
-        //[HttpGet(Name = "GetShoppingList")]
-        //public async Task<ActionResult<>> GetShoppingList()
+        [HttpGet(Name = "GetCostsForDateRange")]
+        public async Task<ActionResult<decimal?>> GetCostsForDateRange(DateTime start, DateTime end)
+        {
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+
+            if (userIdClaim != Guid.Empty)
+            {
+                var costs = await _dayService.GetCostsForDateRangeAsync(start, end, userIdClaim);
+                return Ok(costs);
+            }
+
+            return NotFound("User not found");
+        }
+
+        [HttpGet(Name = "GetShoppingListForDateRange")]
+        public async Task<ActionResult> GetShoppingList(DateTime start, DateTime end)
+        {
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+
+            if (userIdClaim != Guid.Empty)
+            {
+                var days = await _dayService.GetShoppingForDateRangeAsync(start, end, userIdClaim);
+
+                var excelBytes = await _excelHelper.GenerateExcel(days);
+
+                return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "shopping_list.xlsx");
+            }
+
+            return NotFound("User not found");
+        }
     }
 }

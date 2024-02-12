@@ -150,5 +150,32 @@ namespace CebuFitApi.Repositories
 
             return null;
         }
+
+        public async Task<decimal?> GetCostsForDateRangeAsync(DateTime start, DateTime end, Guid userIdClaim)
+        {
+            var totalCosts = await _dbContext.Days
+                .Where(x => x.User.Id == userIdClaim && x.Date >= start && x.Date <= end)
+                .SelectMany(day => day.Meals.SelectMany(meal => meal.StorageItems))
+                .SumAsync(si => si.Price);
+
+            return totalCosts;
+        }
+
+        public async Task<List<Day>> GetShoppingListForDateRangeAsync(DateTime start, DateTime end, Guid userIdClaim)
+        {
+            var days = await _dbContext.Days
+                .Where(x => x.User.Id == userIdClaim && x.Date >= start && x.Date <= end)
+                .Include(d => d.Meals)
+                     .ThenInclude(m => m.Ingredients)
+                     .ThenInclude(i => i.Product)
+                     .ThenInclude(p => p.Macro)
+                 .Include(d => d.Meals)
+                     .ThenInclude(m => m.Ingredients)
+                     .ThenInclude(i => i.Product)
+                     .ThenInclude(p => p.Name)
+                .ToListAsync();
+
+            return days;
+        }
     }
 }

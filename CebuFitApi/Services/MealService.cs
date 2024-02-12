@@ -12,20 +12,23 @@ namespace CebuFitApi.Services
         private readonly IIngredientService _ingredientService;
         private readonly IIngredientRepository _ingredientRepository;
         private readonly IStorageItemService _storageItemService;
+        private readonly IStorageItemRepository _storageItemRepository;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         public MealService(
             IMealRepository mealRepository,
             IIngredientService ingredientService,
             IIngredientRepository ingredientRepository,
-            IStorageItemService storageItemRepository,
+            IStorageItemService storageItemService,
             IUserRepository userRepository,
+            IStorageItemRepository storageItemRepository,
             IMapper mapper)
         {
             _mealRepository = mealRepository;
             _ingredientService = ingredientService;
             _ingredientRepository = ingredientRepository;
-            _storageItemService = storageItemRepository;
+            _storageItemService = storageItemService;
+            _storageItemRepository = storageItemRepository;
             _userRepository = userRepository;
             _mapper = mapper;
         }
@@ -144,6 +147,73 @@ namespace CebuFitApi.Services
                     (ingredient.Quantity.HasValue
                         ? storageItem.Quantity >= ingredient.Quantity
                         : storageItem.Weight >= ingredient.Weight)));
+        }
+
+        public async Task PrepareMealAsync(MealPrepareDTO mealPrepareDTO, Guid userIdClaim)
+        {
+            var meal = _mapper.Map<Meal>(mealPrepareDTO);
+
+            var existingMeal = await _mealRepository.GetByIdAsync(mealPrepareDTO.Id, userIdClaim);
+
+            foreach (var storageItemPrepare in mealPrepareDTO.StorageItems)
+            {
+                var foundSi = await _storageItemService.GetStorageItemByIdAsync(storageItemPrepare.Id, userIdClaim);
+
+                if (foundSi != null)
+                {
+                    if (storageItemPrepare.Quantity != null && foundSi.Quantity != null)
+                    {
+                        var substracted = foundSi.Quantity - storageItemPrepare.Quantity;
+
+                        if(substracted <= 0)
+                        {
+                            foundSi.Eaten = true;
+                        }
+
+                        if (substracted > 0)
+                        {
+                            foundSi.Quantity = substracted;
+                            foundSi.Eaten = false;
+
+                            StorageItemCreateDTO leftSi = new StorageItemCreateDTO();
+                            leftSi.expirationDate = foundSi.expirationDate;
+                            leftSi.Price = foundSi.Price;
+                            leftSi.Quantity = foundSi.Quantity - substracted;
+                            leftSi.baseProductId = (await _storageItemService.GetStorageItemByIdWithProductAsync(storageItemPrepare.Id, userIdClaim)).Product.Id;
+
+                            await _storageItemService.CreateStorageItemAsync(leftSi, userIdClaim);
+                        }
+
+                        await _storageItemService.UpdateStorageItemAsync(foundSi, userIdClaim);
+                    }
+
+                    if (storageItemPrepare.Weight != null && foundSi.Weight != null)
+                    {
+                        var substracted = foundSi.Weight - storageItemPrepare.Weight;
+
+                        if (substracted <= 0)
+                        {
+                            foundSi.Eaten = true;
+                        }
+
+                        if (substracted > 0)
+                        {
+                            foundSi.Weight = substracted;
+                            foundSi.Eaten = false;
+
+                            StorageItemCreateDTO leftSi = new StorageItemCreateDTO();
+                            leftSi.expirationDate = foundSi.expirationDate;
+                            leftSi.Price = foundSi.Price;
+                            leftSi.Weight = foundSi.Weight - substracted;
+                            leftSi.baseProductId = (await _storageItemService.GetStorageItemByIdWithProductAsync(storageItemPrepare.Id, userIdClaim)).Product.Id;
+
+                            await _storageItemService.CreateStorageItemAsync(leftSi, userIdClaim);
+                        }
+
+                        await _storageItemService.UpdateStorageItemAsync(foundSi, userIdClaim);
+                    }
+                }
+            }
         }
     }
 }

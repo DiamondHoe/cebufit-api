@@ -2,6 +2,7 @@
 using CebuFitApi.DTOs;
 using CebuFitApi.Helpers.Enums;
 using CebuFitApi.Interfaces;
+using CebuFitApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -162,6 +163,27 @@ namespace CebuFitApi.Controllers
                 }
 
                 await _mealService.DeleteMealAsync(mealId, userIdClaim);
+
+                return Ok();
+            }
+
+            return NotFound("User not found");
+        }
+        [HttpPut(Name = "PrepareMeal")]
+        public async Task<ActionResult> PrepareMeal(MealPrepareDTO preparedMeal)
+        {
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+
+            if (userIdClaim != Guid.Empty)
+            {
+                var existingMeal = await _mealService.GetMealByIdAsync(preparedMeal.Id, userIdClaim);
+
+                if (existingMeal == null)
+                {
+                    return NotFound();
+                }
+
+                await _mealService.PrepareMealAsync(preparedMeal, userIdClaim);
 
                 return Ok();
             }

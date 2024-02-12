@@ -88,6 +88,18 @@ namespace CebuFitApi.Services
             var dayDTO = _mapper.Map<DayDTO>(dayEntity);
             return dayDTO;
         }
+
+        public async Task<decimal?> GetCostsForDateRangeAsync(DateTime start, DateTime end, Guid userIdClaim)
+        {
+            decimal? costs = await _dayRepository.GetCostsForDateRangeAsync(start, end, userIdClaim);
+            return costs;
+        }
+
+        public async Task<List<Day>> GetShoppingForDateRangeAsync(DateTime start, DateTime end, Guid userIdClaim)
+        {
+            var daysEntities = await _dayRepository.GetShoppingListForDateRangeAsync(start, end, userIdClaim);
+            return daysEntities;
+        }
         #endregion
     }
 }
