@@ -67,7 +67,7 @@ namespace CebuFitApi.Controllers
 
             return NotFound("User not found");
         }
-        [HttpGet("withProduct/byProduct/{productId}", Name = "GetStorageItemsByProductId")]
+        [HttpGet("byProduct/{productId}", Name = "GetStorageItemsByProductId")]
         public async Task<ActionResult<List<StorageItemDTO>>> GetAllByProductIdWithProduct(Guid productId)
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
