@@ -10,6 +10,5 @@ namespace CebuFitApi.DTOs
         public decimal? Quantity { get; set; }
         public decimal? Weight { get; set; }
         public bool Prepared { get; set; }
-        public bool Eaten { get; set; }
     }
 }

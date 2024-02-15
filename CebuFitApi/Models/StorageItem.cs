@@ -16,7 +16,7 @@ namespace CebuFitApi.Models
         public decimal? Price { get; set; }
         public decimal? Quantity { get; set; }
         public decimal? Weight { get; set; }
-        public bool Eaten { get; set; }
+        public bool Prepared { get; set; }
         public Storage? Storage { get; set; }
         public Product Product { get; set; }
     }
