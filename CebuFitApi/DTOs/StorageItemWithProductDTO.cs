@@ -7,7 +7,7 @@
         public decimal? Price { get; set; }
         public decimal? Quantity { get; set; }
         public decimal? Weight { get; set; }
-        public bool Eaten { get; set; }
+        public bool Prepared { get; set; }
         public ProductWithDetailsDTO Product { get; set; }
     }
 }
