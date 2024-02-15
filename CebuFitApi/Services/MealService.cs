@@ -167,13 +167,13 @@ namespace CebuFitApi.Services
 
                         if(substracted <= 0)
                         {
-                            foundSi.Eaten = true;
+                            foundSi.Prepared = true;
                         }
 
                         if (substracted > 0)
                         {
                             foundSi.Quantity = substracted;
-                            foundSi.Eaten = false;
+                            foundSi.Prepared = false;
 
                             StorageItemCreateDTO leftSi = new StorageItemCreateDTO();
                             leftSi.expirationDate = foundSi.expirationDate;
@@ -193,13 +193,13 @@ namespace CebuFitApi.Services
 
                         if (substracted <= 0)
                         {
-                            foundSi.Eaten = true;
+                            foundSi.Prepared = true;
                         }
 
                         if (substracted > 0)
                         {
                             foundSi.Weight = substracted;
-                            foundSi.Eaten = false;
+                            foundSi.Prepared = false;
 
                             StorageItemCreateDTO leftSi = new StorageItemCreateDTO();
                             leftSi.expirationDate = foundSi.expirationDate;

@@ -1,6 +1,6 @@
 ﻿namespace CebuFitApi.DTOs
 {
-    public class StorageItemPrepare
+    public class StorageItemPrepareDTO
     {
         public Guid Id { get; set; }
         public decimal? Quantity { get; set; }
