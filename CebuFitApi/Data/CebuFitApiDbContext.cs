@@ -9,11 +9,12 @@ namespace CebuFitApi.Data
         public CebuFitApiDbContext(IConfiguration configuration)
         {
             Configuration = configuration;
+            DotNetEnv.Env.Load();
             Database.EnsureCreated();
         }
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            options.UseNpgsql(Configuration.GetConnectionString("cebufit_db"));
+            options.UseNpgsql(Environment.GetEnvironmentVariable("ConnectionStrings"));
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

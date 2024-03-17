@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+DotNetEnv.Env.Load();
 
 builder.Services.AddCors(options =>
 {
@@ -37,7 +38,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             ValidIssuer = "cebufit",
             ValidAudience = "cebufitEater",
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("NorbsonIRobsonToQCuryNoIPiwoPiwoPiwoPiwooooooXD"))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SSK")))
         };
     });
 
@@ -76,7 +77,7 @@ builder.Services.AddScoped<IStorageRepository, StorageRepository>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddDbContext<CebuFitApiDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("cebufit_db")));
+    options.UseNpgsql(Environment.GetEnvironmentVariable("ConnectionStrings")));
 
 
 var app = builder.Build();

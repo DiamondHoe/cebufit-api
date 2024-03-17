@@ -34,7 +34,7 @@ namespace CebuFitApi.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(UserCreateDTO registerUser)
+        public async Task<ActionResult> Register(UserCreateDTO registerUser)
         {
             if (registerUser == null)
             {

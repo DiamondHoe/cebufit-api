@@ -12,6 +12,7 @@ namespace CebuFitApi.Helpers
         public JwtTokenHelper(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
+            DotNetEnv.Env.Load();
         }
         public async Task<string> GenerateJwtToken(Guid userId, string username)
         {
@@ -21,7 +22,7 @@ namespace CebuFitApi.Helpers
             new Claim(ClaimTypes.Name, username),
         };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("NorbsonIRobsonToQCuryNoIPiwoPiwoPiwoPiwooooooXD"));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SSK")));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
