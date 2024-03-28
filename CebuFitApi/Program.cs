@@ -17,8 +17,7 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(
         policy  =>
         {
-            policy.WithOrigins("http://localhost:6969",
-                "http://localhost");
+            policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
         });
 });
 
@@ -82,9 +81,6 @@ builder.Services.AddDbContext<CebuFitApiDbContext>(options =>
 
 var app = builder.Build();
 
-app.UseAuthentication();
-app.UseAuthorization();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -102,6 +98,7 @@ app.UseCors(options =>
         .AllowAnyHeader();
 });
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

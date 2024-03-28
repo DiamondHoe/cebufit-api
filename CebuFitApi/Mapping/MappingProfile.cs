@@ -28,7 +28,9 @@ namespace CebuFitApi.Mapping
             CreateMap<MealPrepareDTO, Meal>();
             CreateMap<Meal, MealPrepareDTO>()
                 .ForMember(dest => dest.StorageItems, opt => opt.MapFrom(src => src.StorageItems));
-
+            CreateMap<MealPrepareDTO, Meal>();
+            CreateMap<Meal, MealPrepareDTO>();
+            
             CreateMap<MacroDTO, Macro>();
             CreateMap<Macro, MacroDTO>();
             CreateMap<MacroCreateDTO, Macro>();
@@ -80,7 +82,9 @@ namespace CebuFitApi.Mapping
                 .AfterMap((src, dest, context) => dest.Product.Category = context.Mapper.Map<CategoryDTO>(src.Product.Category));
             CreateMap<StorageItemPrepareDTO, StorageItem>();
             CreateMap<StorageItem, StorageItemPrepareDTO>();
-
+            CreateMap<StorageItemPrepareDTO, StorageItem>();
+            CreateMap<StorageItem, StorageItemPrepareDTO>();
+            
             CreateMap<IngredientDTO, Ingredient>();
             CreateMap<Ingredient, IngredientDTO>();
             CreateMap<IngredientCreateDTO, Ingredient>();
