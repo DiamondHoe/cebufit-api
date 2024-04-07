@@ -51,13 +51,13 @@ namespace CebuFitApi.Controllers
         }
 
         [HttpGet("withProduct/", Name = "GetStorageItemsWithProduct")]
-        public async Task<ActionResult<List<StorageItemWithProductDTO>>> GetAllWithProduct()
+        public async Task<ActionResult<List<StorageItemWithProductDTO>>> GetAllWithProduct(bool withoutEaten = false)
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
 
             if (userIdClaim != Guid.Empty)
             {
-                var storageItems = await _storageItemService.GetAllStorageItemsWithProductAsync(userIdClaim);
+                var storageItems = await _storageItemService.GetAllStorageItemsWithProductAsync(userIdClaim, withoutEaten);
                 if (storageItems.Count == 0)
                 {
                     return NoContent();
