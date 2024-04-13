@@ -19,7 +19,7 @@ namespace CebuFitApi.Repositories
                 .ToListAsync();
             return storageItems;
         }
-        public async Task<List<StorageItem>> GetAllWithProductAsync(Guid userIdClaim)
+        public async Task<List<StorageItem>> GetAllWithProductAsync(Guid userIdClaim, bool withoutEaten = false)
         {
             var storageItems = await _dbContext.StorageItems
                 .Where(x => x.User.Id == userIdClaim)
@@ -28,6 +28,10 @@ namespace CebuFitApi.Repositories
                 .Include(x => x.Product)
                     .ThenInclude(x => x.Macro)
                 .ToListAsync();
+            if (withoutEaten)
+            {
+                storageItems = storageItems.Where(item => item.Quantity > 0 || item.Weight > 0).ToList();
+            }
             return storageItems;
         }
         public async Task<List<StorageItem>> GetAllByProductIdWithProductAsync(Guid productId, Guid userIdClaim)

@@ -25,9 +25,9 @@ namespace CebuFitApi.Services
             var storageItemsDTOs = _mapper.Map<List<StorageItemDTO>>(storageItemsEntities);
             return storageItemsDTOs;
         }
-        public async Task<List<StorageItemWithProductDTO>> GetAllStorageItemsWithProductAsync(Guid userIdClaim)
+        public async Task<List<StorageItemWithProductDTO>> GetAllStorageItemsWithProductAsync(Guid userIdClaim, bool withoutEaten = false)
         {
-            var storageItemsEntities = await _storageItemRepository.GetAllWithProductAsync(userIdClaim);
+            var storageItemsEntities = await _storageItemRepository.GetAllWithProductAsync(userIdClaim, withoutEaten);
             var storageItemsDTOs = _mapper.Map<List<StorageItemWithProductDTO>>(storageItemsEntities);
             return storageItemsDTOs;
         }
