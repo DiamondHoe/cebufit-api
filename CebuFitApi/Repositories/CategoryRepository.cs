@@ -48,6 +48,13 @@ namespace CebuFitApi.Repositories
                 .FirstAsync();
             if (categoryToDelete != null)
             {
+                var productsToUpdate = _dbContext.Products
+                    .Where(p => p.Category.Id == categoryId)
+                    .ToList();
+                foreach (var product in productsToUpdate)
+                {
+                    product.Category = null;
+                }
                 _dbContext.Categories.Remove(categoryToDelete);
                 await _dbContext.SaveChangesAsync();
             }
