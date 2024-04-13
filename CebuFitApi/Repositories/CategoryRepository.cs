@@ -53,7 +53,7 @@ namespace CebuFitApi.Repositories
                     .ToList();
                 foreach (var product in productsToUpdate)
                 {
-                    product.Category.Id = Guid.Empty;
+                    product.Category = null;
                 }
                 _dbContext.Categories.Remove(categoryToDelete);
                 await _dbContext.SaveChangesAsync();
