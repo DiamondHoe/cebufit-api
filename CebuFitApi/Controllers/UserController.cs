@@ -3,6 +3,8 @@ using CebuFitApi.Interfaces;
 using CebuFitApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Mail;
+using System.Net;
 
 namespace CebuFitApi.Controllers
 {
@@ -20,7 +22,7 @@ namespace CebuFitApi.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult> Login(UserLoginDTO user)
+        public async Task<ActionResult> Login(UserLoginDTO user, bool? expire = true)
         {
             var loggedUser = await _userService.AuthenticateAsync(user);
 
@@ -28,7 +30,7 @@ namespace CebuFitApi.Controllers
             {
                 return Unauthorized("Invalid credentials");
             }
-            var token = await _jwtTokenHelper.GenerateJwtToken(loggedUser.Id, loggedUser.Name);
+            var token = await _jwtTokenHelper.GenerateJwtToken(loggedUser.Id, loggedUser.Name, expire);
 
             return Ok(new { Token = token });
         }
@@ -43,12 +45,18 @@ namespace CebuFitApi.Controllers
             registerUser.Password = BCrypt.Net.BCrypt.HashPassword(registerUser.Password);
             var isRegistered = await _userService.CreateAsync(registerUser);
 
-            if(isRegistered)
+            if (isRegistered)
             {
                 return Ok("Registration successful");
             }
             return BadRequest();
         }
+        //Później do research jak wysyłać maila z przypomnieniem hasła, póki co sam mail
+        //[HttpGet]
+        //public async Task<ActionResult> ResetPassword(string email)
+        //{
+
+        //}
 
         //NP: Can be implemented, but for now we do it on client side - if needed i'll add blacklisting
         //[Authorize]

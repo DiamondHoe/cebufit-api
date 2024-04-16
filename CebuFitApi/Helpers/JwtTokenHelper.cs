@@ -14,7 +14,7 @@ namespace CebuFitApi.Helpers
             _httpContextAccessor = httpContextAccessor;
             DotNetEnv.Env.Load();
         }
-        public async Task<string> GenerateJwtToken(Guid userId, string username)
+        public async Task<string> GenerateJwtToken(Guid userId, string username, bool? expire)
         {
             var claims = new[]
             {
@@ -25,16 +25,21 @@ namespace CebuFitApi.Helpers
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SSK")));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
+            DateTime? expires;
+            if (expire != null && expire.HasValue && !expire.Value) expires = null;
+            else expires = DateTime.Now.AddHours(2);
+
             var token = new JwtSecurityToken(
-                issuer: "cebufit",
-                audience: "cebufitEater",
-                claims: claims,
-                expires: DateTime.Now.AddHours(1),
-                signingCredentials: credentials
-            );
+            issuer: "cebufit",
+            audience: "cebufitEater",
+            claims: claims,
+            expires: expires,
+            signingCredentials: credentials
+        );
             var newToken = new JwtSecurityTokenHandler().WriteToken(token);
             return newToken;
         }
+
         public Guid GetCurrentUserId()
         {
             // Extract user ID from the JWT token

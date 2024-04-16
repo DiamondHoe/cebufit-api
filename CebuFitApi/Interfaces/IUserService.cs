@@ -7,5 +7,8 @@ namespace CebuFitApi.Interfaces
     {
         Task<User> AuthenticateAsync(UserLoginDTO user);
         Task<bool> CreateAsync(UserCreateDTO user);
+        Task<string> ResetPasswordAsync(string email);
+        Task<string> UpdateAsync(UserDTO user);
+        Task<bool> DeleteAsync(Guid userId);
     }
 }

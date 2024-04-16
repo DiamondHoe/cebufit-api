@@ -57,5 +57,20 @@ namespace CebuFitApi.Repositories
             }
         }
 
+        public Task<string> ResetPasswordAsync(string email)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<string> UpdateAsync(User user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> DeleteAsync(Guid userId)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

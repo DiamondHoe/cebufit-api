@@ -28,5 +28,18 @@ namespace CebuFitApi.Services
             bool isRegistered = await _userRepository.CreateAsync(userEntity);
             return isRegistered;
         }
+        public Task<string> ResetPasswordAsync(string email)
+        {
+            throw new NotImplementedException();
+        }
+        public Task<string> UpdateAsync(UserDTO user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> DeleteAsync(Guid userId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

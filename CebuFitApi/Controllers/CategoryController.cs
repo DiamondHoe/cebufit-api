@@ -31,7 +31,7 @@ namespace CebuFitApi.Controllers
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
 
-            if(userIdClaim != Guid.Empty)
+            if (userIdClaim != Guid.Empty)
             {
                 var categories = await _categoryService.GetAllCategoriesAsync(userIdClaim);
                 if (categories.Count == 0)
