@@ -60,6 +60,15 @@ namespace CebuFitApi.Services
             {
                 storageItem.User = foundUser;
                 storageItem.Product = _mapper.Map<Product>(baseProduct);
+                
+                if(storageItem.BoughtQuantity == null && storageItem.BoughtWeight != null)
+                {
+                    storageItem.BoughtQuantity = Math.Ceiling((decimal)storageItem.BoughtWeight / baseProduct.UnitWeight);
+                }
+                if(storageItem.BoughtWeight == null && storageItem.BoughtQuantity != null)
+                {
+                    storageItem.BoughtWeight = storageItem.BoughtQuantity * baseProduct.UnitWeight;
+                }
 
                 await _storageItemRepository.CreateAsync(storageItem, userIdClaim);
             }

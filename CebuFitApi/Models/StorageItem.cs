@@ -14,9 +14,10 @@ namespace CebuFitApi.Models
         public DateTime DateOfPurchase { get; set; } = DateTime.UtcNow;
         public DateTime ExpirationDate { get; set; }
         public decimal? Price { get; set; }
-        public decimal? Quantity { get; set; }
-        public decimal? Weight { get; set; }
-        public bool Prepared { get; set; }
+        public decimal? BoughtQuantity { get; set; }
+        public decimal? BoughtWeight { get; set; }
+        public decimal? ActualQuantity { get; set; }
+        public decimal? ActualWeight { get; set; }
         public Storage? Storage { get; set; }
         public Product Product { get; set; }
     }

@@ -90,8 +90,8 @@ namespace CebuFitApi.Services
                 bool isAvailable = storageItems.Any(storageItem =>
                     storageItem.Product.Id == ingredientDTO.baseProductId &&
                     (ingredientDTO.Quantity.HasValue
-                        ? storageItem.Quantity >= ingredientDTO.Quantity
-                        : storageItem.Weight >= ingredientDTO.Weight));
+                        ? storageItem.ActualQuantity >= ingredientDTO.Quantity
+                        : storageItem.ActualWeight >= ingredientDTO.Weight));
 
                 return isAvailable;
             }

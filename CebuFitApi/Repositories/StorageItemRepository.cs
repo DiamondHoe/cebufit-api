@@ -30,7 +30,7 @@ namespace CebuFitApi.Repositories
                 .ToListAsync();
             if (withoutEaten)
             {
-                storageItems = storageItems.Where(item => item.Quantity > 0 || item.Weight > 0).ToList();
+                storageItems = storageItems.Where(item => item.ActualWeight > 0 && item.ActualQuantity > 0).ToList();
             }
             return storageItems;
         }
