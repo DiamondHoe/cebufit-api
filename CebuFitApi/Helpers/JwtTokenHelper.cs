@@ -26,7 +26,7 @@ namespace CebuFitApi.Helpers
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             DateTime? expires;
-            if (expire != null && expire.HasValue && !expire.Value) expires = null;
+            if (expire != null && expire.HasValue && !expire.Value) expires = DateTime.MaxValue;
             else expires = DateTime.Now.AddHours(2);
 
             var token = new JwtSecurityToken(
