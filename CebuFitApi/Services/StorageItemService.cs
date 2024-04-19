@@ -70,6 +70,9 @@ namespace CebuFitApi.Services
                     storageItem.BoughtWeight = storageItem.BoughtQuantity * baseProduct.UnitWeight;
                 }
 
+                storageItem.ActualWeight = storageItem.BoughtWeight;
+                storageItem.ActualQuantity = storageItem.BoughtQuantity;
+
                 await _storageItemRepository.CreateAsync(storageItem, userIdClaim);
             }
         }

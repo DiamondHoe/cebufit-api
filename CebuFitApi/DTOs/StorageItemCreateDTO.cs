@@ -7,6 +7,5 @@
         public decimal? BoughtQuantity { get; set; }
         public decimal? BoughtWeight { get; set; }
         public Guid baseProductId { get; set; }
-        public bool Eaten { get; set; }
     }
 }
