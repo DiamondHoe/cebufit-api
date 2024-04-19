@@ -177,6 +177,9 @@ namespace CebuFitApi.Services
                         await _storageItemService.UpdateStorageItemAsync(foundSi, userIdClaim);
                     }
                 }
+
+                existingMeal.Prepared = true;
+                await _mealRepository.UpdateAsync(existingMeal, userIdClaim);
             }
         }
 
