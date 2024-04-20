@@ -11,7 +11,7 @@ namespace CebuFitApi.Controllers
     [Route("/api/storages")]
     public class StorageController : Controller
     {
-        private readonly ILogger<MealController> _logger;
+        private readonly ILogger<StorageController> _logger;
         //private readonly IMealService _mealService;
         private readonly CebuFitApiDbContext _dbContext;
         public StorageController(CebuFitApiDbContext dbContext)
