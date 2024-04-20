@@ -27,4 +27,4 @@ COPY --from=build-env /app/out .
 EXPOSE 80
 
 # Define the entry point for the container
-ENTRYPOINT ["dotnet", "CebufitApi.dll"]
+ENTRYPOINT ["dotnet", "CebuFitApi.dll"]
