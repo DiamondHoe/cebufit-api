@@ -25,6 +25,7 @@ COPY --from=build-env /app/out .
 
 # Expose port 80 to the outside world
 EXPOSE 80
+EXPOSE 443
 
 # Define the entry point for the container
 ENTRYPOINT ["dotnet", "CebuFitApi.dll"]
