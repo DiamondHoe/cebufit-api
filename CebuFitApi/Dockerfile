@@ -12,7 +12,8 @@ RUN dotnet restore
 COPY . ./
 
 # Build the application
-RUN dotnet publish -c Release -o out -p 8080:8080 swaggerapi/swagger-ui
+RUN dotnet publish -c Release -o out
+
 
 # Build the runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:6.0
@@ -25,7 +26,6 @@ COPY --from=build-env /app/out .
 
 # Expose port 80 to the outside world
 EXPOSE 80
-EXPOSE 8080
 EXPOSE 443
 
 # Define the entry point for the container
