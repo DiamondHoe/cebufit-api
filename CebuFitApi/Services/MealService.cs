@@ -189,6 +189,7 @@ namespace CebuFitApi.Services
             if (existingMeal != null)
             {
                 existingMeal.Eaten = true;
+                // TODO: Add consumed calories to user in the future.
                 await _mealRepository.UpdateAsync(existingMeal, userIdClaim);
             }
         }
