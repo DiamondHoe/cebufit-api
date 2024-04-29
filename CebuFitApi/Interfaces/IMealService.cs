@@ -12,5 +12,6 @@ namespace CebuFitApi.Interfaces
         Task UpdateMealAsync(MealUpdateDTO mealDTO, Guid userIdClaim);
         Task DeleteMealAsync(Guid id, Guid userIdClaim);
         Task PrepareMealAsync(MealPrepareDTO mealPrepareDTO, Guid userIdClaim);
+        Task EatMealAsync(Guid mealId, Guid userIdClaim);
     }
 }
