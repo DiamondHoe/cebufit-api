@@ -190,6 +190,28 @@ namespace CebuFitApi.Controllers
 
             return NotFound("User not found");
         }
+        
+        [HttpPut("EatMeal/{mealId}")]
+        public async Task<ActionResult> EatMeal(Guid mealId)
+        {
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+
+            if (userIdClaim != Guid.Empty)
+            {
+                var existingMeal = await _mealService.GetMealByIdAsync(mealId, userIdClaim);
+
+                if (existingMeal == null)
+                {
+                    return NotFound();
+                }
+
+                await _mealService.EatMealAsync(existingMeal.Id, userIdClaim);
+
+                return Ok();
+            }
+
+            return NotFound("User not found");
+        }
 
         [HttpGet("mealTimes", Name = "GetMealTimes")]
         public async Task<ActionResult<Dictionary<string, int>>> GetMealTimes()

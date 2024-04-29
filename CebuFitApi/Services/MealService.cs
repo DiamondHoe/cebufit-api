@@ -183,5 +183,15 @@ namespace CebuFitApi.Services
             }
         }
 
+        public async Task EatMealAsync(Guid mealId, Guid userIdClaim)
+        {
+            var existingMeal = await _mealRepository.GetByIdAsync(mealId, userIdClaim);
+            if (existingMeal != null)
+            {
+                existingMeal.Eaten = true;
+                await _mealRepository.UpdateAsync(existingMeal, userIdClaim);
+            }
+        }
+
     }
 }
