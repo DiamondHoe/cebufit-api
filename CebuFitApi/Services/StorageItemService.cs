@@ -55,7 +55,9 @@ namespace CebuFitApi.Services
             storageItem.Id = Guid.NewGuid();
 
             var foundUser = await _userRepository.GetById(userIdClaim);
-            var baseProduct = await _productRepository.GetByIdAsync(storageItemDTO.baseProductId, userIdClaim);
+            var baseProduct = await _productRepository.GetByIdAsync(storageItemDTO.BaseProductId, userIdClaim);
+
+            storageItemDTO.DateOfPurchase == null ? storageItem.DateOfPurchase = DateTime.UtcNow : storageItem.DateOfPurchase = storageItemDTO.DateOfPurchase;
             if (baseProduct != null && foundUser != null)
             {
                 storageItem.User = foundUser;
