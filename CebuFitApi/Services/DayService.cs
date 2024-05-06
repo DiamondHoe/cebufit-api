@@ -9,14 +9,12 @@ namespace CebuFitApi.Services
     public class DayService : IDayService
     {
         private readonly IDayRepository _dayRepository;
-        private readonly IMealService _mealService;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-        public DayService(IMapper mapper, IDayRepository dayRepository, IMealService mealService, IUserRepository userRepository)
+        public DayService(IMapper mapper, IDayRepository dayRepository, IUserRepository userRepository)
         {
             _mapper = mapper;
             _dayRepository = dayRepository;
-            _mealService = mealService;
             _userRepository = userRepository;
 
         }

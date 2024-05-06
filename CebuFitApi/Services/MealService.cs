@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CebuFitApi.DTOs;
+using CebuFitApi.Helpers.Enums;
 using CebuFitApi.Interfaces;
 using CebuFitApi.Models;
 using CebuFitApi.Repositories;
@@ -15,6 +16,7 @@ namespace CebuFitApi.Services
         private readonly IStorageItemRepository _storageItemRepository;
         private readonly IProductService _productService;
         private readonly IUserRepository _userRepository;
+        private readonly IDayService _dayService;
         private readonly IMapper _mapper;
         public MealService(
             IMealRepository mealRepository,
@@ -24,6 +26,7 @@ namespace CebuFitApi.Services
             IUserRepository userRepository,
             IStorageItemRepository storageItemRepository,
             IProductService productService,
+            IDayService dayService,
             IMapper mapper)
         {
             _mealRepository = mealRepository;
@@ -33,6 +36,7 @@ namespace CebuFitApi.Services
             _storageItemRepository = storageItemRepository;
             _userRepository = userRepository;
             _productService = productService;
+            _dayService = dayService;
             _mapper = mapper;
         }
         public async Task<List<MealDTO>> GetAllMealsAsync(Guid userIdClaim)
@@ -192,6 +196,26 @@ namespace CebuFitApi.Services
                 // TODO: Add consumed calories to user in the future.
                 await _mealRepository.UpdateAsync(existingMeal, userIdClaim);
             }
+        }
+
+        public async Task EatSnackAsync(SnackCreateDTO snackCreateDto, Guid userIdClaim)
+        {
+            var mealDto = new MealCreateDTO
+            {
+                Name = snackCreateDto.Name,
+                Eaten = true,
+                MealTime = MealTimesEnum.Snack,
+                Ingredients = new List<IngredientCreateDTO>{snackCreateDto.Ingredient}
+            };
+            var mealId = await CreateMealAsync(mealDto, userIdClaim);
+
+            var prepareMealDto = new MealPrepareDTO
+            {
+                Id = mealId,
+                StorageItems = new List<StorageItemPrepareDTO>{snackCreateDto.StorageItem}
+            };
+            await PrepareMealAsync(prepareMealDto, userIdClaim);
+            await _dayService.AddMealToDayAsync(snackCreateDto.DayId, mealId);
         }
 
     }
