@@ -212,6 +212,20 @@ namespace CebuFitApi.Controllers
 
             return NotFound("User not found");
         }
+        
+        [HttpPost("EatSnack")]
+        public async Task<ActionResult> EatSnack(SnackCreateDTO snackDto)
+        {
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+
+            if (userIdClaim != Guid.Empty)
+            {
+                await _mealService.EatSnackAsync(snackDto, userIdClaim);
+                return Ok();
+            }
+
+            return NotFound("User not found");
+        }
 
         [HttpGet("mealTimes", Name = "GetMealTimes")]
         public async Task<ActionResult<Dictionary<string, int>>> GetMealTimes()
