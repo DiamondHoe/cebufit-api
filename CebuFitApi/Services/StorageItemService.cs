@@ -61,6 +61,8 @@ namespace CebuFitApi.Services
                 storageItem.User = foundUser;
                 storageItem.Product = _mapper.Map<Product>(baseProduct);
                 
+                storageItem.DateOfPurchase ??= DateTime.UtcNow;
+                
                 if(storageItem.BoughtQuantity == null && storageItem.BoughtWeight != null)
                 {
                     storageItem.BoughtQuantity = Math.Ceiling((decimal)storageItem.BoughtWeight / baseProduct.UnitWeight);
