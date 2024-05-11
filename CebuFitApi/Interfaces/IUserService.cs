@@ -10,5 +10,6 @@ namespace CebuFitApi.Interfaces
         Task<string> ResetPasswordAsync(string email);
         Task<string> UpdateAsync(UserDTO user);
         Task<bool> DeleteAsync(Guid userId);
+        Task<SummaryDTO> GetSummaryAsync(Guid userId, DateTime start, DateTime end);
     }
 }

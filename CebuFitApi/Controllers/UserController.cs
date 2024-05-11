@@ -51,6 +51,21 @@ namespace CebuFitApi.Controllers
             }
             return BadRequest();
         }
+
+        [Authorize]
+        [HttpGet("summary")]
+        public async Task<ActionResult<SummaryDTO>> GetSummaryAsync(DateTime start, DateTime end)
+        {
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+            if (userIdClaim != Guid.Empty)
+            {
+                var summaryData = await _userService.GetSummaryAsync(userIdClaim, start, end);
+                return Ok(summaryData);
+            }
+    
+            return NotFound("User not found");
+        }
+
         //Później do research jak wysyłać maila z przypomnieniem hasła, póki co sam mail
         //[HttpGet]
         //public async Task<ActionResult> ResetPassword(string email)
