@@ -63,11 +63,11 @@ namespace CebuFitApi.Services
                 
                 storageItem.DateOfPurchase ??= DateTime.UtcNow;
                 
-                if(storageItem.BoughtQuantity == null && storageItem.BoughtWeight != null)
+                if(storageItem.BoughtQuantity == 0 && storageItem.BoughtWeight != null)
                 {
                     storageItem.BoughtQuantity = Math.Ceiling((decimal)storageItem.BoughtWeight / baseProduct.UnitWeight);
                 }
-                if(storageItem.BoughtWeight == null && storageItem.BoughtQuantity != null)
+                if(storageItem.BoughtWeight == 0 && storageItem.BoughtQuantity != null)
                 {
                     storageItem.BoughtWeight = storageItem.BoughtQuantity * baseProduct.UnitWeight;
                 }
