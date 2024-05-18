@@ -1,5 +1,5 @@
 # Use the official .NET SDK image as the base image
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -16,7 +16,7 @@ RUN dotnet publish -c Release -o out
 
 
 # Build the runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:6.0
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 
 # Set the working directory inside the container
 WORKDIR /app
