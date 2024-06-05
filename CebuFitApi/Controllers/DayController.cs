@@ -223,6 +223,11 @@ namespace CebuFitApi.Controllers
 
             if (userIdClaim != Guid.Empty)
             {
+                if(start > end)
+                {
+                    return BadRequest("Start date is greater than end date.");
+                }
+
                 var costs = await _dayService.GetCostsForDateRangeAsync(start, end, userIdClaim);
                 return Ok(costs);
             }
@@ -237,6 +242,11 @@ namespace CebuFitApi.Controllers
 
             if (userIdClaim != Guid.Empty)
             {
+                if (start > end)
+                {
+                    return BadRequest("Start date is greater than end date.");
+                }
+
                 var days = await _dayService.GetShoppingForDateRangeAsync(start, end, userIdClaim);
 
                 var excelBytes = await _excelHelper.GenerateExcel(days);

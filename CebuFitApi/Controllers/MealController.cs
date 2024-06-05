@@ -118,6 +118,11 @@ namespace CebuFitApi.Controllers
                     return BadRequest("Meal data is null.");
                 }
 
+                if(mealDTO.Name == null)
+                {
+                    mealDTO.Name = "Snack";
+                }
+
                 var mealId = await _mealService.CreateMealAsync(mealDTO, userIdClaim);
 
                 return Ok(mealId);

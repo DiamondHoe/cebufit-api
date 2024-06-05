@@ -5,6 +5,7 @@ using CebuFitApi.Interfaces;
 using CebuFitApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 
 namespace CebuFitApi.Controllers
@@ -68,9 +69,9 @@ namespace CebuFitApi.Controllers
 
             if (userIdClaim != Guid.Empty)
             {
-                if (categoryCreateDTO == null)
+                if (categoryCreateDTO == null || categoryCreateDTO.Name.IsNullOrEmpty())
                 {
-                    return BadRequest("Category data is null.");
+                    return BadRequest("Category data is null or name is empty.");
                 }
 
                 await _categoryService.CreateCategoryAsync(categoryCreateDTO, userIdClaim);
@@ -87,6 +88,11 @@ namespace CebuFitApi.Controllers
 
             if (userIdClaim != Guid.Empty)
             {
+                if(categoryDTO == null || categoryDTO.Name.IsNullOrEmpty())
+                {
+                    return BadRequest("Category data is null or name is empty.");
+                }   
+
                 var existingCategory = await _categoryService.GetCategoryByIdAsync(categoryDTO.Id, userIdClaim);
 
                 if (existingCategory == null)

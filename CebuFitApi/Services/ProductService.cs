@@ -75,7 +75,7 @@ namespace CebuFitApi.Services
             macro.Id = Guid.NewGuid();
             product.Macro = macro;
 
-            var foundUser = await _userRepository.GetById(userIdClaim);
+            var foundUser = await _userRepository.GetByIdAsync(userIdClaim);
             var category = await _categoryRepository.GetByIdAsync(productDTO.CategoryId, userIdClaim);
 
             if (foundUser != null && category != null)
@@ -90,7 +90,7 @@ namespace CebuFitApi.Services
         {
             var product = _mapper.Map<Product>(productDTO);
             var macro = _mapper.Map<Macro>(productDTO.Macro);
-            var foundUser = await _userRepository.GetById(userIdClaim);
+            var foundUser = await _userRepository.GetByIdAsync(userIdClaim);
             var category = await _categoryRepository.GetByIdAsync(productDTO.CategoryId, userIdClaim);
 
             if (foundUser != null && category != null)

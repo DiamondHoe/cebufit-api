@@ -51,7 +51,7 @@ namespace CebuFitApi.Services
             var ingredient = _mapper.Map<Ingredient>(ingredientDTO);
             ingredient.Id = Guid.NewGuid();
 
-            var foundUser = await _userRepository.GetById(userIdClaim);
+            var foundUser = await _userRepository.GetByIdAsync(userIdClaim);
             var baseProduct = await _productRepository.GetByIdAsync(ingredientDTO.baseProductId, userIdClaim);
             if (baseProduct != null && foundUser != null)
             {
@@ -66,7 +66,7 @@ namespace CebuFitApi.Services
         public async Task UpdateIngredientAsync(IngredientDTO ingredientDTO, Guid userIdClaim)
         {
             var ingredient = _mapper.Map<Ingredient>(ingredientDTO);
-            var foundUser = await _userRepository.GetById(userIdClaim);
+            var foundUser = await _userRepository.GetByIdAsync(userIdClaim);
             if (foundUser != null)
             {
                 await _ingredientRepository.UpdateAsync(ingredient, userIdClaim);
@@ -74,7 +74,7 @@ namespace CebuFitApi.Services
         }
         public async Task DeleteIngredientAsync(Guid ingredientId, Guid userIdClaim)
         {
-            var foundUser = await _userRepository.GetById(userIdClaim);
+            var foundUser = await _userRepository.GetByIdAsync(userIdClaim);
             if (foundUser != null)
             {
                 await _ingredientRepository.DeleteAsync(ingredientId, userIdClaim);

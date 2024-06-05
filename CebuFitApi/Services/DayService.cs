@@ -49,7 +49,7 @@ namespace CebuFitApi.Services
         {
             var day = _mapper.Map<Day>(dayDTO);
             day.Id = Guid.NewGuid();
-            var foundUser = await _userRepository.GetById(userIdClaim);
+            var foundUser = await _userRepository.GetByIdAsync(userIdClaim);
             if (foundUser != null)
             {
                 day.User = foundUser;
@@ -61,7 +61,7 @@ namespace CebuFitApi.Services
         public async Task UpdateDayAsync(DayUpdateDTO dayDto, Guid userIdClaim)
         {
             var day = _mapper.Map<Day>(dayDto);
-            var foundUser = await _userRepository.GetById(userIdClaim);
+            var foundUser = await _userRepository.GetByIdAsync(userIdClaim);
             if (foundUser != null)
             {
                 await _dayRepository.CreateAsync(day, userIdClaim);

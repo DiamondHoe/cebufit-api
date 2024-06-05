@@ -37,7 +37,7 @@ public class CategoryService : ICategoryService
         var category = _mapper.Map<Category>(categoryDTO);
         category.Id = Guid.NewGuid();
 
-        var foundUser = await _userRepository.GetById(userIdClaim);
+        var foundUser = await _userRepository.GetByIdAsync(userIdClaim);
         if(foundUser != null)
         {
             category.User = foundUser;
@@ -49,7 +49,7 @@ public class CategoryService : ICategoryService
     public async Task UpdateCategoryAsync(CategoryDTO categoryDTO, Guid userIdClaim)
     {
         var category = _mapper.Map<Category>(categoryDTO);
-        var foundUser = await _userRepository.GetById(userIdClaim);
+        var foundUser = await _userRepository.GetByIdAsync(userIdClaim);
         if (foundUser != null)
         {
             await _categoryRepository.UpdateAsync(category, userIdClaim);

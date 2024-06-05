@@ -40,8 +40,9 @@ namespace CebuFitApi.Controllers
         {
             if (registerUser == null)
             {
-                return BadRequest();
+                return BadRequest("User data is null");
             }
+
             registerUser.Password = BCrypt.Net.BCrypt.HashPassword(registerUser.Password);
             var (isRegistered, userEntity) = await _userService.CreateAsync(registerUser);
 
@@ -58,8 +59,14 @@ namespace CebuFitApi.Controllers
         public async Task<ActionResult<SummaryDTO>> GetSummaryAsync(DateTime start, DateTime end)
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+
             if (userIdClaim != Guid.Empty)
             {
+                if(end < start)
+                {
+                    return BadRequest("End date cannot be earlier than start date");
+                }
+
                 var summaryData = await _userService.GetSummaryAsync(userIdClaim, start, end);
                 return Ok(summaryData);
             }

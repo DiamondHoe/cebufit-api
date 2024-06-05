@@ -12,7 +12,7 @@ namespace CebuFitApi.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task<User> GetById(Guid userId)
+        public async Task<User> GetByIdAsync(Guid userId)
         {
             var foundUser =  await _dbContext.Users.Where(user => user.Id == userId).FirstOrDefaultAsync();
             return foundUser;

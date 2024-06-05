@@ -79,7 +79,7 @@ namespace CebuFitApi.Services
             var meal = _mapper.Map<Meal>(mealDTO);
             meal.Id = Guid.NewGuid();
 
-            var foundUser = await _userRepository.GetById(userIdClaim);
+            var foundUser = await _userRepository.GetByIdAsync(userIdClaim);
             if (foundUser != null)
             {
                 meal.User = foundUser;
@@ -134,7 +134,7 @@ namespace CebuFitApi.Services
 
         public async Task DeleteMealAsync(Guid mealId, Guid userIdClaim)
         {
-            var foundUser = await _userRepository.GetById(userIdClaim);
+            var foundUser = await _userRepository.GetByIdAsync(userIdClaim);
             if (foundUser != null)
             {
                 await _mealRepository.DeleteAsync(mealId, userIdClaim);

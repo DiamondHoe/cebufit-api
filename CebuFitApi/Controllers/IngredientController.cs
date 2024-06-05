@@ -18,17 +18,20 @@ namespace CebuFitApi.Controllers
         private readonly ILogger<IngredientController> _logger;
         private readonly IMapper _mapper;
         private readonly IIngredientService _ingredientService;
+        private readonly IProductService _productService;
         private readonly IJwtTokenHelper _jwtTokenHelper;
 
         public IngredientController(
             ILogger<IngredientController> logger,
             IMapper mapper,
             IIngredientService ingredientService,
+            IProductService productService,
             IJwtTokenHelper jwtTokenHelper)
         {
             _logger = logger;
             _mapper = mapper;
             _ingredientService = ingredientService;
+            _productService = productService;
             _jwtTokenHelper = jwtTokenHelper;
         }
 
@@ -113,7 +116,14 @@ namespace CebuFitApi.Controllers
             {
                 if (ingredientDTO == null)
                 {
-                    return BadRequest("Ingredient data is null.");
+                    return BadRequest("Ingredient data is null");
+                }
+
+                var foundProduct = await _productService.GetProductByIdAsync(ingredientDTO.baseProductId, userIdClaim);
+
+                if(foundProduct == null)
+                {
+                    return NotFound("Base product not found");
                 }
 
                 await _ingredientService.CreateIngredientAsync(ingredientDTO, userIdClaim);
@@ -131,9 +141,14 @@ namespace CebuFitApi.Controllers
 
             if (userIdClaim != Guid.Empty)
             {
-                var existingStorageItem = await _ingredientService.GetIngredientByIdAsync(ingredientDTO.Id, userIdClaim);
+                if (ingredientDTO == null)
+                {
+                    return BadRequest("Ingredient data is null");
+                }
 
-                if (existingStorageItem == null)
+                var existingIngredient = await _ingredientService.GetIngredientByIdAsync(ingredientDTO.Id, userIdClaim);
+
+                if (existingIngredient == null)
                 {
                     return NotFound();
                 }
@@ -153,9 +168,9 @@ namespace CebuFitApi.Controllers
 
             if (userIdClaim != Guid.Empty)
             {
-                var existingStorageItem = await _ingredientService.GetIngredientByIdAsync(ingredientId, userIdClaim);
+                var existingIngredient = await _ingredientService.GetIngredientByIdAsync(ingredientId, userIdClaim);
 
-                if (existingStorageItem == null)
+                if (existingIngredient == null)
                 {
                     return NotFound();
                 }
@@ -175,6 +190,11 @@ namespace CebuFitApi.Controllers
 
             if (userIdClaim != Guid.Empty)
             {
+                if (ingredientDTO == null)
+                {
+                    return BadRequest("Ingredient data is null");
+                }
+
                 return await _ingredientService.IsIngredientAvailable(ingredientDTO, userIdClaim);
             }
 

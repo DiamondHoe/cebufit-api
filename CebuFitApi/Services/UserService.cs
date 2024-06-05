@@ -56,6 +56,7 @@ namespace CebuFitApi.Services
 
         public async Task<SummaryDTO> GetSummaryAsync(Guid userId, DateTime start, DateTime end)
         {
+            //Check why error when start and end are same exception
             var SummaryType = (end - start).Days switch
             {
                 var n when n < 27 => SummaryTypeEnum.Daily,     // Less than 27 days
