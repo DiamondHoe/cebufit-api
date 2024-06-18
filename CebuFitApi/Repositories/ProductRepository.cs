@@ -1,5 +1,6 @@
 ﻿using CebuFitApi.Data;
 using CebuFitApi.DTOs;
+using CebuFitApi.Helpers.Enums;
 using CebuFitApi.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,45 +13,67 @@ namespace CebuFitApi.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task<List<Product>> GetAllAsync(Guid userIdClaim)
+        public async Task<List<Product>> GetAllAsync(Guid userIdClaim, DataType dataType)
         {
-            var products = await _dbContext.Products
-                .Where(x => x.User.Id == userIdClaim)
+            return dataType switch
+            {
+                DataType.Private => await _dbContext.Products
+                .Where(x => x.User.Id == userIdClaim && x.IsPublic == false)
                 .Include(p => p.Macro)
                 .Include(c => c.Category)
-                .ToListAsync();
-            return products;
-        }
-        public async Task<List<Product>> GetAllWithMacroAsync(Guid userIdClaim)
-        {
-            var productsWithMacro = await _dbContext.Products
-                .Where(x => x.User.Id == userIdClaim)
-                .Include(p => p.Macro)
-                .Include(c => c.Category)
-                .ToListAsync();
+                .ToListAsync(),
 
-            return productsWithMacro;
-        }
-        public async Task<List<Product>> GetAllWithCategoryAsync(Guid userIdClaim)
-        {
-            var productsWithMacro = await _dbContext.Products
+                DataType.Public => await _dbContext.Products
+                .Where(x => x.User.Id == userIdClaim && x.IsPublic == true)
+                .Include(p => p.Macro)
+                .Include(c => c.Category)
+                .ToListAsync(),
+
+                DataType.Both => await _dbContext.Products
                 .Where(x => x.User.Id == userIdClaim)
                 .Include(p => p.Macro)
                 .Include(c => c.Category)
-                .ToListAsync();
+                .ToListAsync(),
 
-            return productsWithMacro;
-        }
-        public async Task<List<Product>> GetAllWithDetailsAsync(Guid userIdClaim)
-        {
-            var productsWithMacro = await _dbContext.Products
+                _ => await _dbContext.Products
                 .Where(x => x.User.Id == userIdClaim)
                 .Include(p => p.Macro)
                 .Include(c => c.Category)
-                .ToListAsync();
-
-            return productsWithMacro;
+                .ToListAsync(),
+            };
         }
+        //Nie używane, złamany DRY
+
+        //public async Task<List<Product>> GetAllWithMacroAsync(Guid userIdClaim, DataType dataType)
+        //{
+        //    var productsWithMacro = await _dbContext.Products
+        //        .Where(x => x.User.Id == userIdClaim)
+        //        .Include(p => p.Macro)
+        //        .Include(c => c.Category)
+        //        .ToListAsync();
+
+        //    return productsWithMacro;
+        //}
+        //public async Task<List<Product>> GetAllWithCategoryAsync(Guid userIdClaim, DataType dataType)
+        //{
+        //    var productsWithMacro = await _dbContext.Products
+        //        .Where(x => x.User.Id == userIdClaim)
+        //        .Include(p => p.Macro)
+        //        .Include(c => c.Category)
+        //        .ToListAsync();
+
+        //    return productsWithMacro;
+        //}
+        //public async Task<List<Product>> GetAllWithDetailsAsync(Guid userIdClaim, DataType dataType)
+        //{
+        //    var productsWithMacro = await _dbContext.Products
+        //        .Where(x => x.User.Id == userIdClaim)
+        //        .Include(p => p.Macro)
+        //        .Include(c => c.Category)
+        //        .ToListAsync();
+
+        //    return productsWithMacro;
+        //}
         public async Task<Product> GetByIdAsync(Guid productId, Guid userIdClaim)
         {
             var product = await _dbContext.Products
@@ -61,26 +84,27 @@ namespace CebuFitApi.Repositories
             return product;
         }
 
-        public async Task<Product> GetByIdWithMacroAsync(Guid productId, Guid userIdClaim)
-        {
-            var product = await _dbContext.Products
-                .Where(x => x.User.Id == userIdClaim && x.Id == productId)
-                .Include(p => p.Macro)
-                .Include(c => c.Category)
-                .FirstAsync();
+        //Nie używane, złamany DRY
+        //public async Task<Product> GetByIdWithMacroAsync(Guid productId, Guid userIdClaim)
+        //{
+        //    var product = await _dbContext.Products
+        //        .Where(x => x.User.Id == userIdClaim && x.Id == productId)
+        //        .Include(p => p.Macro)
+        //        .Include(c => c.Category)
+        //        .FirstAsync();
 
-            return product;
-        }
-        public async Task<Product> GetByIdWithCategoryAsync(Guid productId, Guid userIdClaim)
-        {
-            var product = await _dbContext.Products
-                .Where(x => x.User.Id == userIdClaim && x.Id == productId)
-                .Include(p => p.Macro)
-                .Include(c => c.Category)
-                .FirstAsync();
+        //    return product;
+        //}
+        //public async Task<Product> GetByIdWithCategoryAsync(Guid productId, Guid userIdClaim)
+        //{
+        //    var product = await _dbContext.Products
+        //        .Where(x => x.User.Id == userIdClaim && x.Id == productId)
+        //        .Include(p => p.Macro)
+        //        .Include(c => c.Category)
+        //        .FirstAsync();
 
-            return product;
-        }
+        //    return product;
+        //}
         public async Task<Product> GetByIdWithDetailsAsync(Guid productId, Guid userIdClaim)
         {
             var product = await _dbContext.Products
@@ -119,8 +143,6 @@ namespace CebuFitApi.Repositories
                 await _dbContext.SaveChangesAsync();
             }
         }
-
-
 
         public async Task DeleteAsync(Guid id, Guid userIdClaim)
         {
