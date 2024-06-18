@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CebuFitApi.DTOs;
+using CebuFitApi.Helpers.Enums;
 using CebuFitApi.Interfaces;
 using CebuFitApi.Models;
 
@@ -18,27 +19,27 @@ namespace CebuFitApi.Services
             _userRepository = userRepository;
             _mapper = mapper;
         }
-        public async Task<List<ProductDTO>> GetAllProductsAsync(Guid userIdClaim)
+        public async Task<List<ProductDTO>> GetAllProductsAsync(Guid userIdClaim, DataType dataType)
         {
-            var productsEntities = await _productRepository.GetAllAsync(userIdClaim);
+            var productsEntities = await _productRepository.GetAllAsync(userIdClaim, dataType);
             var productsDTOs = _mapper.Map<List<ProductDTO>>(productsEntities);
             return productsDTOs;
         }
-        public async Task<List<ProductWithMacroDTO>> GetAllProductsWithMacroAsync(Guid userIdClaim)
+        public async Task<List<ProductWithMacroDTO>> GetAllProductsWithMacroAsync(Guid userIdClaim, DataType dataType)
         {
-            var productsEntities = await _productRepository.GetAllWithMacroAsync(userIdClaim);
+            var productsEntities = await _productRepository.GetAllAsync(userIdClaim, dataType);
             var productsDTOs = _mapper.Map<List<ProductWithMacroDTO>>(productsEntities);
             return productsDTOs;
         }
-        public async Task<List<ProductWithCategoryDTO>> GetAllProductsWithCategoryAsync(Guid userIdClaim)
+        public async Task<List<ProductWithCategoryDTO>> GetAllProductsWithCategoryAsync(Guid userIdClaim, DataType dataType )
         {
-            var productsEntities = await _productRepository.GetAllWithCategoryAsync(userIdClaim);
+            var productsEntities = await _productRepository.GetAllAsync(userIdClaim, dataType);
             var productsDTOs = _mapper.Map<List<ProductWithCategoryDTO>>(productsEntities);
             return productsDTOs;
         }
-        public async Task<List<ProductWithDetailsDTO>> GetAllProductsWithDetailsAsync(Guid userIdClaim)
+        public async Task<List<ProductWithDetailsDTO>> GetAllProductsWithDetailsAsync(Guid userIdClaim, DataType dataType)
         {
-            var productsEntities = await _productRepository.GetAllWithDetailsAsync(userIdClaim);
+            var productsEntities = await _productRepository.GetAllAsync(userIdClaim, dataType);
             var productsDTOs = _mapper.Map<List<ProductWithDetailsDTO>>(productsEntities);
             return productsDTOs;
         }
@@ -50,13 +51,13 @@ namespace CebuFitApi.Services
         }
         public async Task<ProductWithMacroDTO> GetProductByIdWithMacroAsync(Guid productId, Guid userIdClaim)
         {
-            var productEntity = await _productRepository.GetByIdWithMacroAsync(productId, userIdClaim);
+            var productEntity = await _productRepository.GetByIdWithDetailsAsync(productId, userIdClaim);
             var productDTO = _mapper.Map<ProductWithMacroDTO>(productEntity);
             return productDTO;
         }
         public async Task<ProductWithCategoryDTO> GetProductByIdWithCategoryAsync(Guid productId, Guid userIdClaim)
         {
-            var productEntity = await _productRepository.GetByIdWithCategoryAsync(productId, userIdClaim);
+            var productEntity = await _productRepository.GetByIdWithDetailsAsync(productId, userIdClaim);
             var productDTO = _mapper.Map<ProductWithCategoryDTO>(productEntity);
             return productDTO;
         }

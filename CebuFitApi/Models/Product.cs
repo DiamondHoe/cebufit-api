@@ -14,6 +14,7 @@ namespace CebuFitApi.Models
         public User? User { get; set; }
         public string? Name { get; set; }
         public ImportanceEnum Importance { get; set; }
+        public bool IsPublic { get; set; }
         public int UnitWeight { get; set; }
         public Category? Category { get; set; }
         public Macro? Macro { get; set; }

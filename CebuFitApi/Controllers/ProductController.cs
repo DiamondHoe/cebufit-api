@@ -30,13 +30,13 @@ namespace CebuFitApi.Controllers
         }
 
         [HttpGet(Name = "GetProducts")]
-        public async Task<ActionResult<List<ProductDTO>>> GetAll()
+        public async Task<ActionResult<List<ProductDTO>>> GetAll(DataType dataType = DataType.Both)
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
 
             if (userIdClaim != Guid.Empty)
             {
-                var products = await _productService.GetAllProductsAsync(userIdClaim);
+                var products = await _productService.GetAllProductsAsync(userIdClaim, dataType);
                 if (products.Count == 0)
                 {
                     return NoContent();
@@ -47,13 +47,13 @@ namespace CebuFitApi.Controllers
         }
 
         [HttpGet("withMacro/", Name = "GetProductsWithMacro")]
-        public async Task<ActionResult<List<ProductWithMacroDTO>>> GetAllWithMacro()
+        public async Task<ActionResult<List<ProductWithMacroDTO>>> GetAllWithMacro(DataType dataType = DataType.Both)
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
 
             if (userIdClaim != Guid.Empty)
             {
-                var products = await _productService.GetAllProductsWithMacroAsync(userIdClaim);
+                var products = await _productService.GetAllProductsWithMacroAsync(userIdClaim, dataType);
                 if (products.Count == 0)
                 {
                     return NoContent();
@@ -64,13 +64,13 @@ namespace CebuFitApi.Controllers
         }
 
         [HttpGet("withCategory/", Name = "GetProductsWithCategory")]
-        public async Task<ActionResult<List<ProductWithCategoryDTO>>> GetAllWithCategory()
+        public async Task<ActionResult<List<ProductWithCategoryDTO>>> GetAllWithCategory(DataType dataType = DataType.Both)
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
 
             if (userIdClaim != Guid.Empty)
             {
-                var products = await _productService.GetAllProductsWithCategoryAsync(userIdClaim);
+                var products = await _productService.GetAllProductsWithCategoryAsync(userIdClaim, dataType);
                 if (products.Count == 0)
                 {
                     return NoContent();
@@ -81,13 +81,13 @@ namespace CebuFitApi.Controllers
         }
 
         [HttpGet("withDetails/", Name = "GetProductsWithDetails")]
-        public async Task<ActionResult<List<ProductWithDetailsDTO>>> GetAllWithDetails()
+        public async Task<ActionResult<List<ProductWithDetailsDTO>>> GetAllWithDetails(DataType dataType = DataType.Both)
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
 
             if (userIdClaim != Guid.Empty)
             {
-                var products = await _productService.GetAllProductsWithDetailsAsync(userIdClaim);
+                var products = await _productService.GetAllProductsWithDetailsAsync(userIdClaim, dataType);
                 if (products.Count == 0)
                 {
                     return NoContent();
