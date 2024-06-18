@@ -43,13 +43,14 @@ namespace CebuFitApi.Controllers
                 return BadRequest();
             }
             registerUser.Password = BCrypt.Net.BCrypt.HashPassword(registerUser.Password);
-            var isRegistered = await _userService.CreateAsync(registerUser);
+            var (isRegistered, userEntity) = await _userService.CreateAsync(registerUser);
 
             if (isRegistered)
             {
-                return Ok("Registration successful");
+                var token = await _jwtTokenHelper.GenerateJwtToken(userEntity.Id, userEntity.Name, true);
+                return Ok(new { Token = token });
             }
-            return BadRequest();
+            return Conflict("Name is already taken");
         }
 
         [Authorize]
@@ -66,7 +67,7 @@ namespace CebuFitApi.Controllers
             return NotFound("User not found");
         }
 
-        //Później do research jak wysyłać maila z przypomnieniem hasła, póki co sam mail
+        // TODO research jak wysyłać maila z przypomnieniem hasła, póki co sam mail
         //[HttpGet]
         //public async Task<ActionResult> ResetPassword(string email)
         //{

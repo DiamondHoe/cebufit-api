@@ -33,12 +33,12 @@ namespace CebuFitApi.Services
             return userAuthenticated;
         }
 
-        public async Task<bool> CreateAsync(UserCreateDTO user)
+        public async Task<(bool, User)> CreateAsync(UserCreateDTO user)
         {
             var userEntity = _mapper.Map<User>(user);
             userEntity.Id = Guid.NewGuid();
             bool isRegistered = await _userRepository.CreateAsync(userEntity);
-            return isRegistered;
+            return (isRegistered, userEntity);
         }
         public Task<string> ResetPasswordAsync(string email)
         {
