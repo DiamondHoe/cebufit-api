@@ -1,4 +1,5 @@
 ﻿using CebuFitApi.Interfaces;
+using CebuFitApi.Models;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -14,12 +15,13 @@ namespace CebuFitApi.Helpers
             _httpContextAccessor = httpContextAccessor;
             DotNetEnv.Env.Load();
         }
-        public async Task<string> GenerateJwtToken(Guid userId, string username, bool? expire)
+        public async Task<string> GenerateJwtToken(User user, bool? expire)
         {
             var claims = new[]
             {
-            new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
-            new Claim(ClaimTypes.Name, username),
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.Name),
+            new Claim(ClaimTypes.Role, user.Role)
         };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SSK")));

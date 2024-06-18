@@ -30,7 +30,7 @@ namespace CebuFitApi.Controllers
             {
                 return Unauthorized("Invalid credentials");
             }
-            var token = await _jwtTokenHelper.GenerateJwtToken(loggedUser.Id, loggedUser.Name, expire);
+            var token = await _jwtTokenHelper.GenerateJwtToken(loggedUser, expire);
 
             return Ok(new { Token = token });
         }
