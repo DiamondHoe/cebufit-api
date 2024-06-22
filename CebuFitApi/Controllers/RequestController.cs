@@ -1,4 +1,5 @@
 ﻿using CebuFitApi.DTOs;
+using CebuFitApi.Helpers.Enums;
 using CebuFitApi.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,15 +24,21 @@ public class RequestController : Controller
     public async Task<ActionResult<List<RequestDto>>> GetAll()
     {
         var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+        var userRole = _jwtTokenHelper.GetUserRole();
         
         if (userIdClaim != Guid.Empty)
         {
-            var requests = await _requestService.GetAllRequestsAsync();
-            if (requests.Count == 0)
+            if (userRole == RoleEnum.Admin || userRole == RoleEnum.Maintainer) 
             {
-                return NoContent();
+                var requests = await _requestService.GetAllRequestsAsync();
+                if (requests.Count == 0)
+                {
+                    return NoContent();
+                }
+                return Ok(requests);
             }
-            return Ok(requests);
+
+            return Forbid();
         }
         return NotFound("User not found");
     }
