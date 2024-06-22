@@ -71,6 +71,9 @@ builder.Services.AddScoped<IStorageItemService, StorageItemService>();
 
 builder.Services.AddScoped<IStorageService, StorageService>();
 builder.Services.AddScoped<IStorageRepository, StorageRepository>();
+
+builder.Services.AddScoped<IRequestRepository, RequestRepository>();
+builder.Services.AddScoped<IRequestService, RequestService>();
 #endregion
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
