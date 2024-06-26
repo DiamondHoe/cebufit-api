@@ -1,9 +1,5 @@
 ﻿using CebuFitApi.DTOs;
 using CebuFitApi.Helpers.Enums;
-using CebuFitApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 public interface IProductService
 {

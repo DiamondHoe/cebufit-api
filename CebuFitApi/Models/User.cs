@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 
 namespace CebuFitApi.Models
@@ -24,6 +24,8 @@ namespace CebuFitApi.Models
         public List<Recipe> Recipes { get; set; }
         public List<Meal> Meals { get; set; }
         public List<Day> Days { get; set; }
+        public List<Request> CreatedRequests { get; set; }
+        public List<Request> ApprovedRequests { get; set; }
 
     }
     public class UserConfiguration : IEntityTypeConfiguration<User>
@@ -50,6 +52,12 @@ namespace CebuFitApi.Models
 
             builder.HasMany(user => user.Days)
                     .WithOne(day => day.User);
+            
+            builder.HasMany(user => user.CreatedRequests)
+                    .WithOne(request => request.Requester);
+            
+            builder.HasMany(user => user.ApprovedRequests)
+                    .WithOne(request => request.Approver);
         }
     }
 }

@@ -256,6 +256,40 @@ namespace CebuFitApi.Migrations
                     b.ToTable("Recipes");
                 });
 
+            modelBuilder.Entity("CebuFitApi.Models.Request", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ApproverId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<Guid>("RequestedItemId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("RequesterId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApproverId");
+
+                    b.HasIndex("RequesterId");
+
+                    b.ToTable("Request", (string)null);
+                });
+
             modelBuilder.Entity("CebuFitApi.Models.Storage", b =>
                 {
                     b.Property<Guid>("Id")
@@ -472,6 +506,23 @@ namespace CebuFitApi.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("CebuFitApi.Models.Request", b =>
+                {
+                    b.HasOne("CebuFitApi.Models.User", "Approver")
+                        .WithMany("ApprovedRequests")
+                        .HasForeignKey("ApproverId");
+
+                    b.HasOne("CebuFitApi.Models.User", "Requester")
+                        .WithMany("CreatedRequests")
+                        .HasForeignKey("RequesterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Approver");
+
+                    b.Navigation("Requester");
+                });
+
             modelBuilder.Entity("CebuFitApi.Models.StorageItem", b =>
                 {
                     b.HasOne("CebuFitApi.Models.Meal", null)
@@ -539,7 +590,11 @@ namespace CebuFitApi.Migrations
 
             modelBuilder.Entity("CebuFitApi.Models.User", b =>
                 {
+                    b.Navigation("ApprovedRequests");
+
                     b.Navigation("Categories");
+
+                    b.Navigation("CreatedRequests");
 
                     b.Navigation("Days");
 

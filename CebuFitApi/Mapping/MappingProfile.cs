@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using CebuFitApi.DTOs;
 using CebuFitApi.Models;
 
@@ -15,6 +15,8 @@ namespace CebuFitApi.Mapping
             CreateMap<User, UserCreateDTO>();
             CreateMap<UserLoginDTO, User>();
             CreateMap<User, UserLoginDTO>();
+            CreateMap<UserPublicDto, User>();
+            CreateMap<User, UserPublicDto>();
             #endregion
 
             #region Meal
@@ -130,6 +132,20 @@ namespace CebuFitApi.Mapping
                         ingredient.Product = context.Mapper.Map<ProductWithMacroDTO>(src.Ingredients.FirstOrDefault(i => i.Id == ingredient.Id)?.Product);
                     }
                 });
+            #endregion
+
+            #region Request
+            CreateMap<RequestCreateDto, Request>();
+            CreateMap<Request, RequestCreateDto>();
+            CreateMap<RequestDto, Request>();
+            CreateMap<Request, RequestDto>()
+                .ForMember(dest => dest.Requester, opt => opt.MapFrom(src => src.Requester.Id))
+                .ForMember(dest => dest.Approver, opt => opt.MapFrom(src => src.Approver == null ? (Guid?)null : src.Approver.Id));
+            CreateMap<Request, RequestProductWithDetailsDto>();
+                // .ForMember(dest => dest.RequestedProduct, opt => object);
+            CreateMap<RequestProductWithDetailsDto, Request>();
+            CreateMap<Request, RequestRecipeWithDetailsDto>();
+            CreateMap<RequestRecipeWithDetailsDto, Request>();
             #endregion
         }
     }
