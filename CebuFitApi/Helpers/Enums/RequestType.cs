@@ -1,4 +1,4 @@
-﻿namespace CebuFitApi.Helpers.Enums;
+namespace CebuFitApi.Helpers.Enums;
 
 public enum RequestType
 {

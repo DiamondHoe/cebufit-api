@@ -1,4 +1,4 @@
-﻿using CebuFitApi.Data;
+using CebuFitApi.Data;
 using CebuFitApi.Helpers.Enums;
 using CebuFitApi.Interfaces;
 using CebuFitApi.Models;
@@ -38,12 +38,16 @@ public class RequestRepository : IRequestRepository
     {
         return await _dbContext.Requests
             .Where(x => x.Type == requestType && x.Status == requestStatus)
+            .Include(r => r.Requester)
+            .Include(r => r.Approver)
             .ToListAsync();
     }
     
     public async Task<Request?> GetByIdAsync(Guid id)
     {
         var request = await _dbContext.Requests
+            .Include(r => r.Requester)
+            .Include(r => r.Approver)
             .FirstOrDefaultAsync(x => x.Id == id);
         return request;
     }
