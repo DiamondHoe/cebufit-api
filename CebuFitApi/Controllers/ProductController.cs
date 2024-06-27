@@ -213,6 +213,7 @@ namespace CebuFitApi.Controllers
             if(userRoleClaim == RoleEnum.Admin)
             {
                 await _productService.DeleteProductAsync(productId);
+                return Ok();
             }
             if (userIdClaim != Guid.Empty)
             {
