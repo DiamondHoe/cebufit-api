@@ -83,7 +83,7 @@ public class RequestController : Controller
         if (userIdClaim == Guid.Empty) return NotFound("User not found");
         
         await _requestService.CreateRequestAsync(requestDto, userIdClaim);
-        await _webSocketHandler.BroadcastMessageAsync(new { Message = "New request added" });
+        await _webSocketHandler.BroadcastMessageAsync(new { Message = "Request added" });
         return Ok();
     }
     [HttpPut("ChangeStatus", Name = "ChangeRequestStatus")]
@@ -98,7 +98,12 @@ public class RequestController : Controller
         if (userRole != RoleEnum.Admin && userRole != RoleEnum.Maintainer) return Forbid();
         
         await _requestService.ChangeRequestStatusAsync(id, requestStatus, userIdClaim);
-        await _webSocketHandler.BroadcastMessageAsync(new { Message = "Request status changed" });
+
+        if(requestStatus == RequestStatus.Rejected)
+            await _webSocketHandler.BroadcastMessageAsync(new { Message = "Request rejected" });
+        if(requestStatus == RequestStatus.Approved) 
+            await _webSocketHandler.BroadcastMessageAsync(new { Message = "Request approved" });
+
         return Ok();
     }
 }
