@@ -223,6 +223,10 @@ namespace CebuFitApi.Controllers
                 {
                     return NotFound();
                 }
+                if (existingProduct.IsPublic)
+                {
+                    return BadRequest("Cannot delete public product.");
+                }
 
                 await _productService.DeleteProductAsync(productId);
 
