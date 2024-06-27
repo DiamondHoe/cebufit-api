@@ -14,5 +14,5 @@ public interface IProductRepository
     Task<Product> GetByIdWithDetailsAsync(Guid id, Guid userIdClaim);
     Task CreateAsync(Product product, Guid userIdClaim);
     Task UpdateAsync(Product product, Guid userIdClaim);
-    Task DeleteAsync(Guid id, Guid userIdClaim);
+    Task DeleteAsync(Guid id);
 }

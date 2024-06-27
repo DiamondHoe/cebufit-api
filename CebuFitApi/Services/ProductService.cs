@@ -102,9 +102,9 @@ namespace CebuFitApi.Services
                 await _productRepository.UpdateAsync(product, userIdClaim);
             }
         }
-        public async Task DeleteProductAsync(Guid productId, Guid userIdClaim)
+        public async Task DeleteProductAsync(Guid productId)
         {
-            await _productRepository.DeleteAsync(productId, userIdClaim);
+            await _productRepository.DeleteAsync(productId);
         }
     }
 }

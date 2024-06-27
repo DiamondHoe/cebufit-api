@@ -145,10 +145,10 @@ namespace CebuFitApi.Repositories
             }
         }
 
-        public async Task DeleteAsync(Guid id, Guid userIdClaim)
+        public async Task DeleteAsync(Guid id)
         {
             var productToDelete = await _dbContext.Products
-                .Where(p => p.Id == id && p.User.Id == userIdClaim)
+                .Where(p => p.Id == id)
                 .FirstAsync();
             if (productToDelete != null)
             {

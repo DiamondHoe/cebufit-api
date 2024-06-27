@@ -209,7 +209,11 @@ namespace CebuFitApi.Controllers
         public async Task<ActionResult> DeleteProduct(Guid productId)
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
-
+            var userRoleClaim = _jwtTokenHelper.GetUserRole();
+            if(userRoleClaim == RoleEnum.Admin)
+            {
+                await _productService.DeleteProductAsync(productId);
+            }
             if (userIdClaim != Guid.Empty)
             {
                 var existingProduct = await _productService.GetProductByIdAsync(productId, userIdClaim);
@@ -219,7 +223,7 @@ namespace CebuFitApi.Controllers
                     return NotFound();
                 }
 
-                await _productService.DeleteProductAsync(productId, userIdClaim);
+                await _productService.DeleteProductAsync(productId);
 
                 return Ok();
             }
