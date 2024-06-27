@@ -23,14 +23,16 @@ namespace CebuFitApi.Helpers
             await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
         }
 
-        public async Task BroadcastMessageAsync(string message)
+        public async Task BroadcastMessageAsync<T>(T message)
         {
-            var messageBuffer = Encoding.UTF8.GetBytes(message);
+            var jsonMessage = System.Text.Json.JsonSerializer.Serialize(message);
+            var messageBuffer = Encoding.UTF8.GetBytes(jsonMessage);
             var tasks = _sockets.Select(socket =>
                 socket.SendAsync(new ArraySegment<byte>(messageBuffer), WebSocketMessageType.Text, true, CancellationToken.None)
             );
 
             await Task.WhenAll(tasks);
         }
+
     }
 }

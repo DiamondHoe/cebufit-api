@@ -4,6 +4,7 @@ using CebuFitApi.Helpers.Enums;
 using CebuFitApi.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CebuFitApi.Controllers;
 
@@ -82,7 +83,7 @@ public class RequestController : Controller
         if (userIdClaim == Guid.Empty) return NotFound("User not found");
         
         await _requestService.CreateRequestAsync(requestDto, userIdClaim);
-        await _webSocketHandler.BroadcastMessageAsync("New request added");
+        await _webSocketHandler.BroadcastMessageAsync(new { Message = "New request added" });
         return Ok();
     }
     [HttpPut("ChangeStatus", Name = "ChangeRequestStatus")]
@@ -97,7 +98,7 @@ public class RequestController : Controller
         if (userRole != RoleEnum.Admin && userRole != RoleEnum.Maintainer) return Forbid();
         
         await _requestService.ChangeRequestStatusAsync(id, requestStatus, userIdClaim);
-        await _webSocketHandler.BroadcastMessageAsync("Request status changed");
+        await _webSocketHandler.BroadcastMessageAsync(new { Message = "Request status changed" });
         return Ok();
     }
 }
