@@ -47,7 +47,7 @@ namespace CebuFitApi.Controllers
 
             if (isRegistered)
             {
-                var token = await _jwtTokenHelper.GenerateJwtToken(userEntity.Id, userEntity.Name, true);
+                var token = await _jwtTokenHelper.GenerateJwtToken(userEntity, true);
                 return Ok(new { Token = token });
             }
             return Conflict("Name is already taken");
