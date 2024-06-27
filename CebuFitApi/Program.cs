@@ -5,6 +5,7 @@ using CebuFitApi.Mapping;
 using CebuFitApi.Repositories;
 using CebuFitApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.WebSockets;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -21,6 +22,11 @@ builder.Services.AddCors(options =>
         });
 });
 
+builder.Services.AddWebSockets(options =>
+{
+    options.KeepAliveInterval = TimeSpan.FromMinutes(2);
+});
+builder.Services.AddSingleton<WebSocketHandler>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -84,6 +90,8 @@ builder.Services.AddDbContext<CebuFitApiDbContext>(options =>
 
 var app = builder.Build();
 
+app.UseWebSockets();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -99,6 +107,20 @@ app.UseCors(options =>
         .AllowAnyOrigin()
         .AllowAnyMethod()
         .AllowAnyHeader();
+});
+
+app.Use(async (context, next) =>
+{
+    if (context.WebSockets.IsWebSocketRequest)
+    {
+        var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+        var webSocketHandler = context.RequestServices.GetRequiredService<WebSocketHandler>();
+        await webSocketHandler.HandleAsync(webSocket);
+    }
+    else
+    {
+        await next();
+    }
 });
 
 app.UseAuthentication();

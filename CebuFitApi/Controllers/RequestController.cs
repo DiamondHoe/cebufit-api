@@ -1,4 +1,5 @@
 ﻿using CebuFitApi.DTOs;
+using CebuFitApi.Helpers;
 using CebuFitApi.Helpers.Enums;
 using CebuFitApi.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -13,11 +14,13 @@ public class RequestController : Controller
 {
     private readonly IRequestService _requestService;
     private readonly IJwtTokenHelper _jwtTokenHelper;
-    
-    public RequestController(IRequestService requestService, IJwtTokenHelper jwtTokenHelper)
+    private readonly WebSocketHandler _webSocketHandler;
+
+    public RequestController(IRequestService requestService, IJwtTokenHelper jwtTokenHelper, WebSocketHandler webSocketHandler)
     {
         _requestService = requestService;
         _jwtTokenHelper = jwtTokenHelper;
+        _webSocketHandler = webSocketHandler;
     }
     
     [HttpGet(Name = "GetRequests")]
@@ -79,8 +82,8 @@ public class RequestController : Controller
         if (userIdClaim == Guid.Empty) return NotFound("User not found");
         
         await _requestService.CreateRequestAsync(requestDto, userIdClaim);
+        await _webSocketHandler.BroadcastMessageAsync("New request added");
         return Ok();
-
     }
     [HttpPut("ChangeStatus", Name = "ChangeRequestStatus")]
     public async Task<ActionResult> ChangeStatus(
@@ -94,6 +97,7 @@ public class RequestController : Controller
         if (userRole != RoleEnum.Admin && userRole != RoleEnum.Maintainer) return Forbid();
         
         await _requestService.ChangeRequestStatusAsync(id, requestStatus, userIdClaim);
+        await _webSocketHandler.BroadcastMessageAsync("Request status changed");
         return Ok();
     }
 }
