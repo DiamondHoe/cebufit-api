@@ -13,7 +13,7 @@ public interface IRequestService
     Task<List<RequestProductWithDetailsDto>> GetRequestsProductByStatusWithDetails(RequestStatus requestStatus);
     Task<List<RequestRecipeWithDetailsDto>> GetRequestsRecipeByStatusWithDetails(RequestStatus requestStatus);
     
-    Task CreateRequestAsync(RequestCreateDto requestCreate, Guid userIdClaim);
+    Task<bool> CreateRequestAsync(RequestCreateDto requestCreate, Guid userIdClaim);
     Task UpdateRequestAsync(RequestDto request, Guid userIdClaim);
     Task DeleteRequestAsync(Guid id, Guid userIdClaim);
     Task ChangeRequestStatusAsync(Guid id, RequestStatus requestStatus, Guid userIdClaim);

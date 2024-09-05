@@ -52,10 +52,16 @@ public class RequestRepository : IRequestRepository
         return request;
     }
     
-    public async Task CreateAsync(Request request)
+    public async Task<bool> CreateAsync(Request request)
     {
+        bool requesterExists = await _dbContext.Requests.AnyAsync(p => p.Id == request.RequestedItemId);
+        if (requesterExists)
+        {
+            return false;
+        }
         await _dbContext.Requests.AddAsync(request);
         await _dbContext.SaveChangesAsync();
+        return true;
     }
     
     public async Task UpdateAsync(Request request)

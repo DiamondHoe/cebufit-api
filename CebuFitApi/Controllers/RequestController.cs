@@ -17,7 +17,11 @@ public class RequestController : Controller
     private readonly IJwtTokenHelper _jwtTokenHelper;
     private readonly WebSocketHandler _webSocketHandler;
 
-    public RequestController(IRequestService requestService, IJwtTokenHelper jwtTokenHelper, WebSocketHandler webSocketHandler)
+    public RequestController(
+        IRequestService requestService, 
+        IJwtTokenHelper jwtTokenHelper, 
+        WebSocketHandler webSocketHandler
+        )
     {
         _requestService = requestService;
         _jwtTokenHelper = jwtTokenHelper;
@@ -82,7 +86,11 @@ public class RequestController : Controller
         
         if (userIdClaim == Guid.Empty) return NotFound("User not found");
         
-        await _requestService.CreateRequestAsync(requestDto, userIdClaim);
+        bool requestAlreadyCreated = await _requestService.CreateRequestAsync(requestDto, userIdClaim);
+        if (requestAlreadyCreated)
+        {
+            return Conflict("Request already created for this item.");
+        }
         await _webSocketHandler.BroadcastMessageAsync(new { Message = "Request added" });
         return Ok();
     }
