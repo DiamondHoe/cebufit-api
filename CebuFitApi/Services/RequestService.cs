@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Net;
+using AutoMapper;
 using CebuFitApi.DTOs;
 using CebuFitApi.Helpers.Enums;
 using CebuFitApi.Interfaces;
@@ -77,13 +78,14 @@ public class RequestService : IRequestService
         throw new NotImplementedException();
     }
     
-    public async Task CreateRequestAsync(RequestCreateDto requestCreateDto, Guid userIdClaim)
+    public async Task<bool> CreateRequestAsync(RequestCreateDto requestCreateDto, Guid userIdClaim)
     {
         var requestEntity = _mapper.Map<Request>(requestCreateDto);
         requestEntity.Requester = _userRepository.GetById(userIdClaim).Result;
         requestEntity.Status = RequestStatus.Pending;
         
-        await _requestRepository.CreateAsync(requestEntity);
+        bool requestAlreadyCreated = await _requestRepository.CreateAsync(requestEntity);
+        return requestAlreadyCreated;
     }
     
     public async Task UpdateRequestAsync(RequestDto request, Guid userIdClaim)
