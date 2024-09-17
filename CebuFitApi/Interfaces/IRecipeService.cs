@@ -13,4 +13,5 @@ public interface IRecipeService
     Task CreateRecipeAsync(RecipeCreateDTO recipe, Guid userIdClaim);
     Task UpdateRecipeAsync(RecipeUpdateDTO recipe, Guid userIdClaim);
     Task DeleteRecipeAsync(Guid recipeId, Guid userIdClaim);
+    Task<List<Tuple<RecipeWithDetailsDTO, List<Tuple<IngredientWithProductDTO, decimal?>>>>> GetRecipesFromAvailableStorageItemsAsync(Guid userIdClaim, int recipesCount);
 }

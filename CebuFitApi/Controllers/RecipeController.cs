@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CebuFitApi.DTOs;
 using CebuFitApi.Interfaces;
+using CebuFitApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -163,6 +164,24 @@ namespace CebuFitApi.Controllers
                 await _recipeService.DeleteRecipeAsync(recipeId, userIdClaim);
 
                 return Ok();
+            }
+
+            return NotFound("User not found");
+        }
+
+        [HttpGet("available/{recipesCount}", Name = "GetAvailableRecipes")]
+        public async Task<ActionResult<List<MealDTO>>> GetAvailableRecipes(int recipesCount)
+        {
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+
+            if (userIdClaim != Guid.Empty)
+            {
+                var meals = await _recipeService.GetRecipesFromAvailableStorageItemsAsync(userIdClaim, recipesCount);
+                if (meals.Count == 0)
+                {
+                    return NoContent();
+                }
+                return Ok(meals);
             }
 
             return NotFound("User not found");

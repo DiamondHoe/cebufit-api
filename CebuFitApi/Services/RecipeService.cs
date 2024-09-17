@@ -11,14 +11,16 @@ namespace CebuFitApi.Services
         private readonly IRecipeRepository _recipeRepository;
         private readonly IIngredientRepository _ingredientRepository;
         private readonly IIngredientService _ingredientService;
+        private readonly IStorageItemService _storageItemService;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-        public RecipeService(IMapper mapper, IRecipeRepository recipeRepository, IIngredientRepository ingredientRepository, IIngredientService ingredientService, IUserRepository userRepository)
+        public RecipeService(IMapper mapper, IRecipeRepository recipeRepository, IIngredientRepository ingredientRepository, IIngredientService ingredientService, IStorageItemService storageItemService, IUserRepository userRepository)
         {
             _mapper = mapper;
             _recipeRepository = recipeRepository;
             _ingredientRepository = ingredientRepository;
             _ingredientService = ingredientService;
+            _storageItemService = storageItemService;
             _userRepository = userRepository;
         }
         public async Task<List<RecipeDTO>> GetAllRecipesAsync(Guid userIdClaim)
@@ -103,5 +105,78 @@ namespace CebuFitApi.Services
         {
             await _recipeRepository.DeleteAsync(recipeId, userIdClaim);
         }
+
+        public async Task<List<Tuple<RecipeWithDetailsDTO, List<Tuple<IngredientWithProductDTO, decimal?>>>>> GetRecipesFromAvailableStorageItemsAsync(Guid userIdClaim, int recipesCount)
+        {
+            //Robson - pomyśl czy będziesz rozróżniał Quantity i Weight w zwracanym DTO XD
+
+            // Get available storage items
+            var availableStorageItems = new Dictionary<Guid, Tuple<decimal?, decimal?>>();
+
+            // Aggregate storage items by product and sum quantities and weights
+            foreach (var storageItem in await _storageItemService.GetAllStorageItemsWithProductAsync(userIdClaim))
+            {
+                if (!availableStorageItems.ContainsKey(storageItem.Product.Id))
+                {
+                    availableStorageItems.Add(storageItem.Product.Id, new Tuple<decimal?, decimal?>(
+                        storageItem.ActualQuantity, storageItem.ActualWeight));
+                }
+                else
+                {
+                    availableStorageItems[storageItem.Product.Id] = new Tuple<decimal?, decimal?>(
+                        availableStorageItems[storageItem.Product.Id].Item1 + storageItem.ActualQuantity,
+                        availableStorageItems[storageItem.Product.Id].Item2 + storageItem.ActualWeight);
+                }
+            }
+
+            var recipesDTOs = new List<Tuple<RecipeWithDetailsDTO, List<Tuple<IngredientWithProductDTO, decimal?>>>>();
+
+            foreach (var recipe in await GetAllRecipesWithDetailsAsync(userIdClaim))
+            {
+                var missingProducts = new List<Tuple<IngredientWithProductDTO, decimal?>>();
+
+                foreach (var ingredient in recipe.Ingredients)
+                {
+                    if (availableStorageItems.ContainsKey(ingredient.Product.Id))
+                    {
+                        var availableQuantity = availableStorageItems[ingredient.Product.Id].Item1;
+                        var availableWeight = availableStorageItems[ingredient.Product.Id].Item2;
+
+                        // Check Quantity
+                        if (ingredient.Quantity.HasValue && availableQuantity.HasValue)
+                        {
+                            if (ingredient.Quantity > availableQuantity)
+                            {
+                                missingProducts.Add(new Tuple<IngredientWithProductDTO, decimal?>(
+                                    ingredient, ingredient.Quantity - availableQuantity));
+                            }
+                        }
+
+                        // Check Weight
+                        if (ingredient.Weight.HasValue && availableWeight.HasValue)
+                        {
+                            if (ingredient.Weight > availableWeight)
+                            {
+                                missingProducts.Add(new Tuple<IngredientWithProductDTO, decimal?>(
+                                    ingredient, ingredient.Weight - availableWeight));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Product not available in storage, so entire quantity/weight is missing
+                        missingProducts.Add(new Tuple<IngredientWithProductDTO, decimal?>(
+                            ingredient, ingredient.Quantity.HasValue ? ingredient.Quantity : ingredient.Weight));
+                    }
+                }
+
+                recipesDTOs.Add(new Tuple<RecipeWithDetailsDTO, List<Tuple<IngredientWithProductDTO, decimal?>>>(
+                    recipe, missingProducts));
+            }
+
+            // Order by recipes with the fewest missing ingredients and return the top N recipes
+            return recipesDTOs.OrderBy(x => x.Item2.Count).Take(recipesCount).ToList();
+        }
+
     }
 }
