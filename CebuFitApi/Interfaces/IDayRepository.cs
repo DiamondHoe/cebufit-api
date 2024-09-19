@@ -7,6 +7,7 @@ public interface IDayRepository
     Task<List<Day>> GetAllWithMealsAsync(Guid userIdClaim);
     Task<Day> GetByIdAsync(Guid id, Guid userIdClaim);
     Task<Day> GetByIdWithMealsAsync(Guid id, Guid userIdClaim);
+    Task<Day?> GetByDateWithMealsAsync(DateTime date, Guid userIdClaim);
     Task CreateAsync(Day day, Guid userIdClaim);
     Task UpdateAsync(Day day, Guid userIdClaim);
     Task DeleteAsync(Guid id, Guid userIdClaim);

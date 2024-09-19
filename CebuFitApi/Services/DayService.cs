@@ -45,6 +45,14 @@ namespace CebuFitApi.Services
             var dayDTO = _mapper.Map<DayWithMealsDTO>(dayEntity);
             return dayDTO;
         }
+        
+        public async Task<DayWithMealsDTO> GetDayByDateWithMealsAsync(DateTime date, Guid userIdClaim)
+        {
+            var dayEntity = await _dayRepository.GetByDateWithMealsAsync(date, userIdClaim);
+            var dayDto = _mapper.Map<DayWithMealsDTO>(dayEntity);
+            return dayDto;
+        }
+        
         public async Task<Guid> CreateDayAsync(DayCreateDTO dayDTO, Guid userIdClaim)
         {
             var day = _mapper.Map<Day>(dayDTO);
