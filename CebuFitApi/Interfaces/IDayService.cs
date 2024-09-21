@@ -11,6 +11,7 @@ public interface IDayService
     Task<List<DayWithMealsDTO>> GetAllDaysWithMealsAsync(Guid userIdClaim);
     Task<DayDTO> GetDayByIdAsync(Guid dayId, Guid userIdClaim);
     Task<DayWithMealsDTO> GetDayByIdWithMealsAsync(Guid dayId, Guid userIdClaim);
+    Task<DayWithMealsDTO> GetDayByDateWithMealsAsync(DateTime date, Guid userIdClaim);
     Task<Guid> CreateDayAsync(DayCreateDTO day, Guid userIdClaim);
     Task UpdateDayAsync(DayUpdateDTO day, Guid userIdClaim);
     Task DeleteDayAsync(Guid dayId, Guid userIdClaim);
