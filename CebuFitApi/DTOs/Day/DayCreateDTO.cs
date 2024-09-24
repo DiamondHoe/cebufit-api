@@ -1,6 +1,4 @@
-﻿using CebuFitApi.Models;
-
-namespace CebuFitApi.DTOs
+﻿namespace CebuFitApi.DTOs
 {
     public class DayCreateDTO
     {

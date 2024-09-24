@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using CebuFitApi.DTOs;
-using CebuFitApi.Helpers;
 using CebuFitApi.Helpers.Enums;
 using CebuFitApi.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -81,7 +80,8 @@ namespace CebuFitApi.Controllers
         }
 
         [HttpGet("withDetails/", Name = "GetProductsWithDetails")]
-        public async Task<ActionResult<List<ProductWithDetailsDTO>>> GetAllWithDetails(DataType dataType = DataType.Both)
+        public async Task<ActionResult<List<ProductWithDetailsDTO>>> GetAllWithDetails(
+            [FromQuery] DataType dataType = DataType.Both)
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
 
