@@ -113,15 +113,32 @@ public class RequestService : IRequestService
     {
         var requestEntity = await _requestRepository.GetByIdAsync(id);
         if (requestEntity == null) return;
-        // TODO make it more generic (for recipe also)
-        var product = await _productRepository.GetByIdAsync(requestEntity.RequestedItemId, requestEntity.Requester.Id);
-        if (product == null) return;
+        var requestType = requestEntity.Type;
         requestEntity.Status = requestStatus;
         requestEntity.Approver = await _userRepository.GetById(userIdClaim);
-        if (requestStatus == RequestStatus.Approved)
+        
+        switch (requestType)
         {
-            product.IsPublic = true;
-            await _productRepository.UpdateAsync(product, requestEntity.Requester.Id);
+            case RequestType.PromoteProductToPublic:
+                var product = await _productRepository.GetByIdAsync(requestEntity.RequestedItemId, requestEntity.Requester.Id);
+                if (product == null) return;
+        
+                if (requestStatus == RequestStatus.Approved)
+                {
+                    product.IsPublic = true;
+                    await _productRepository.UpdateAsync(product, requestEntity.Requester.Id);
+                }
+                break;
+            case RequestType.PromoteRecipeToPublic:
+                var recipe = await _recipeRepository.GetByIdAsync(requestEntity.RequestedItemId, requestEntity.Requester.Id);
+                if (recipe == null) return;
+        
+                if (requestStatus == RequestStatus.Approved)
+                {
+                    recipe.IsPublic = true;
+                    await _recipeRepository.UpdateAsync(recipe, requestEntity.Requester.Id);
+                }
+                break;
         }
         await _requestRepository.UpdateAsync(requestEntity);
     }
