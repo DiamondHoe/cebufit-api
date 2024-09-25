@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CebuFitApi.DTOs;
+using CebuFitApi.Helpers.Enums;
 using CebuFitApi.Interfaces;
 using CebuFitApi.Models;
 using CebuFitApi.Repositories;
@@ -27,9 +28,9 @@ namespace CebuFitApi.Services
             var storageItemsDTOs = _mapper.Map<List<RecipeDTO>>(recipesEntities);
             return storageItemsDTOs;
         }
-        public async Task<List<RecipeWithDetailsDTO>> GetAllRecipesWithDetailsAsync(Guid userIdClaim)
+        public async Task<List<RecipeWithDetailsDTO>> GetAllRecipesWithDetailsAsync(Guid userIdClaim, DataType dataType)
         {
-            var recipesEntities = await _recipeRepository.GetAllWithDetailsAsync(userIdClaim);
+            var recipesEntities = await _recipeRepository.GetAllWithDetailsAsync(userIdClaim, dataType);
             var recipesDTOs = _mapper.Map<List<RecipeWithDetailsDTO>>(recipesEntities);
 
             return recipesDTOs;

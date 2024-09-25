@@ -79,6 +79,22 @@ public class RequestController : Controller
         return Ok(requests);
     }
     
+    [HttpGet("RecipeByStatusWithDetails", Name = "GetRequestsRecipeByStatusWithDetails")]
+    public async Task<ActionResult<List<RequestProductWithDetailsDto>>> GetRequestsRecipeByStatusWithDetails(
+        [FromQuery] RequestStatus requestStatus)
+    {
+        var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+        var userRole = _jwtTokenHelper.GetUserRole();
+        
+        if (userIdClaim == Guid.Empty) return NotFound("User not found");
+        if (userRole != RoleEnum.Admin && userRole != RoleEnum.Maintainer) return Forbid();
+        
+        var requests = await _requestService.GetRequestsRecipeByStatusWithDetails(requestStatus);
+            
+        if (requests.Count == 0) return NoContent();
+        return Ok(requests);
+    }
+    
     [HttpPost]
     public async Task<ActionResult> CreateRequest(RequestCreateDto requestDto)
     {

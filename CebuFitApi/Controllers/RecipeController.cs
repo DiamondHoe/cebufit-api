@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CebuFitApi.Helpers.Enums;
 
 namespace CebuFitApi.Controllers
 {
@@ -51,13 +52,14 @@ namespace CebuFitApi.Controllers
         }
 
         [HttpGet("withDetails/", Name = "GetRecipesWithDetails")]
-        public async Task<ActionResult<List<RecipeWithDetailsDTO>>> GetAllWithDetails()
+        public async Task<ActionResult<List<RecipeWithDetailsDTO>>> GetAllWithDetails(
+            [FromQuery] DataType dataType = DataType.Both)
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
 
             if (userIdClaim != Guid.Empty)
             {
-                var recipes = await _recipeService.GetAllRecipesWithDetailsAsync(userIdClaim);
+                var recipes = await _recipeService.GetAllRecipesWithDetailsAsync(userIdClaim, dataType);
                 if (recipes.Count == 0)
                 {
                     return NoContent();
