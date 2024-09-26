@@ -30,8 +30,7 @@ namespace CebuFitApi.Repositories
                 .ToListAsync(),
 
                 DataType.Both => await _dbContext.Products
-                .Where(x => x.User.Id == userIdClaim)
-                .Where(x => x.IsPublic == true)
+                .Where(x => x.User.Id == userIdClaim || x.IsPublic == true)
                 .Include(p => p.Macro)
                 .Include(c => c.Category)
                 .ToListAsync(),
