@@ -46,7 +46,8 @@ namespace CebuFitApi.Controllers
         }
 
         [HttpGet("withMacro/", Name = "GetProductsWithMacro")]
-        public async Task<ActionResult<List<ProductWithMacroDTO>>> GetAllWithMacro(DataType dataType = DataType.Both)
+        public async Task<ActionResult<List<ProductWithMacroDTO>>> GetAllWithMacro(
+            [FromQuery] DataType dataType = DataType.Both)
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
 

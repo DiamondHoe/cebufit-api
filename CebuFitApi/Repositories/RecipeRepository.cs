@@ -45,7 +45,7 @@ namespace CebuFitApi.Repositories
                     .ToListAsync(),
 
                 DataType.Both => await _dbContext.Recipes
-                    .Where(x => x.User.Id == userIdClaim)
+                    .Where(x => x.User.Id == userIdClaim || x.IsPublic == true)
                     .Include(x => x.Ingredients)
                     .ThenInclude(x => x.Product)
                     .ThenInclude(x => x.Category)
