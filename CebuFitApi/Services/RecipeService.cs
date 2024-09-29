@@ -106,15 +106,14 @@ namespace CebuFitApi.Services
             await _recipeRepository.DeleteAsync(recipeId, userIdClaim);
         }
 
-        public async Task<List<Tuple<RecipeWithDetailsDTO, List<Tuple<IngredientWithProductDTO, decimal?>>>>> GetRecipesFromAvailableStorageItemsAsync(Guid userIdClaim, int recipesCount)
-        {
-            //Robson - pomyśl czy będziesz rozróżniał Quantity i Weight w zwracanym DTO XD
+        public async Task<List<Tuple<RecipeWithDetailsDTO, List<Tuple<IngredientWithProductDTO, Tuple<decimal?, decimal?>>>>>> GetRecipesFromAvailableStorageItemsAsync(Guid userIdClaim, int recipesCount)
+        {   //NOTE: Norberto - dopytać Robsona co z konwersją quantity i weight, jeżeli mamy piwo 500, a w storage mamy 1 quantity, może skonwertowac do porównania?
 
             // Get available storage items
             var availableStorageItems = new Dictionary<Guid, Tuple<decimal?, decimal?>>();
 
             // Aggregate storage items by product and sum quantities and weights
-            foreach (var storageItem in await _storageItemService.GetAllStorageItemsWithProductAsync(userIdClaim))
+            foreach (var storageItem in await _storageItemService.GetAllStorageItemsWithProductAsync(userIdClaim, true))
             {
                 if (!availableStorageItems.ContainsKey(storageItem.Product.Id))
                 {
@@ -129,11 +128,11 @@ namespace CebuFitApi.Services
                 }
             }
 
-            var recipesDTOs = new List<Tuple<RecipeWithDetailsDTO, List<Tuple<IngredientWithProductDTO, decimal?>>>>();
+            var recipesDTOs = new List<Tuple<RecipeWithDetailsDTO, List<Tuple<IngredientWithProductDTO, Tuple<decimal?, decimal?>>>>>();
 
             foreach (var recipe in await GetAllRecipesWithDetailsAsync(userIdClaim))
             {
-                var missingProducts = new List<Tuple<IngredientWithProductDTO, decimal?>>();
+                var missingProducts = new List<Tuple<IngredientWithProductDTO, Tuple<decimal?, decimal?>>>();
 
                 foreach (var ingredient in recipe.Ingredients)
                 {
@@ -147,8 +146,10 @@ namespace CebuFitApi.Services
                         {
                             if (ingredient.Quantity > availableQuantity)
                             {
-                                missingProducts.Add(new Tuple<IngredientWithProductDTO, decimal?>(
-                                    ingredient, ingredient.Quantity - availableQuantity));
+                                missingProducts.Add(new Tuple<IngredientWithProductDTO, Tuple<decimal?, decimal?>>(
+                                    ingredient,
+                                    new Tuple<decimal?, decimal?>(ingredient.Quantity - availableQuantity, null)
+                                ));
                             }
                         }
 
@@ -157,22 +158,26 @@ namespace CebuFitApi.Services
                         {
                             if (ingredient.Weight > availableWeight)
                             {
-                                missingProducts.Add(new Tuple<IngredientWithProductDTO, decimal?>(
-                                    ingredient, ingredient.Weight - availableWeight));
+                                missingProducts.Add(new Tuple<IngredientWithProductDTO, Tuple<decimal?, decimal?>>(
+                                    ingredient,
+                                    new Tuple<decimal?, decimal?>(null, ingredient.Weight - availableWeight)
+                                ));
                             }
                         }
                     }
                     else
                     {
                         // Product not available in storage, so entire quantity/weight is missing
-                        missingProducts.Add(new Tuple<IngredientWithProductDTO, decimal?>(
-                            ingredient, ingredient.Quantity.HasValue ? ingredient.Quantity : ingredient.Weight));
+                        missingProducts.Add(new Tuple<IngredientWithProductDTO, Tuple<decimal?, decimal?>>(
+                            ingredient,
+                            new Tuple<decimal?, decimal?>(ingredient.Quantity, ingredient.Weight))); ;
                     }
                 }
 
-                recipesDTOs.Add(new Tuple<RecipeWithDetailsDTO, List<Tuple<IngredientWithProductDTO, decimal?>>>(
+                recipesDTOs.Add(new Tuple<RecipeWithDetailsDTO, List<Tuple<IngredientWithProductDTO, Tuple<decimal?, decimal?>>>>(
                     recipe, missingProducts));
             }
+            //Nie dodało mi missing produktów
 
             // Order by recipes with the fewest missing ingredients and return the top N recipes
             return recipesDTOs.OrderBy(x => x.Item2.Count).Take(recipesCount).ToList();

@@ -170,7 +170,7 @@ namespace CebuFitApi.Controllers
         }
 
         [HttpGet("available/{recipesCount}", Name = "GetAvailableRecipes")]
-        public async Task<ActionResult<List<MealDTO>>> GetAvailableRecipes(int recipesCount)
+        public async Task<ActionResult<List<Tuple<RecipeWithDetailsDTO, List<Tuple<IngredientWithProductDTO, Tuple<decimal?, decimal?>>>>>>> GetAvailableRecipes(int recipesCount)
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
 
