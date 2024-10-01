@@ -131,7 +131,7 @@ namespace CebuFitApi.Services
 
             var recipesDTOs = new List<Tuple<RecipeWithDetailsDTO, List<Tuple<IngredientWithProductDTO, Tuple<decimal?, decimal?>>>>>();
 
-            foreach (var recipe in await GetAllRecipesWithDetailsAsync(userIdClaim))
+            foreach (var recipe in await GetAllRecipesWithDetailsAsync(userIdClaim, DataType.Both))
             {
                 var missingProducts = new List<Tuple<IngredientWithProductDTO, Tuple<decimal?, decimal?>>>();
 
