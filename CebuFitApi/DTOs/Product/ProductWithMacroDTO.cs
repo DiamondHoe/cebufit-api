@@ -8,6 +8,7 @@ namespace CebuFitApi.DTOs
         public string? Name { get; set; }
         public ImportanceEnum Importance { get; set; }
         public bool IsPublic { get; set; }
+        public bool Packaged { get; set; }
         public int UnitWeight { get; set; }
         public Guid CategoryId { get; set; }
         public MacroDTO Macro { get; set; }
