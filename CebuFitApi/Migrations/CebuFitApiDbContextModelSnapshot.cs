@@ -218,6 +218,9 @@ namespace CebuFitApi.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
+                    b.Property<bool>("Packaged")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("UnitWeight")
                         .HasColumnType("integer");
 
