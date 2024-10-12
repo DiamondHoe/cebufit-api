@@ -68,13 +68,13 @@ namespace CebuFitApi.Repositories
             var day = await _dbContext.Days
                 .Where(x => x.User.Id == userIdClaim && x.Date.ToLocalTime().Date == date.ToLocalTime().Date)
                 .Include(d => d.Meals)
-                .ThenInclude(m => m.Ingredients)
-                .ThenInclude(i => i.Product)
-                .ThenInclude(p => p.Macro)
+                    .ThenInclude(m => m.Ingredients)
+                    .ThenInclude(i => i.Product)
+                    .ThenInclude(p => p.Macro)
                 .Include(d => d.Meals)
-                .ThenInclude(m => m.Ingredients)
-                .ThenInclude(i => i.Product)
-                .ThenInclude(p => p.Category)
+                    .ThenInclude(m => m.Ingredients)
+                    .ThenInclude(i => i.Product)
+                    .ThenInclude(p => p.Category)
                 .FirstOrDefaultAsync();
             return day;
         }
