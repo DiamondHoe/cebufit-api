@@ -22,13 +22,15 @@ namespace CebuFitApi.Models
         public decimal? Protein => Calories * ProteinPercent / 100 / 4;
 
         public User? User { get; set; }
+        public Guid UserId { get; set; }
     }
     public class DemandConfiguration : IEntityTypeConfiguration<Demand>
     {
         public void Configure(EntityTypeBuilder<Demand> builder)
         {
             builder.HasOne(demand => demand.User)
-                .WithOne(user => user.Demand);
+                .WithOne(user => user.Demand)
+                .HasForeignKey<Demand>(demand => demand.UserId);
         }
     }
 }

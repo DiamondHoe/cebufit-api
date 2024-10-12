@@ -67,7 +67,7 @@ namespace CebuFitApi.Services
                 demand.FatPercent = 30;
                 demand.ProteinPercent = 30;
 
-                await _demandRepository.UpdateDemandAsync(new Demand(), userId);
+                await _demandRepository.UpdateDemandAsync(demand, userId);
             }
         }
     }

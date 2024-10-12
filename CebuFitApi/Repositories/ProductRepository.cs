@@ -77,10 +77,9 @@ namespace CebuFitApi.Repositories
         public async Task<Product> GetByIdAsync(Guid productId, Guid userIdClaim)
         {
             var product = await _dbContext.Products
-                .Where(x => x.User.Id == userIdClaim && x.Id == productId)
                 .Include(c => c.Category)
-                .FirstAsync();
-
+                .FirstOrDefaultAsync(x => x.User.Id == userIdClaim && x.Id == productId);
+ 
             return product;
         }
 
