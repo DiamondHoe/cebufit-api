@@ -40,7 +40,11 @@ namespace CebuFitApi.Services
             var userEntity = _mapper.Map<User>(user);
             userEntity.Id = Guid.NewGuid();
             bool isRegistered = await _userRepository.CreateAsync(userEntity);
-            if(isRegistered) await _demandService.AutoCalculateDemandAsync(userEntity.Id);
+            if (isRegistered
+                && (userEntity.Demand?.Calories != null || userEntity.Demand?.Calories != 0)
+                && (userEntity.Demand?.FatPercent != null || userEntity.Demand?.FatPercent != 0)
+                && (userEntity.Demand?.CarbPercent != null || userEntity.Demand?.CarbPercent != 0)
+                && (userEntity.Demand?.ProteinPercent != null || userEntity.Demand?.ProteinPercent != 0)) await _demandService.AutoCalculateDemandAsync(userEntity.Id);
             return (isRegistered, userEntity);
         }
         public Task<string> ResetPasswordAsync(string email)

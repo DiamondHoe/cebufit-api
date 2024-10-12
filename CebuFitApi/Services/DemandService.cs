@@ -44,11 +44,11 @@ namespace CebuFitApi.Services
         public async Task AutoCalculateDemandAsync(Guid userId)
         {
             var foundUser = await _userRepository.GetById(userId);
-            if (foundUser != null)
+            var foundDemand = await _demandRepository.GetDemandAsync(userId);
+            if (foundUser != null && foundDemand != null)
             {
                 //Calculate demand
-                Demand demand = new Demand();
-                demand.Calories = (int?)((int?)(
+                foundDemand.Calories = (int?)((int?)(
                     (10 * decimal.ToInt32(foundUser.Weight))
                     + (6.25m * foundUser.Height)
                     - (5 * (DateTime.UtcNow.Year - foundUser.BirthDate.Year))
@@ -63,11 +63,11 @@ namespace CebuFitApi.Services
                         _ => 1.0 // Default case
                     }));
 
-                demand.CarbPercent = 40;
-                demand.FatPercent = 30;
-                demand.ProteinPercent = 30;
+                foundDemand.CarbPercent = 40;
+                foundDemand.FatPercent = 30;
+                foundDemand.ProteinPercent = 30;
 
-                await _demandRepository.UpdateDemandAsync(demand, userId);
+                await _demandRepository.UpdateDemandAsync(foundDemand, userId);
             }
         }
     }
