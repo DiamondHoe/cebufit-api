@@ -16,14 +16,16 @@ namespace CebuFitApi.Services
         private readonly IDayService _dayService;
         private readonly IMealService _mealService;
         private readonly ICategoryService _categoryService;
+        private readonly IDemandService _demandService;
         private readonly IMapper _mapper;
-        public UserService(IUserRepository userRepository, IStorageItemService storageItemService, IDayService dayService, IMealService mealService, ICategoryService categoryService, IMapper mapper)
+        public UserService(IUserRepository userRepository, IStorageItemService storageItemService, IDayService dayService, IMealService mealService, ICategoryService categoryService, IDemandService demandService, IMapper mapper)
         {
             _userRepository = userRepository;
             _storageItemService = storageItemService;
             _dayService = dayService;
             _mealService = mealService;
             _categoryService = categoryService;
+            _demandService = demandService;
             _mapper = mapper;
         }
         public async Task<User> AuthenticateAsync(UserLoginDTO user)
@@ -38,6 +40,11 @@ namespace CebuFitApi.Services
             var userEntity = _mapper.Map<User>(user);
             userEntity.Id = Guid.NewGuid();
             bool isRegistered = await _userRepository.CreateAsync(userEntity);
+            if (isRegistered
+                && (userEntity.Demand?.Calories != null || userEntity.Demand?.Calories != 0)
+                && (userEntity.Demand?.FatPercent != null || userEntity.Demand?.FatPercent != 0)
+                && (userEntity.Demand?.CarbPercent != null || userEntity.Demand?.CarbPercent != 0)
+                && (userEntity.Demand?.ProteinPercent != null || userEntity.Demand?.ProteinPercent != 0)) await _demandService.AutoCalculateDemandAsync(userEntity.Id);
             return (isRegistered, userEntity);
         }
         public Task<string> ResetPasswordAsync(string email)

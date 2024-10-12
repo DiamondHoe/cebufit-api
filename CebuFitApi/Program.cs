@@ -80,6 +80,9 @@ builder.Services.AddScoped<IStorageRepository, StorageRepository>();
 
 builder.Services.AddScoped<IRequestRepository, RequestRepository>();
 builder.Services.AddScoped<IRequestService, RequestService>();
+
+builder.Services.AddScoped<IDemandRepository, DemandRepository>();
+builder.Services.AddScoped<IDemandService, DemandService>();
 #endregion
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));

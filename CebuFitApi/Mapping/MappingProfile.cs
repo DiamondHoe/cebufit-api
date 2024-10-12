@@ -1,5 +1,6 @@
 using AutoMapper;
 using CebuFitApi.DTOs;
+using CebuFitApi.DTOs.Demand;
 using CebuFitApi.Models;
 
 namespace CebuFitApi.Mapping
@@ -146,6 +147,14 @@ namespace CebuFitApi.Mapping
             CreateMap<RequestProductWithDetailsDto, Request>();
             CreateMap<Request, RequestRecipeWithDetailsDto>();
             CreateMap<RequestRecipeWithDetailsDto, Request>();
+            #endregion
+
+            #region Demand
+            CreateMap<DemandDTO, Demand>();
+            CreateMap<Demand, DemandDTO>();
+
+            CreateMap<DemandUpdateDTO, Demand>();
+            CreateMap<Demand, DemandUpdateDTO>();
             #endregion
         }
     }
