@@ -150,11 +150,11 @@ namespace CebuFitApi.Mapping
             #endregion
 
             #region Demand
-            CreateMap<DemandDTO, Demand>();
-            CreateMap<Demand, DemandDTO>();
+            CreateMap<UserDemandDTO, UserDemand>();
+            CreateMap<UserDemand, UserDemandDTO>();
 
-            CreateMap<DemandUpdateDTO, Demand>();
-            CreateMap<Demand, DemandUpdateDTO>();
+            CreateMap<UserDemandUpdateDTO, UserDemand>();
+            CreateMap<UserDemand, UserDemandUpdateDTO>();
             #endregion
         }
     }

@@ -5,24 +5,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CebuFitApi.Repositories
 {
-    public class DemandRepository: IDemandRepository
+    public class UserDemandRepository: IUserDemandRepository
     {
         private readonly CebuFitApiDbContext _dbContext;
-        public DemandRepository(CebuFitApiDbContext dbContext)
+        public UserDemandRepository(CebuFitApiDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public async Task<Demand> GetDemandAsync(Guid userId)
+        public async Task<UserDemand> GetDemandAsync(Guid userId)
         {
-            var demand = await _dbContext.Demands
+            var demand = await _dbContext.UsersDemands
                 .FirstOrDefaultAsync(x => x.User.Id == userId);
             return demand;
         }
 
-        public async Task UpdateDemandAsync(Demand demand, Guid userId)
+        public async Task UpdateDemandAsync(UserDemand demand, Guid userId)
         {
-            var exisitingDemand = await _dbContext.Demands
+            var exisitingDemand = await _dbContext.UsersDemands
                 .FirstOrDefaultAsync(x => x.User.Id == userId);
             if (exisitingDemand != null)
             {

@@ -19,7 +19,7 @@ namespace CebuFitApi.Models
         public decimal Weight { get; set; }
         public DateTime BirthDate { get; set; }
         public PhysicalActivityLevelEnum PhysicalActivityLevel { get; set; } = PhysicalActivityLevelEnum.LightlyActive;
-        public Demand? Demand { get; set; }
+        public UserDemand? Demand { get; set; }
         public List<Product> Products { get; set; }
         public List<Category> Categories { get; set; }
         public List<StorageItem> StorageItems { get; set; }

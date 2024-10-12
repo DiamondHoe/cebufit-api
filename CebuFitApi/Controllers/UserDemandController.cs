@@ -8,16 +8,16 @@ namespace CebuFitApi.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("/api/demand")]
-    public class DemandController : Controller
+    [Route("/api/userDemand")]
+    public class UserDemandController : Controller
     {
         private readonly IMapper _mapper;
         private readonly IJwtTokenHelper _jwtTokenHelper;
-        private readonly IDemandService _demandService;
-        public DemandController(
+        private readonly IUserDemandService _demandService;
+        public UserDemandController(
             IMapper mapper,
             IJwtTokenHelper jwtTokenHelper,
-            IDemandService demandService)
+            IUserDemandService demandService)
         {
             _mapper = mapper;
             _jwtTokenHelper = jwtTokenHelper;
@@ -25,7 +25,7 @@ namespace CebuFitApi.Controllers
 
         }
         [HttpGet(Name = "GetDemand")]
-        public async Task<ActionResult<DemandDTO>> GetDemand()
+        public async Task<ActionResult<UserDemandDTO>> GetDemand()
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
 
@@ -41,7 +41,7 @@ namespace CebuFitApi.Controllers
             return NotFound("User not found");
         }
         [HttpPut(Name = "UpdateDemand")]
-        public async Task<ActionResult> UpdateDemand(DemandUpdateDTO demandUpdateDTO)
+        public async Task<ActionResult> UpdateDemand(UserDemandUpdateDTO demandUpdateDTO)
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
             if (userIdClaim != Guid.Empty)

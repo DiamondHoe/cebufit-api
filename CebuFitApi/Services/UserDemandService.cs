@@ -8,15 +8,15 @@ using CebuFitApi.Repositories;
 
 namespace CebuFitApi.Services
 {
-    public class DemandService : IDemandService
+    public class UserDemandService : IUserDemandService
     {
         private readonly IMapper _mapper;
-        private readonly IDemandRepository _demandRepository;
+        private readonly IUserDemandRepository _demandRepository;
         private readonly IUserRepository _userRepository;
 
-        public DemandService(
+        public UserDemandService(
                 IMapper mapper,
-                IDemandRepository demandRepository,
+                IUserDemandRepository demandRepository,
                 IUserRepository userRepository)
         {
             _mapper = mapper;
@@ -24,16 +24,16 @@ namespace CebuFitApi.Services
             _userRepository = userRepository;
         }
 
-        public async Task<DemandDTO> GetDemandAsync(Guid userId)
+        public async Task<UserDemandDTO> GetDemandAsync(Guid userId)
         {
             var demandEntity = await _demandRepository.GetDemandAsync(userId);
-            var demandDTO = _mapper.Map<DemandDTO>(demandEntity);
+            var demandDTO = _mapper.Map<UserDemandDTO>(demandEntity);
             return demandDTO;
         }
 
-        public async Task UpdateDemandAsync(DemandUpdateDTO demandUpdateDTO, Guid userId)
+        public async Task UpdateDemandAsync(UserDemandUpdateDTO demandUpdateDTO, Guid userId)
         {
-            var demand = _mapper.Map<Demand>(demandUpdateDTO);
+            var demand = _mapper.Map<UserDemand>(demandUpdateDTO);
 
             if (await _userRepository.GetById(userId) != null)
             {

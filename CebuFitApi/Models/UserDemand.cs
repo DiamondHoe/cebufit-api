@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CebuFitApi.Models
 {
-    public class Demand : BaseModel
+    public class UserDemand : BaseModel
     {
-        public Demand()
+        public UserDemand()
         {
 
         }
@@ -24,13 +24,13 @@ namespace CebuFitApi.Models
         public User? User { get; set; }
         public Guid UserId { get; set; }
     }
-    public class DemandConfiguration : IEntityTypeConfiguration<Demand>
+    public class UserDemandConfiguration : IEntityTypeConfiguration<UserDemand>
     {
-        public void Configure(EntityTypeBuilder<Demand> builder)
+        public void Configure(EntityTypeBuilder<UserDemand> builder)
         {
             builder.HasOne(demand => demand.User)
                 .WithOne(user => user.Demand)
-                .HasForeignKey<Demand>(demand => demand.UserId);
+                .HasForeignKey<UserDemand>(demand => demand.UserId);
         }
     }
 }

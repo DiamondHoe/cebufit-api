@@ -33,7 +33,7 @@ namespace CebuFitApi.Data
             modelBuilder.ApplyConfiguration(new RecipeConfiguration());
 
             modelBuilder.ApplyConfiguration(new RequestConfiguration());
-            modelBuilder.ApplyConfiguration(new DemandConfiguration());
+            modelBuilder.ApplyConfiguration(new UserDemandConfiguration());
         }
         public DbSet<User> Users { get; set; }
         public DbSet<Category> Categories { get; set; }
@@ -47,6 +47,6 @@ namespace CebuFitApi.Data
         public DbSet<Day> Days { get; set; }
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<Request> Requests { get; set; }
-        public DbSet<Demand> Demands { get; set; }
+        public DbSet<UserDemand> UsersDemands { get; set; }
     }
 }

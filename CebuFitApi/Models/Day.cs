@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using CebuFitApi.Migrations;
 
 namespace CebuFitApi.Models
 {

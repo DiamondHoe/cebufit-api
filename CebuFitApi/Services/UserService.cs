@@ -16,9 +16,9 @@ namespace CebuFitApi.Services
         private readonly IDayService _dayService;
         private readonly IMealService _mealService;
         private readonly ICategoryService _categoryService;
-        private readonly IDemandService _demandService;
+        private readonly IUserDemandService _demandService;
         private readonly IMapper _mapper;
-        public UserService(IUserRepository userRepository, IStorageItemService storageItemService, IDayService dayService, IMealService mealService, ICategoryService categoryService, IDemandService demandService, IMapper mapper)
+        public UserService(IUserRepository userRepository, IStorageItemService storageItemService, IDayService dayService, IMealService mealService, ICategoryService categoryService, IUserDemandService demandService, IMapper mapper)
         {
             _userRepository = userRepository;
             _storageItemService = storageItemService;
