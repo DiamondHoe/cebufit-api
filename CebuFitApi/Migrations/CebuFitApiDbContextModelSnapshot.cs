@@ -221,6 +221,9 @@ namespace CebuFitApi.Migrations
                     b.Property<bool>("Packaged")
                         .HasColumnType("boolean");
 
+                    b.Property<Guid>("ProductTypeId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("UnitWeight")
                         .HasColumnType("integer");
 
@@ -231,9 +234,31 @@ namespace CebuFitApi.Migrations
 
                     b.HasIndex("CategoryId");
 
+                    b.HasIndex("ProductTypeId");
+
                     b.HasIndex("UserId");
 
                     b.ToTable("Product", (string)null);
+                });
+
+            modelBuilder.Entity("CebuFitApi.Models.ProductType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ProductType");
                 });
 
             modelBuilder.Entity("CebuFitApi.Models.Recipe", b =>
@@ -494,11 +519,28 @@ namespace CebuFitApi.Migrations
                         .WithMany("Products")
                         .HasForeignKey("CategoryId");
 
+                    b.HasOne("CebuFitApi.Models.ProductType", "ProductType")
+                        .WithMany("Products")
+                        .HasForeignKey("ProductTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("CebuFitApi.Models.User", "User")
                         .WithMany("Products")
                         .HasForeignKey("UserId");
 
                     b.Navigation("Category");
+
+                    b.Navigation("ProductType");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("CebuFitApi.Models.ProductType", b =>
+                {
+                    b.HasOne("CebuFitApi.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
@@ -580,6 +622,11 @@ namespace CebuFitApi.Migrations
                     b.Navigation("Macro");
 
                     b.Navigation("StorageItems");
+                });
+
+            modelBuilder.Entity("CebuFitApi.Models.ProductType", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("CebuFitApi.Models.Recipe", b =>
