@@ -17,6 +17,7 @@ namespace CebuFitApi.Models
         public bool IsPublic { get; set; }
         public bool Packaged { get; set; }
         public int UnitWeight { get; set; }
+        public ProductType ProductType { get; set; }
         public Category? Category { get; set; }
         public Macro? Macro { get; set; }
         public List<Ingredient> Ingredients { get; set; } = new();
