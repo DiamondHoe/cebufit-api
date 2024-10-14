@@ -4,10 +4,10 @@ namespace CebuFitApi.Interfaces
 {
     public interface IProductTypeService
     {
-        Task<List<ProductTypeCreateDto>> GetAllCategoriesAsync(Guid userIdClaim);
-        Task<ProductTypeDto> GetCategoryByIdAsync(Guid categoryId, Guid userIdClaim);
-        Task CreateCategoryAsync(ProductTypeCreateDto productTypeDto, Guid userIdClaim);
-        Task UpdateCategoryAsync(ProductTypeDto productTypeDto , Guid userIdClaim);
-        Task DeleteCategoryAsync(Guid categoryId, Guid userIdClaim);
+        Task<List<ProductTypeDto>> GetAllProductTypesAsync(Guid userIdClaim);
+        Task<ProductTypeDto?> GetProductTypeByIdAsync(Guid productTypeId, Guid userIdClaim);
+        Task CreateProductTypeAsync(ProductTypeCreateDto productTypeDto, Guid userIdClaim);
+        Task UpdateProductTypeAsync(ProductTypeDto productTypeDto , Guid userIdClaim);
+        Task DeleteProductTypeAsync(Guid productTypeId, Guid userIdClaim);
     }
 }

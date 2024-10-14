@@ -258,7 +258,7 @@ namespace CebuFitApi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ProductType");
+                    b.ToTable("ProductTypes");
                 });
 
             modelBuilder.Entity("CebuFitApi.Models.Recipe", b =>
