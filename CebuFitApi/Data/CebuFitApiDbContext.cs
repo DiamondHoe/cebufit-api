@@ -27,9 +27,7 @@ namespace CebuFitApi.Data
             modelBuilder.ApplyConfiguration(new ProductTypeConfiguration());
             modelBuilder.ApplyConfiguration(new StorageItemConfiguration());
             modelBuilder.ApplyConfiguration(new IngredientConfiguration());
-
-            modelBuilder.ApplyConfiguration(new StorageConfiguration());
-            modelBuilder.ApplyConfiguration(new CatalogueConfiguration());
+            
             modelBuilder.ApplyConfiguration(new DayConfiguration());
             modelBuilder.ApplyConfiguration(new RecipeConfiguration());
 
@@ -44,8 +42,6 @@ namespace CebuFitApi.Data
         public DbSet<ProductType> ProductTypes { get; set; }
         public DbSet<StorageItem> StorageItems { get; set; }
         public DbSet<Ingredient> Ingredients { get; set; }
-        public DbSet<Storage> Storages { get; set; }
-        public DbSet<Catalogue> Catalogues { get; set; }
         public DbSet<Day> Days { get; set; }
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<Request> Requests { get; set; }

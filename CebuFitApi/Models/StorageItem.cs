@@ -18,7 +18,6 @@ namespace CebuFitApi.Models
         public decimal? BoughtWeight { get; set; }
         public decimal? ActualQuantity { get; set; }
         public decimal? ActualWeight { get; set; }
-        public Storage? Storage { get; set; }
         public Product Product { get; set; }
     }
 
