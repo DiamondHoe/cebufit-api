@@ -18,7 +18,7 @@ namespace CebuFitApi.Models
         public decimal? BoughtWeight { get; set; }
         public decimal? ActualQuantity { get; set; }
         public decimal? ActualWeight { get; set; }
-        public Product Product { get; set; }
+        public Product Product { get; set; } = new Product();
     }
 
     public class StorageItemConfiguration : IEntityTypeConfiguration<StorageItem>

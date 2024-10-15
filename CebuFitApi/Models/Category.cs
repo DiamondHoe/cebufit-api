@@ -12,7 +12,7 @@ namespace CebuFitApi.Models
         }
         public User? User { get; set; }
         public string? Name { get; set; }
-        public List<Product> Products { get; set; }
+        public List<Product> Products { get; set; } = new List<Product>();
     }
 
     public class CategoryConfiguration : IEntityTypeConfiguration<Category>

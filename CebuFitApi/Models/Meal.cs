@@ -16,8 +16,8 @@ namespace CebuFitApi.Models
         public bool Eaten { get; set; }
         public bool Prepared { get; set; }
         public MealTimesEnum MealTime { get; set; }
-        public List<Ingredient> Ingredients { get; set; } = new();
-        public List<StorageItem> StorageItems { get; set; } = new();
+        public List<Ingredient> Ingredients { get; set; } = new List<Ingredient>();
+        public List<StorageItem> StorageItems { get; set; } = new List<StorageItem>();
         public Day? Day { get; set; }
     }
     public class MealConfiguration : IEntityTypeConfiguration<Meal>

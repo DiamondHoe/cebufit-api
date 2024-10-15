@@ -13,7 +13,7 @@ namespace CebuFitApi.Models
         public decimal? SaturatedFattyAcid { get; set; }
         public decimal? Protein { get; set; }
         public decimal? Salt { get; set; }
-        public Product Product { get; set; }
+        public Product Product { get; set; } = new Product();
     }
 
     public class MacroConfiguration : IEntityTypeConfiguration<Macro>

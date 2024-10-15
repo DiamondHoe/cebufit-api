@@ -20,8 +20,8 @@ namespace CebuFitApi.Models
         public ProductType ProductType { get; set; }
         public Category? Category { get; set; }
         public Macro? Macro { get; set; }
-        public List<Ingredient> Ingredients { get; set; } = new();
-        public List<StorageItem> StorageItems { get; set; } = new();
+        public List<Ingredient> Ingredients { get; set; } = new List<Ingredient>();
+        public List<StorageItem> StorageItems { get; set; } = new List<StorageItem>();
 
     }
 
