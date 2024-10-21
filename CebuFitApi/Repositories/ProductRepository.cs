@@ -20,24 +20,28 @@ namespace CebuFitApi.Repositories
                 DataType.Private => await _dbContext.Products
                 .Where(x => x.User.Id == userIdClaim && x.IsPublic == false)
                 .Include(p => p.Macro)
+                .Include(pt => pt.ProductType)
                 .Include(c => c.Category)
                 .ToListAsync(),
 
                 DataType.Public => await _dbContext.Products
                 .Where(x => x.IsPublic == true)
                 .Include(p => p.Macro)
+                .Include(pt => pt.ProductType)
                 .Include(c => c.Category)
                 .ToListAsync(),
 
                 DataType.Both => await _dbContext.Products
                 .Where(x => x.User.Id == userIdClaim || x.IsPublic == true)
                 .Include(p => p.Macro)
+                .Include(pt => pt.ProductType)
                 .Include(c => c.Category)
                 .ToListAsync(),
 
                 _ => await _dbContext.Products
                 .Where(x => x.User.Id == userIdClaim)
                 .Include(p => p.Macro)
+                .Include(pt => pt.ProductType)
                 .Include(c => c.Category)
                 .ToListAsync(),
             };

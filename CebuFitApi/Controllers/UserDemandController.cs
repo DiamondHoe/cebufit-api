@@ -60,12 +60,10 @@ namespace CebuFitApi.Controllers
         public async Task<ActionResult> AutoCalculateDemand()
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
-            if (userIdClaim != Guid.Empty)
-            {
-                await _demandService.AutoCalculateDemandAsync(userIdClaim);
-                return Ok();
-            }
-            return NotFound("User not found");
+            if (userIdClaim == Guid.Empty) return NotFound("User not found");
+            
+            await _demandService.AutoCalculateDemandAsync(userIdClaim);
+            return Ok();
         }
     }
 }

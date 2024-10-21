@@ -5,8 +5,8 @@ namespace CebuFitApi.Helpers
 {
     public static class DemandHelper
     {
-        public static void CountDayDemand(DayWithMealsDTO day)
-        {
+        public static void CountDayDemand(DayWithMealsDTO? day)
+        {   
             foreach (var meal in day.Meals)
             {
                 foreach(var ingredient in meal.Ingredients)
