@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CebuFitApi.DTOs;
 using CebuFitApi.DTOs.Demand;
+using CebuFitApi.Helpers;
 using CebuFitApi.Helpers.Enums;
 using CebuFitApi.Interfaces;
 using CebuFitApi.Models;
@@ -41,34 +42,16 @@ namespace CebuFitApi.Services
             }
         }
 
-        public async Task AutoCalculateDemandAsync(Guid userId)
+        public async Task AutoCalculateDemandAsync(Guid userId, UserDemandCreateDTO? demandCreateDTO = null)
         {
             var foundUser = await _userRepository.GetById(userId);
+            if (foundUser == null) return;
+
             var foundDemand = await _demandRepository.GetDemandAsync(userId);
-            if (foundUser != null && foundDemand != null)
-            {
-                //Calculate demand
-                foundDemand.Calories = (int?)((int?)(
-                    (10 * decimal.ToInt32(foundUser.Weight))
-                    + (6.25m * foundUser.Height)
-                    - (5 * (DateTime.UtcNow.Year - foundUser.BirthDate.Year))
-                    + (foundUser.Gender ? -161 : 5))
-                    * (foundUser.PhysicalActivityLevel switch
-                    {
-                        PhysicalActivityLevelEnum.Sedentary => 1.2,
-                        PhysicalActivityLevelEnum.LightlyActive => 1.375,
-                        PhysicalActivityLevelEnum.ModeratelyActive => 1.55,
-                        PhysicalActivityLevelEnum.VeryActive => 1.725,
-                        PhysicalActivityLevelEnum.SuperActive => 1.9,
-                        _ => 1.0 // Default case
-                    }));
+            if (foundDemand == null) return;
 
-                foundDemand.CarbPercent = 40;
-                foundDemand.FatPercent = 30;
-                foundDemand.ProteinPercent = 30;
-
-                await _demandRepository.UpdateDemandAsync(foundDemand, userId);
-            }
+            foundDemand = DemandHelper.CalculateDemand(foundUser);
+            await _demandRepository.UpdateDemandAsync(foundDemand, userId);
         }
     }
 }

@@ -20,6 +20,12 @@ namespace CebuFitApi.Repositories
             return demand;
         }
 
+        public async Task AddDemandAsync(UserDemand demand)
+        {
+            await _dbContext.UsersDemands.AddAsync(demand);
+            await _dbContext.SaveChangesAsync();
+        }
+
         public async Task UpdateDemandAsync(UserDemand demand, Guid userId)
         {
             var exisitingDemand = await _dbContext.UsersDemands

@@ -14,6 +14,6 @@ namespace CebuFitApi.DTOs
         public decimal Weight { get; set; }
         public DateTime BirthDate { get; set; }
         public PhysicalActivityLevelEnum PhysicalActivityLevel { get; set; } = PhysicalActivityLevelEnum.LightlyActive;
-        public UserDemandUpdateDTO? Demand { get; set; }
+        public UserDemandCreateDTO? Demand { get; set; }
     }
 }

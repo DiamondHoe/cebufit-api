@@ -6,6 +6,6 @@ namespace CebuFitApi.Interfaces
     {
         Task<UserDemandDTO?> GetDemandAsync(Guid userId);
         Task UpdateDemandAsync(UserDemandUpdateDTO demandUpdateDTO, Guid userId);
-        Task AutoCalculateDemandAsync(Guid userId);
+        Task AutoCalculateDemandAsync(Guid userId, UserDemandCreateDTO? demandCreateDTO = null);
     }
 }
