@@ -40,6 +40,7 @@ namespace CebuFitApi.Services
             var userEntity = _mapper.Map<User>(user);
             userEntity.Id = Guid.NewGuid();
             bool isRegistered = await _userRepository.CreateAsync(userEntity);
+            userEntity.Demand = new UserDemand();
             if (isRegistered
                 && (userEntity.Demand?.Calories != null || userEntity.Demand?.Calories != 0)
                 && (userEntity.Demand?.FatPercent != null || userEntity.Demand?.FatPercent != 0)

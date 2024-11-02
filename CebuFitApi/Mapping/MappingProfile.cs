@@ -101,8 +101,8 @@ namespace CebuFitApi.Mapping
             CreateMap<StorageItem, StorageItemCreateDTO>();
             CreateMap<StorageItemWithProductDTO, StorageItem>();
             CreateMap<StorageItem, StorageItemWithProductDTO>()
-                .ForMember(dest => dest.Product, opt => opt.MapFrom(src => src.Product))
-                .AfterMap((src, dest, context) => dest.Product.Category = context.Mapper.Map<CategoryDTO>(src.Product.Category));
+                .ForMember(dest => dest.Product, opt => opt.MapFrom(src => src.Product));
+                // .AfterMap((src, dest, context) => dest.Product.Category = context.Mapper.Map<CategoryDTO>(src.Product.Category));
             CreateMap<StorageItemPrepareDTO, StorageItem>();
             CreateMap<StorageItem, StorageItemPrepareDTO>();
             CreateMap<StorageItemPrepareDTO, StorageItem>();

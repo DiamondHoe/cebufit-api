@@ -10,6 +10,6 @@
         public decimal? BoughtWeight { get; set; }
         public decimal? ActualQuantity { get; set; }
         public decimal? ActualWeight { get; set; }
-        public ProductWithDetailsDTO Product { get; set; }
+        public ProductWithMacroDTO Product { get; set; }
     }
 }
