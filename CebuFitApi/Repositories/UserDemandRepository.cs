@@ -13,10 +13,10 @@ namespace CebuFitApi.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<UserDemand> GetDemandAsync(Guid userId)
+        public async Task<UserDemand?> GetDemandAsync(Guid userId)
         {
             var demand = await _dbContext.UsersDemands
-                .FirstOrDefaultAsync(x => x.User.Id == userId);
+                .FirstOrDefaultAsync(x => x.User != null && x.User.Id == userId);
             return demand;
         }
 

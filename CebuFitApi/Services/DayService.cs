@@ -72,7 +72,8 @@ namespace CebuFitApi.Services
             var dayEntity = await _dayRepository.GetByDateWithMealsAsync(date, userIdClaim);
             var dayDto = _mapper.Map<DayWithMealsDTO>(dayEntity);
             var userDemand = await _userDemandService.GetDemandAsync(userIdClaim);
-
+            
+            if(dayDto == null) return dayDto;
             DemandHelper.CountDayDemand(dayDto);
             dayDto.Demand.Calories = userDemand.Calories;
             dayDto.Demand.Carb = userDemand.Carb;
