@@ -41,9 +41,12 @@ namespace CebuFitApi.Controllers
             var (registerSuccess, userEntity) = await _userService.CreateAsync(registerUser);
             if (!registerSuccess) return Conflict("Name is already taken");
 
-            var token = await _jwtTokenHelper.GenerateJwtToken(userEntity, true);
-            return Ok(new { Token = token });
-            
+            if (isRegistered)
+            {
+                var token = await _jwtTokenHelper.GenerateJwtToken(userEntity, true);
+                return Ok(new { Token = token });
+            }
+            return Conflict("Name is already taken");
         }
 
         [Authorize]
