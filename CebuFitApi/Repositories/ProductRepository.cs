@@ -20,25 +20,28 @@ namespace CebuFitApi.Repositories
                 DataType.Private => await _dbContext.Products
                 .Where(x => x.User.Id == userIdClaim && x.IsPublic == false)
                 .Include(p => p.Macro)
+                .Include(pt => pt.ProductType)
                 .Include(c => c.Category)
                 .ToListAsync(),
 
                 DataType.Public => await _dbContext.Products
                 .Where(x => x.IsPublic == true)
                 .Include(p => p.Macro)
+                .Include(pt => pt.ProductType)
                 .Include(c => c.Category)
                 .ToListAsync(),
 
                 DataType.Both => await _dbContext.Products
-                .Where(x => x.User.Id == userIdClaim)
-                .Where(x => x.IsPublic == true)
+                .Where(x => x.User.Id == userIdClaim || x.IsPublic == true)
                 .Include(p => p.Macro)
+                .Include(pt => pt.ProductType)
                 .Include(c => c.Category)
                 .ToListAsync(),
 
                 _ => await _dbContext.Products
                 .Where(x => x.User.Id == userIdClaim)
                 .Include(p => p.Macro)
+                .Include(pt => pt.ProductType)
                 .Include(c => c.Category)
                 .ToListAsync(),
             };
@@ -78,10 +81,9 @@ namespace CebuFitApi.Repositories
         public async Task<Product> GetByIdAsync(Guid productId, Guid userIdClaim)
         {
             var product = await _dbContext.Products
-                .Where(x => x.User.Id == userIdClaim && x.Id == productId)
                 .Include(c => c.Category)
-                .FirstAsync();
-
+                .FirstOrDefaultAsync(x => x.User.Id == userIdClaim && x.Id == productId);
+ 
             return product;
         }
 
@@ -145,10 +147,10 @@ namespace CebuFitApi.Repositories
             }
         }
 
-        public async Task DeleteAsync(Guid id, Guid userIdClaim)
+        public async Task DeleteAsync(Guid id)
         {
             var productToDelete = await _dbContext.Products
-                .Where(p => p.Id == id && p.User.Id == userIdClaim)
+                .Where(p => p.Id == id)
                 .FirstAsync();
             if (productToDelete != null)
             {

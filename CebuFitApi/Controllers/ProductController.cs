@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using CebuFitApi.DTOs;
-using CebuFitApi.Helpers;
 using CebuFitApi.Helpers.Enums;
 using CebuFitApi.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -47,7 +46,8 @@ namespace CebuFitApi.Controllers
         }
 
         [HttpGet("withMacro/", Name = "GetProductsWithMacro")]
-        public async Task<ActionResult<List<ProductWithMacroDTO>>> GetAllWithMacro(DataType dataType = DataType.Both)
+        public async Task<ActionResult<List<ProductWithMacroDTO>>> GetAllWithMacro(
+            [FromQuery] DataType dataType = DataType.Both)
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
 
@@ -81,7 +81,8 @@ namespace CebuFitApi.Controllers
         }
 
         [HttpGet("withDetails/", Name = "GetProductsWithDetails")]
-        public async Task<ActionResult<List<ProductWithDetailsDTO>>> GetAllWithDetails(DataType dataType = DataType.Both)
+        public async Task<ActionResult<List<ProductWithDetailsDTO>>> GetAllWithDetails(
+            [FromQuery] DataType dataType = DataType.Both)
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
 
@@ -209,7 +210,12 @@ namespace CebuFitApi.Controllers
         public async Task<ActionResult> DeleteProduct(Guid productId)
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
-
+            var userRoleClaim = _jwtTokenHelper.GetUserRole();
+            if(userRoleClaim == RoleEnum.Admin)
+            {
+                await _productService.DeleteProductAsync(productId);
+                return Ok();
+            }
             if (userIdClaim != Guid.Empty)
             {
                 var existingProduct = await _productService.GetProductByIdAsync(productId, userIdClaim);
@@ -218,8 +224,12 @@ namespace CebuFitApi.Controllers
                 {
                     return NotFound();
                 }
+                if (existingProduct.IsPublic)
+                {
+                    return BadRequest("Cannot delete public product.");
+                }
 
-                await _productService.DeleteProductAsync(productId, userIdClaim);
+                await _productService.DeleteProductAsync(productId);
 
                 return Ok();
             }

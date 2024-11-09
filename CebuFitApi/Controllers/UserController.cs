@@ -1,10 +1,7 @@
 ﻿using CebuFitApi.DTOs;
 using CebuFitApi.Interfaces;
-using CebuFitApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Mail;
-using System.Net;
 
 namespace CebuFitApi.Controllers
 {
@@ -36,14 +33,13 @@ namespace CebuFitApi.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult> Register(UserCreateDTO registerUser)
+        public async Task<ActionResult> Register(UserCreateDTO? registerUser)
         {
-            if (registerUser == null)
-            {
-                return BadRequest();
-            }
+            if (registerUser == null) return BadRequest();
             registerUser.Password = BCrypt.Net.BCrypt.HashPassword(registerUser.Password);
-            var (isRegistered, userEntity) = await _userService.CreateAsync(registerUser);
+            
+            var (registerSuccess, userEntity) = await _userService.CreateAsync(registerUser);
+            if (!registerSuccess) return Conflict("Name is already taken");
 
             if (isRegistered)
             {

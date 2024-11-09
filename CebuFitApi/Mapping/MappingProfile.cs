@@ -1,5 +1,6 @@
-﻿using AutoMapper;
+using AutoMapper;
 using CebuFitApi.DTOs;
+using CebuFitApi.DTOs.Demand;
 using CebuFitApi.Models;
 
 namespace CebuFitApi.Mapping
@@ -15,6 +16,8 @@ namespace CebuFitApi.Mapping
             CreateMap<User, UserCreateDTO>();
             CreateMap<UserLoginDTO, User>();
             CreateMap<User, UserLoginDTO>();
+            CreateMap<UserPublicDto, User>();
+            CreateMap<User, UserPublicDto>();
             #endregion
 
             #region Meal
@@ -84,6 +87,13 @@ namespace CebuFitApi.Mapping
                 .ForMember(dest => dest.Macro, opt => opt.MapFrom(src => src.Macro));
             #endregion
 
+            #region ProductType
+            CreateMap<ProductTypeDto, ProductType>();
+            CreateMap<ProductType, ProductTypeDto>();
+            CreateMap<ProductType, ProductTypeCreateDto>();
+            CreateMap<ProductTypeCreateDto, ProductType>();
+            #endregion
+            
             #region StorageItem
             CreateMap<StorageItemDTO, StorageItem>();
             CreateMap<StorageItem, StorageItemDTO>();
@@ -91,8 +101,8 @@ namespace CebuFitApi.Mapping
             CreateMap<StorageItem, StorageItemCreateDTO>();
             CreateMap<StorageItemWithProductDTO, StorageItem>();
             CreateMap<StorageItem, StorageItemWithProductDTO>()
-                .ForMember(dest => dest.Product, opt => opt.MapFrom(src => src.Product))
-                .AfterMap((src, dest, context) => dest.Product.Category = context.Mapper.Map<CategoryDTO>(src.Product.Category));
+                .ForMember(dest => dest.Product, opt => opt.MapFrom(src => src.Product));
+                // .AfterMap((src, dest, context) => dest.Product.Category = context.Mapper.Map<CategoryDTO>(src.Product.Category));
             CreateMap<StorageItemPrepareDTO, StorageItem>();
             CreateMap<StorageItem, StorageItemPrepareDTO>();
             CreateMap<StorageItemPrepareDTO, StorageItem>();
@@ -130,6 +140,31 @@ namespace CebuFitApi.Mapping
                         ingredient.Product = context.Mapper.Map<ProductWithMacroDTO>(src.Ingredients.FirstOrDefault(i => i.Id == ingredient.Id)?.Product);
                     }
                 });
+            #endregion
+
+            #region Request
+            CreateMap<RequestCreateDto, Request>();
+            CreateMap<Request, RequestCreateDto>();
+            CreateMap<RequestDto, Request>();
+            CreateMap<Request, RequestDto>()
+                .ForMember(dest => dest.Requester, opt => opt.MapFrom(src => src.Requester.Id))
+                .ForMember(dest => dest.Approver, opt => opt.MapFrom(src => src.Approver == null ? (Guid?)null : src.Approver.Id));
+            CreateMap<Request, RequestProductWithDetailsDto>();
+                // .ForMember(dest => dest.RequestedProduct, opt => object);
+            CreateMap<RequestProductWithDetailsDto, Request>();
+            CreateMap<Request, RequestRecipeWithDetailsDto>();
+            CreateMap<RequestRecipeWithDetailsDto, Request>();
+            #endregion
+
+            #region Demand
+            CreateMap<UserDemandDTO, UserDemand>();
+            CreateMap<UserDemand, UserDemandDTO>();
+
+            CreateMap<UserDemandCreateDTO, UserDemand>();
+            CreateMap<UserDemand, UserDemandCreateDTO>();
+
+            CreateMap<UserDemandUpdateDTO, UserDemand>();
+            CreateMap<UserDemand, UserDemandUpdateDTO>();
             #endregion
         }
     }

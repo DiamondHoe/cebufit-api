@@ -9,12 +9,19 @@ namespace CebuFitApi.Services
     public class ProductService : IProductService
     {
         private readonly IProductRepository _productRepository;
+        private readonly IProductTypeRepository _productTypeRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-        public ProductService(IMapper mapper, IProductRepository productRepository, ICategoryRepository categoryRepository, IUserRepository userRepository)
+        public ProductService(
+            IMapper mapper,
+            IProductRepository productRepository,
+            IProductTypeRepository productTypeRepository,
+            ICategoryRepository categoryRepository,
+            IUserRepository userRepository)
         {
             _productRepository = productRepository;
+            _productTypeRepository = productTypeRepository;
             _categoryRepository = categoryRepository;
             _userRepository = userRepository;
             _mapper = mapper;
@@ -77,11 +84,13 @@ namespace CebuFitApi.Services
             product.Macro = macro;
 
             var foundUser = await _userRepository.GetById(userIdClaim);
-            var category = await _categoryRepository.GetByIdAsync(productDTO.CategoryId, userIdClaim);
+            var productType = await _productTypeRepository.GetByIdAsync(productDTO.ProductTypeId, userIdClaim);
+            var category = await _categoryRepository.GetByIdAsync(productDTO.CategoryId.GetValueOrDefault(), userIdClaim);
 
             if (foundUser != null && category != null)
             {
                 product.User = foundUser;
+                product.ProductType = _mapper.Map<ProductType>(productType);
                 product.Category = _mapper.Map<Category>(category);
 
                 await _productRepository.CreateAsync(product, userIdClaim);
@@ -92,7 +101,7 @@ namespace CebuFitApi.Services
             var product = _mapper.Map<Product>(productDTO);
             var macro = _mapper.Map<Macro>(productDTO.Macro);
             var foundUser = await _userRepository.GetById(userIdClaim);
-            var category = await _categoryRepository.GetByIdAsync(productDTO.CategoryId, userIdClaim);
+            var category = await _categoryRepository.GetByIdAsync(productDTO.CategoryId.GetValueOrDefault(), userIdClaim);
 
             if (foundUser != null && category != null)
             {
@@ -102,9 +111,9 @@ namespace CebuFitApi.Services
                 await _productRepository.UpdateAsync(product, userIdClaim);
             }
         }
-        public async Task DeleteProductAsync(Guid productId, Guid userIdClaim)
+        public async Task DeleteProductAsync(Guid productId)
         {
-            await _productRepository.DeleteAsync(productId, userIdClaim);
+            await _productRepository.DeleteAsync(productId);
         }
     }
 }

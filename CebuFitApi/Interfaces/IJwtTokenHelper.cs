@@ -1,4 +1,5 @@
-﻿using CebuFitApi.Models;
+﻿using CebuFitApi.Helpers.Enums;
+using CebuFitApi.Models;
 
 namespace CebuFitApi.Interfaces
 {
@@ -6,6 +7,6 @@ namespace CebuFitApi.Interfaces
     {
         public Task<string> GenerateJwtToken(User user, bool? expire);
         public Guid GetCurrentUserId();
-
+        public RoleEnum? GetUserRole();
     }
 }

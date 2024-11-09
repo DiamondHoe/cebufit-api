@@ -1,9 +1,5 @@
 ﻿using CebuFitApi.DTOs;
 using CebuFitApi.Helpers.Enums;
-using CebuFitApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 public interface IProductService
 {
@@ -17,5 +13,5 @@ public interface IProductService
     Task<ProductWithDetailsDTO> GetProductByIdWithDetailsAsync(Guid productId, Guid userIdClaim);
     Task CreateProductAsync(ProductCreateDTO product, Guid userIdClaim);
     Task UpdateProductAsync(ProductUpdateDTO product, Guid userIdClaim);
-    Task DeleteProductAsync(Guid productId, Guid userIdClaim);
+    Task DeleteProductAsync(Guid productId);
 }

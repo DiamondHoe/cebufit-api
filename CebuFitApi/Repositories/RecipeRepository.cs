@@ -1,4 +1,5 @@
 ﻿using CebuFitApi.Data;
+using CebuFitApi.Helpers.Enums;
 using CebuFitApi.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,18 +20,50 @@ namespace CebuFitApi.Repositories
                 .ToListAsync();
             return recipes;
         }
-        public async Task<List<Recipe>> GetAllWithDetailsAsync(Guid userIdClaim)
+        public async Task<List<Recipe>> GetAllWithDetailsAsync(Guid userIdClaim, DataType dataType)
         {
-            var recipes = await _dbContext.Recipes
-                .Where(x => x.User.Id == userIdClaim)
-                .Include(x => x.Ingredients)
+            return dataType switch
+            {
+                DataType.Private => await _dbContext.Recipes
+                    .Where(x => x.User.Id == userIdClaim && x.IsPublic == false)
+                    .Include(x => x.Ingredients)
                     .ThenInclude(x => x.Product)
                     .ThenInclude(x => x.Category)
-                .Include(x => x.Ingredients)
+                    .Include(x => x.Ingredients)
                     .ThenInclude(x => x.Product)
                     .ThenInclude(x => x.Macro)
-                .ToListAsync();
-            return recipes;
+                    .ToListAsync(),
+
+                DataType.Public => await _dbContext.Recipes
+                    .Where(x => x.IsPublic == true)
+                    .Include(x => x.Ingredients)
+                    .ThenInclude(x => x.Product)
+                    .ThenInclude(x => x.Category)
+                    .Include(x => x.Ingredients)
+                    .ThenInclude(x => x.Product)
+                    .ThenInclude(x => x.Macro)
+                    .ToListAsync(),
+
+                DataType.Both => await _dbContext.Recipes
+                    .Where(x => x.User.Id == userIdClaim || x.IsPublic == true)
+                    .Include(x => x.Ingredients)
+                    .ThenInclude(x => x.Product)
+                    .ThenInclude(x => x.Category)
+                    .Include(x => x.Ingredients)
+                    .ThenInclude(x => x.Product)
+                    .ThenInclude(x => x.Macro)
+                    .ToListAsync(),
+
+                _ => await _dbContext.Recipes
+                    .Where(x => x.User.Id == userIdClaim)
+                    .Include(x => x.Ingredients)
+                    .ThenInclude(x => x.Product)
+                    .ThenInclude(x => x.Category)
+                    .Include(x => x.Ingredients)
+                    .ThenInclude(x => x.Product)
+                    .ThenInclude(x => x.Macro)
+                    .ToListAsync(),
+            };
         }
         public async Task<Recipe> GetByIdAsync(Guid id, Guid userIdClaim)
         {

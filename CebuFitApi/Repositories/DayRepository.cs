@@ -62,6 +62,26 @@ namespace CebuFitApi.Repositories
                  .FirstAsync();
             return day;
         }
+        
+        public async Task<Day?> GetByDateWithMealsAsync(DateTime date, Guid userIdClaim)
+        {
+            var day = await _dbContext.Days
+                .Where(x => x.User.Id == userIdClaim && x.Date.ToLocalTime().Date == date.ToLocalTime().Date)
+                .Include(d => d.Meals)
+                    .ThenInclude(m => m.Ingredients)
+                    .ThenInclude(i => i.Product)
+                    .ThenInclude(p => p.ProductType)
+                .Include(d => d.Meals)
+                    .ThenInclude(m => m.Ingredients)
+                    .ThenInclude(i => i.Product)
+                    .ThenInclude(p => p.Macro)
+                .Include(d => d.Meals)
+                    .ThenInclude(m => m.Ingredients)
+                    .ThenInclude(i => i.Product)
+                    .ThenInclude(p => p.Category)
+                .FirstOrDefaultAsync();
+            return day;
+        }
 
         public async Task CreateAsync(Day day, Guid userIdClaim)
         {

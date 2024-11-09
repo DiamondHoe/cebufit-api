@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using CebuFitApi.DTOs;
 using CebuFitApi.Interfaces;
+using CebuFitApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CebuFitApi.Helpers.Enums;
 
 namespace CebuFitApi.Controllers
 {
@@ -51,13 +53,14 @@ namespace CebuFitApi.Controllers
         }
 
         [HttpGet("withDetails/", Name = "GetRecipesWithDetails")]
-        public async Task<ActionResult<List<RecipeWithDetailsDTO>>> GetAllWithDetails()
+        public async Task<ActionResult<List<RecipeWithDetailsDTO>>> GetAllWithDetails(
+            [FromQuery] DataType dataType = DataType.Both)
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
 
             if (userIdClaim != Guid.Empty)
             {
-                var recipes = await _recipeService.GetAllRecipesWithDetailsAsync(userIdClaim);
+                var recipes = await _recipeService.GetAllRecipesWithDetailsAsync(userIdClaim, dataType);
                 if (recipes.Count == 0)
                 {
                     return NoContent();
@@ -163,6 +166,24 @@ namespace CebuFitApi.Controllers
                 await _recipeService.DeleteRecipeAsync(recipeId, userIdClaim);
 
                 return Ok();
+            }
+
+            return NotFound("User not found");
+        }
+
+        [HttpGet("available/{recipesCount}", Name = "GetAvailableRecipes")]
+        public async Task<ActionResult<List<Tuple<RecipeWithDetailsDTO, List<Tuple<IngredientWithProductDTO, Tuple<decimal?, decimal?>>>>>>> GetAvailableRecipes(int recipesCount)
+        {
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+
+            if (userIdClaim != Guid.Empty)
+            {
+                var meals = await _recipeService.GetRecipesFromAvailableStorageItemsAsync(userIdClaim, recipesCount);
+                if (meals.Count == 0)
+                {
+                    return NoContent();
+                }
+                return Ok(meals);
             }
 
             return NotFound("User not found");

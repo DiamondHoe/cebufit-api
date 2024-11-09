@@ -23,6 +23,8 @@ namespace CebuFitApi.Repositories
             var ingredients = await _dbContext.Ingredients
                 .Where(x => x.User.Id == userIdClaim)
                 .Include(x => x.Product)
+                    .ThenInclude(x => x.ProductType)
+                .Include(x => x.Product)
                     .ThenInclude(x => x.Category)
                 .Include(x => x.Product)
                     .ThenInclude(x => x.Macro)

@@ -5,6 +5,7 @@ using CebuFitApi.Mapping;
 using CebuFitApi.Repositories;
 using CebuFitApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.WebSockets;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -21,6 +22,11 @@ builder.Services.AddCors(options =>
         });
 });
 
+builder.Services.AddWebSockets(options =>
+{
+    options.KeepAliveInterval = TimeSpan.FromMinutes(2);
+});
+builder.Services.AddSingleton<WebSocketHandler>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -37,7 +43,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             ValidIssuer = "cebufit",
             ValidAudience = "cebufitEater",
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SSK")))
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SSK")))
         };
     });
 
@@ -63,14 +70,20 @@ builder.Services.AddScoped<IIngredientService, IngredientService>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
 
+builder.Services.AddScoped<IProductTypeRepository, ProductTypeRepository>();
+builder.Services.AddScoped<IProductTypeService, ProductTypeService>();
+
 builder.Services.AddScoped<IRecipeRepository, RecipeRepository>();
 builder.Services.AddScoped<IRecipeService, RecipeService>();
 
 builder.Services.AddScoped<IStorageItemRepository, StorageItemRepository>();
 builder.Services.AddScoped<IStorageItemService, StorageItemService>();
 
-builder.Services.AddScoped<IStorageService, StorageService>();
-builder.Services.AddScoped<IStorageRepository, StorageRepository>();
+builder.Services.AddScoped<IRequestRepository, RequestRepository>();
+builder.Services.AddScoped<IRequestService, RequestService>();
+
+builder.Services.AddScoped<IUserDemandRepository, UserDemandRepository>();
+builder.Services.AddScoped<IUserDemandService, UserDemandService>();
 #endregion
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
@@ -80,6 +93,8 @@ builder.Services.AddDbContext<CebuFitApiDbContext>(options =>
 
 
 var app = builder.Build();
+
+app.UseWebSockets();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -96,6 +111,20 @@ app.UseCors(options =>
         .AllowAnyOrigin()
         .AllowAnyMethod()
         .AllowAnyHeader();
+});
+
+app.Use(async (context, next) =>
+{
+    if (context.WebSockets.IsWebSocketRequest)
+    {
+        var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+        var webSocketHandler = context.RequestServices.GetRequiredService<WebSocketHandler>();
+        await webSocketHandler.HandleAsync(webSocket);
+    }
+    else
+    {
+        await next();
+    }
 });
 
 app.UseAuthentication();

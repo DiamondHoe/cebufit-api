@@ -1,5 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
+using CebuFitApi.Helpers.Enums;
 
 namespace CebuFitApi.Models
 {
@@ -7,16 +8,18 @@ namespace CebuFitApi.Models
     {
         public User()
         {
-               
+
         }
         public string Role { get; set; }
         public string Login { get; set; }
         public string Password { get; set; }
         public string Name { get; set; }
         public bool Gender { get; set; } //False = Man, True = Woman
+        public int Height { get; set; }
+        public decimal Weight { get; set; }
         public DateTime BirthDate { get; set; }
-        public int KcalDemand { get; set; }
-
+        public PhysicalActivityLevelEnum PhysicalActivityLevel { get; set; } = PhysicalActivityLevelEnum.LightlyActive;
+        public UserDemand? Demand { get; set; }
         public List<Product> Products { get; set; }
         public List<Category> Categories { get; set; }
         public List<StorageItem> StorageItems { get; set; }
@@ -24,6 +27,8 @@ namespace CebuFitApi.Models
         public List<Recipe> Recipes { get; set; }
         public List<Meal> Meals { get; set; }
         public List<Day> Days { get; set; }
+        public List<Request> CreatedRequests { get; set; }
+        public List<Request> ApprovedRequests { get; set; }
 
     }
     public class UserConfiguration : IEntityTypeConfiguration<User>
@@ -50,6 +55,12 @@ namespace CebuFitApi.Models
 
             builder.HasMany(user => user.Days)
                     .WithOne(day => day.User);
+
+            builder.HasMany(user => user.CreatedRequests)
+                    .WithOne(request => request.Requester);
+
+            builder.HasMany(user => user.ApprovedRequests)
+                    .WithOne(request => request.Approver);
         }
     }
 }

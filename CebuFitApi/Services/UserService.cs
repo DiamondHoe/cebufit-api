@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CebuFitApi.DTOs;
+using CebuFitApi.DTOs.Demand;
 using CebuFitApi.Helpers;
 using CebuFitApi.Helpers.Enums;
 using CebuFitApi.Interfaces;
@@ -16,14 +17,25 @@ namespace CebuFitApi.Services
         private readonly IDayService _dayService;
         private readonly IMealService _mealService;
         private readonly ICategoryService _categoryService;
+        private readonly IUserDemandService _demandService;
+        private readonly IUserDemandRepository _demandRepository;
         private readonly IMapper _mapper;
-        public UserService(IUserRepository userRepository, IStorageItemService storageItemService, IDayService dayService, IMealService mealService, ICategoryService categoryService, IMapper mapper)
+        public UserService(IUserRepository userRepository,
+            IStorageItemService storageItemService,
+            IDayService dayService,
+            IMealService mealService,
+            ICategoryService categoryService,
+            IUserDemandService demandService,
+            IUserDemandRepository demandRepository,
+            IMapper mapper)
         {
             _userRepository = userRepository;
             _storageItemService = storageItemService;
             _dayService = dayService;
             _mealService = mealService;
             _categoryService = categoryService;
+            _demandService = demandService;
+            _demandRepository = demandRepository;
             _mapper = mapper;
         }
         public async Task<User> AuthenticateAsync(UserLoginDTO user)
@@ -37,7 +49,18 @@ namespace CebuFitApi.Services
         {
             var userEntity = _mapper.Map<User>(user);
             userEntity.Id = Guid.NewGuid();
+
+            if (userEntity.Demand == null
+                || userEntity.Height == 0
+                || userEntity.Weight == 0
+                || !DemandHelper.IsDemandValid(userEntity.Demand)
+                )
+            {
+                userEntity.Demand = DemandHelper.CalculateDemand(userEntity);
+            }
+
             bool isRegistered = await _userRepository.CreateAsync(userEntity);
+
             return (isRegistered, userEntity);
         }
         public Task<string> ResetPasswordAsync(string email)
@@ -132,7 +155,7 @@ namespace CebuFitApi.Services
                     //Categories
                     foreach (var product in productsPerDay)
                     {
-                        var foundCategory = await _categoryService.GetCategoryByIdAsync(product.CategoryId, userId);
+                        var foundCategory = await _categoryService.GetCategoryByIdAsync(product.CategoryId.GetValueOrDefault(), userId);
                         if(foundCategory != null)
                         {
                             if (summaryDto.AverageCategories.ContainsKey(foundCategory.Name))
@@ -144,7 +167,7 @@ namespace CebuFitApi.Services
                     }
 
                     //Importances
-                    foreach(var product in productsPerDay)
+                    foreach (var product in productsPerDay)
                     {
                         var importance = product.Importance;
 
@@ -209,7 +232,7 @@ namespace CebuFitApi.Services
                     //Categories
                     foreach (var product in productsPerWeek)
                     {
-                        var foundCategory = await _categoryService.GetCategoryByIdAsync(product.CategoryId, userId);
+                        var foundCategory = await _categoryService.GetCategoryByIdAsync(product.CategoryId.GetValueOrDefault(), userId);
                         if (foundCategory != null)
                         {
                             if (summaryDto.AverageCategories.ContainsKey(foundCategory.Name))
@@ -284,7 +307,7 @@ namespace CebuFitApi.Services
                     //Categories
                     foreach (var product in productsPerMonth)
                     {
-                        var foundCategory = await _categoryService.GetCategoryByIdAsync(product.CategoryId, userId);
+                        var foundCategory = await _categoryService.GetCategoryByIdAsync(product.CategoryId.GetValueOrDefault(), userId);
                         if (foundCategory != null)
                         {
                             if (summaryDto.AverageCategories.ContainsKey(foundCategory.Name))

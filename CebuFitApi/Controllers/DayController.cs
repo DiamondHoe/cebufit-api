@@ -94,7 +94,7 @@ namespace CebuFitApi.Controllers
         }
 
         [HttpGet("withMeals/{dayId}", Name = "GetDayWithMeals")]
-        public async Task<ActionResult<DayWithMealsDTO>> GetByIdWithMeals(Guid dayId)
+        public async Task<ActionResult<DayWithMealsDTO>> GetByIdWithMeals([FromQuery] Guid dayId)
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
 
@@ -109,6 +109,21 @@ namespace CebuFitApi.Controllers
             }
 
             return NotFound("User not found");
+        }
+    
+        [HttpGet("withMeals/byDate", Name = "GetDayByDateWithMeals")]
+        public async Task<ActionResult<DayWithMealsDTO>> GetByDateWithMeals([FromQuery] DateTime date)
+        {
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+            if (userIdClaim != Guid.Empty)
+            {
+                var day = await _dayService.GetDayByDateWithMealsAsync(date, userIdClaim);
+                if (day != null)
+                {
+                    return Ok(day);
+                }
+            }
+            return NotFound("Day not found");
         }
 
         [HttpPost]
@@ -194,8 +209,8 @@ namespace CebuFitApi.Controllers
             return NotFound("User not found");
         }
 
-        [HttpDelete("manageDayMeals/{dayId}", Name = "RemoveMealFromDay")]
-        public async Task<ActionResult> RemoveMealFromDay(Guid dayId, Guid mealId)
+        [HttpDelete("manageDayMeals", Name = "RemoveMealFromDay")]
+        public async Task<ActionResult> RemoveMealFromDay([FromQuery] Guid dayId, [FromQuery] Guid mealId)
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
 
