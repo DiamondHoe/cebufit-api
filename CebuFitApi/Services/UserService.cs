@@ -155,8 +155,8 @@ namespace CebuFitApi.Services
                     //Categories
                     foreach (var product in productsPerDay)
                     {
-                        var foundCategory = await _categoryService.GetCategoryByIdAsync(product.CategoryId, userId);
-                        if (foundCategory != null)
+                        var foundCategory = await _categoryService.GetCategoryByIdAsync(product.CategoryId.GetValueOrDefault(), userId);
+                        if(foundCategory != null)
                         {
                             if (summaryDto.AverageCategories.ContainsKey(foundCategory.Name))
                             {
@@ -232,7 +232,7 @@ namespace CebuFitApi.Services
                     //Categories
                     foreach (var product in productsPerWeek)
                     {
-                        var foundCategory = await _categoryService.GetCategoryByIdAsync(product.CategoryId, userId);
+                        var foundCategory = await _categoryService.GetCategoryByIdAsync(product.CategoryId.GetValueOrDefault(), userId);
                         if (foundCategory != null)
                         {
                             if (summaryDto.AverageCategories.ContainsKey(foundCategory.Name))
@@ -307,7 +307,7 @@ namespace CebuFitApi.Services
                     //Categories
                     foreach (var product in productsPerMonth)
                     {
-                        var foundCategory = await _categoryService.GetCategoryByIdAsync(product.CategoryId, userId);
+                        var foundCategory = await _categoryService.GetCategoryByIdAsync(product.CategoryId.GetValueOrDefault(), userId);
                         if (foundCategory != null)
                         {
                             if (summaryDto.AverageCategories.ContainsKey(foundCategory.Name))

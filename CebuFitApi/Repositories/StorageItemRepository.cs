@@ -24,6 +24,8 @@ namespace CebuFitApi.Repositories
             var storageItems = await _dbContext.StorageItems
                 .Where(x => x.User.Id == userIdClaim)
                 .Include(x => x.Product)
+                    .ThenInclude(x => x.ProductType)
+                .Include(x => x.Product)
                     .ThenInclude(x => x.Category)
                 .Include(x => x.Product)
                     .ThenInclude(x => x.Macro)

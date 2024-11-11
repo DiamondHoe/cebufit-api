@@ -25,7 +25,7 @@ namespace CebuFitApi.Services
             _userRepository = userRepository;
         }
 
-        public async Task<UserDemandDTO> GetDemandAsync(Guid userId)
+        public async Task<UserDemandDTO?> GetDemandAsync(Guid userId)
         {
             var demandEntity = await _demandRepository.GetDemandAsync(userId);
             var demandDTO = _mapper.Map<UserDemandDTO>(demandEntity);

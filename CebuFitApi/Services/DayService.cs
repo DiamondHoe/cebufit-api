@@ -34,13 +34,16 @@ namespace CebuFitApi.Services
             var daysDTOs = _mapper.Map<List<DayWithMealsDTO>>(daysEntities);
 
             var userDemand = await _userDemandService.GetDemandAsync(userIdClaim);
-            foreach (var day in daysDTOs)
+            if(userDemand != null)
             {
-                DemandHelper.CountDayDemand(day);
-                day.Demand.Calories = userDemand.Calories;
-                day.Demand.Carb = userDemand.Carb;
-                day.Demand.Fat = userDemand.Fat;
-                day.Demand.Protein = userDemand.Protein;
+                foreach (var day in daysDTOs)
+                {
+                    DemandHelper.CountDayDemand(day);
+                    day.Demand.Calories = userDemand.Calories;
+                    day.Demand.Carb = userDemand.Carb;
+                    day.Demand.Fat = userDemand.Fat;
+                    day.Demand.Protein = userDemand.Protein;
+                }
             }
             return daysDTOs;
         }
@@ -72,7 +75,8 @@ namespace CebuFitApi.Services
             var dayEntity = await _dayRepository.GetByDateWithMealsAsync(date, userIdClaim);
             var dayDto = _mapper.Map<DayWithMealsDTO>(dayEntity);
             var userDemand = await _userDemandService.GetDemandAsync(userIdClaim);
-
+            
+            if(dayDto == null) return dayDto;
             DemandHelper.CountDayDemand(dayDto);
             dayDto.Demand.Calories = userDemand.Calories;
             dayDto.Demand.Carb = userDemand.Carb;
