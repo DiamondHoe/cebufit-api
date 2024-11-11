@@ -7,28 +7,30 @@ namespace CebuFitApi.Helpers
 {
     public static class DemandHelper
     {
-        public static void CountDayDemand(DayWithMealsDTO? day)
-        {   
+        public static void CountDayDemand(DayWithMealsDTO day)
+        {
             foreach (var meal in day.Meals)
             {
+
+
                 if (meal.Eaten)
                 {
                     foreach (var ingredient in meal.Ingredients)
                     {
-                        day.Demand.CaloriesEaten += ingredient.Product.Macro.Calories;
-                        day.Demand.CarbEaten += ingredient.Product.Macro.Carb;
-                        day.Demand.FatEaten += ingredient.Product.Macro.Fat;
-                        day.Demand.ProteinEaten += ingredient.Product.Macro.Protein;
+                        day.Demand.CaloriesEaten += ingredient.Product.Macro.Calories * ingredient.Product.UnitWeight / 100;
+                        day.Demand.CarbEaten += ingredient.Product.Macro.Carb * ingredient.Product.UnitWeight / 100;
+                        day.Demand.FatEaten += ingredient.Product.Macro.Fat * ingredient.Product.UnitWeight / 100;
+                        day.Demand.ProteinEaten += ingredient.Product.Macro.Protein * ingredient.Product.UnitWeight / 100;
                     }
                 }
                 else
                 {
                     foreach (var ingredient in meal.Ingredients)
                     {
-                        day.Demand.CaloriesPlanned += ingredient.Product.Macro.Calories;
-                        day.Demand.CarbPlanned += ingredient.Product.Macro.Carb;
-                        day.Demand.FatPlanned += ingredient.Product.Macro.Fat;
-                        day.Demand.ProteinPlanned += ingredient.Product.Macro.Protein;
+                        day.Demand.CaloriesPlanned += ingredient.Product.Macro.Calories * ingredient.Product.UnitWeight / 100;
+                        day.Demand.CarbPlanned += ingredient.Product.Macro.Carb * ingredient.Product.UnitWeight / 100;
+                        day.Demand.FatPlanned += ingredient.Product.Macro.Fat * ingredient.Product.UnitWeight / 100;
+                        day.Demand.ProteinPlanned += ingredient.Product.Macro.Protein * ingredient.Product.UnitWeight / 100;
                     }
                 }
             }
