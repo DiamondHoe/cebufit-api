@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CebuFitApi.DTOs;
+using CebuFitApi.Helpers.Enums;
 using CebuFitApi.Interfaces;
 using CebuFitApi.Models;
 namespace CebuFitApi.Services;
@@ -9,9 +10,9 @@ public class ProductTypeService(
     IUserRepository userRepository,
     IMapper mapper) : IProductTypeService
 {
-    public async Task<List<ProductTypeDto>> GetAllProductTypesAsync(Guid userIdClaim)
+    public async Task<List<ProductTypeDto>> GetAllProductTypesAsync(Guid userIdClaim, DataType dataType)
     {
-        var productTypeEntities = await productTypeRepository.GetAllAsync(userIdClaim);
+        var productTypeEntities = await productTypeRepository.GetAllAsync(userIdClaim, dataType);
         var productTypeDtos = mapper.Map<List<ProductTypeDto>>(productTypeEntities);
         return productTypeDtos;
     }
