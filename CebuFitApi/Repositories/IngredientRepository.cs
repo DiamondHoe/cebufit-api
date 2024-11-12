@@ -56,7 +56,7 @@ namespace CebuFitApi.Repositories
         public async Task UpdateAsync(Ingredient ingredient, Guid userIdClaim)
         {
             var existingIngredient = await _dbContext.Ingredients
-                .FirstOrDefaultAsync(ing => ing.Id == ingredient.Id && ing.User.Id == userIdClaim));
+                .FirstOrDefaultAsync(ing => ing.Id == ingredient.Id && ing.User.Id == userIdClaim);
 
             if (existingIngredient != null)
             {
