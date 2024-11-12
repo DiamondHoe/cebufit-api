@@ -82,7 +82,7 @@ namespace CebuFitApi.Repositories
         {
             var product = await _dbContext.Products
                 .Include(c => c.Category)
-                .FirstOrDefaultAsync(x => x.User.Id == userIdClaim && x.Id == productId);
+                .FirstOrDefaultAsync(x => x.Id == productId);
  
             return product;
         }
