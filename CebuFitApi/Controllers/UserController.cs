@@ -1,4 +1,6 @@
 ﻿using CebuFitApi.DTOs;
+using CebuFitApi.DTOs.User;
+using CebuFitApi.Helpers;
 using CebuFitApi.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -59,12 +61,31 @@ namespace CebuFitApi.Controllers
             return NotFound("User not found");
         }
 
-        // TODO research jak wysyłać maila z przypomnieniem hasła, póki co sam mail
-        //[HttpGet]
-        //public async Task<ActionResult> ResetPassword(string email)
-        //{
+        [HttpGet("resetPassword")]
+        public async Task<ActionResult> ResetPassword(string email)
+        {
+            var foundUser = await _userService.GetByEmailAsync(email);
+            if(foundUser == null) return NotFound("User not found");
 
-        //}
+            var newPassword = await _userService.ResetPasswordAsync(email);
+            if (!string.IsNullOrEmpty(newPassword)) return Ok();
+
+            return BadRequest("Password reset failed");
+        }
+
+        [Authorize]
+        [HttpPut("update")]
+        public async Task<ActionResult> UpdateUser(UserUpdateDTO user)
+        {
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+            if (userIdClaim != Guid.Empty)
+            {
+                await _userService.UpdateAsync(userIdClaim, user);
+                return Ok();
+            }
+
+            return NotFound("User not found");
+        }
 
         //NP: Can be implemented, but for now we do it on client side - if needed i'll add blacklisting
         //[Authorize]

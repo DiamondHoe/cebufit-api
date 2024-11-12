@@ -1,15 +1,17 @@
 ﻿using CebuFitApi.DTOs;
+using CebuFitApi.DTOs.User;
 using CebuFitApi.Models;
 
 namespace CebuFitApi.Interfaces
 {
     public interface IUserService
     {
-        Task<User> AuthenticateAsync(UserLoginDTO user);
-        Task<(bool, User)> CreateAsync(UserCreateDTO user);
+        Task<User> AuthenticateAsync(UserLoginDTO userDTO);
+        Task<(bool, User)> CreateAsync(UserCreateDTO userDTO);
+        Task<UserDTO> GetByEmailAsync(string email);
         Task<string> ResetPasswordAsync(string email);
-        Task<string> UpdateAsync(UserDTO user);
-        Task<bool> DeleteAsync(Guid userId);
-        Task<SummaryDTO> GetSummaryAsync(Guid userId, DateTime start, DateTime end);
+        Task UpdateAsync(Guid userIdClaim, UserUpdateDTO userDTO);
+        Task<bool> DeleteAsync(Guid userIdClaim);
+        Task<SummaryDTO> GetSummaryAsync(Guid userIdClaim, DateTime start, DateTime end);
     }
 }

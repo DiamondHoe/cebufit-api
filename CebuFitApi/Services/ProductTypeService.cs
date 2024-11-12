@@ -28,7 +28,7 @@ public class ProductTypeService(
         var productType = mapper.Map<ProductType>(productTypeDto);
         productType.Id = Guid.NewGuid();
 
-        var foundUser = await userRepository.GetById(userIdClaim);
+        var foundUser = await userRepository.GetByIdAsync(userIdClaim);
         if(foundUser != null)
         {
             productType.User = foundUser;
@@ -40,7 +40,7 @@ public class ProductTypeService(
     public async Task UpdateProductTypeAsync(ProductTypeDto productTypeDto, Guid userIdClaim)
     {
         var productType = mapper.Map<ProductType>(productTypeDto);
-        var foundUser = await userRepository.GetById(userIdClaim);
+        var foundUser = await userRepository.GetByIdAsync(userIdClaim);
         if (foundUser != null) await productTypeRepository.UpdateAsync(productType, userIdClaim);
     }
 

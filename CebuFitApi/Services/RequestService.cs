@@ -92,7 +92,7 @@ public class RequestService : IRequestService
     public async Task<bool> CreateRequestAsync(RequestCreateDto requestCreateDto, Guid userIdClaim)
     {
         var requestEntity = _mapper.Map<Request>(requestCreateDto);
-        requestEntity.Requester = _userRepository.GetById(userIdClaim).Result;
+        requestEntity.Requester = _userRepository.GetByIdAsync(userIdClaim).Result;
         requestEntity.Status = RequestStatus.Pending;
         
         bool requestAlreadyCreated = await _requestRepository.CreateAsync(requestEntity);
@@ -115,7 +115,7 @@ public class RequestService : IRequestService
         if (requestEntity == null) return;
         var requestType = requestEntity.Type;
         requestEntity.Status = requestStatus;
-        requestEntity.Approver = await _userRepository.GetById(userIdClaim);
+        requestEntity.Approver = await _userRepository.GetByIdAsync(userIdClaim);
         
         switch (requestType)
         {

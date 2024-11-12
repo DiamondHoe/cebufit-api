@@ -1,6 +1,7 @@
 using AutoMapper;
 using CebuFitApi.DTOs;
 using CebuFitApi.DTOs.Demand;
+using CebuFitApi.DTOs.User;
 using CebuFitApi.Models;
 
 namespace CebuFitApi.Mapping
@@ -18,6 +19,8 @@ namespace CebuFitApi.Mapping
             CreateMap<User, UserLoginDTO>();
             CreateMap<UserPublicDto, User>();
             CreateMap<User, UserPublicDto>();
+            CreateMap<UserUpdateDTO, User>();
+            CreateMap<User, UserUpdateDTO>();
             #endregion
 
             #region Meal

@@ -54,7 +54,7 @@ namespace CebuFitApi.Services
             var recipe = _mapper.Map<Recipe>(recipeDTO);
             recipe.Id = Guid.NewGuid();
 
-            var foundUser = await _userRepository.GetById(userIdClaim);
+            var foundUser = await _userRepository.GetByIdAsync(userIdClaim);
             if (foundUser != null)
             {
                 recipe.User = foundUser;

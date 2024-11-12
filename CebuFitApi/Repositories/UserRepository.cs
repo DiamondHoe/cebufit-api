@@ -12,9 +12,14 @@ namespace CebuFitApi.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task<User> GetById(Guid userId)
+        public async Task<User> GetByIdAsync(Guid userIdclaim)
         {
-            var foundUser =  await _dbContext.Users.Where(user => user.Id == userId).FirstOrDefaultAsync();
+            var foundUser =  await _dbContext.Users.FirstOrDefaultAsync(user => user.Id == userIdclaim);
+            return foundUser;
+        }
+        public async Task<User?> GetByEmailAsync(string email)
+        {
+            var foundUser = await _dbContext.Users.FirstOrDefaultAsync(user => user.Email == email);
             return foundUser;
         }
         public async Task<User> AuthenticateAsync(User user)
@@ -57,14 +62,16 @@ namespace CebuFitApi.Repositories
             }
         }
 
-        public Task<string> ResetPasswordAsync(string email)
+        public async Task UpdateAsync(User user)
         {
-            throw new NotImplementedException();
-        }
+            var existingUser = await _dbContext.Users
+                .FirstOrDefaultAsync(u => u.Id == user.Id);
 
-        public Task<string> UpdateAsync(User user)
-        {
-            throw new NotImplementedException();
+            if (existingUser != null)
+            {
+                _dbContext.Entry(existingUser).CurrentValues.SetValues(user);
+                await _dbContext.SaveChangesAsync();
+            }
         }
 
         public Task<bool> DeleteAsync(Guid userId)

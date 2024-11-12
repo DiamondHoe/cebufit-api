@@ -1,12 +1,11 @@
 ﻿using CebuFitApi.DTOs.Demand;
 using CebuFitApi.Helpers.Enums;
 
-namespace CebuFitApi.DTOs
+namespace CebuFitApi.DTOs.User
 {
-    public class UserCreateDTO
+    public class UserUpdateDTO
     {
         public string Login { get; set; }
-        public string Email { get; set; }
         public string Password { get; set; }
         public string Name { get; set; }
         public bool Gender { get; set; } //False = Man, True = Woman
