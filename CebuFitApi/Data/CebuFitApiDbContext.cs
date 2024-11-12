@@ -10,7 +10,7 @@ namespace CebuFitApi.Data
         {
             Configuration = configuration;
             DotNetEnv.Env.Load();
-            Database.EnsureCreated();
+            //Database.EnsureCreated();
         }
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
