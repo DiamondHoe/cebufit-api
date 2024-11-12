@@ -29,8 +29,7 @@ namespace CebuFitApi.Repositories
         public async Task<ProductType?> GetByIdAsync(Guid typeId, Guid userIdClaim)
         {
             var productType = await dbContext.ProductTypes
-                .Where(x => x.Id == typeId && x.User != null && x.User.Id == userIdClaim)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(x => x.Id == typeId && x.User != null && x.User.Id == userIdClaim);
             return productType;
         }
         public async Task AddAsync(ProductType productType)
@@ -52,8 +51,7 @@ namespace CebuFitApi.Repositories
         public async Task DeleteAsync(Guid productTypeId, Guid userIdClaim)
         {
             var typeToDelete = await dbContext.ProductTypes
-                .Where(x => x.Id == productTypeId && x.User != null && x.User.Id == userIdClaim)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(x => x.Id == productTypeId && x.User != null && x.User.Id == userIdClaim);
             if (typeToDelete != null)
             {
                 var productsToUpdate = dbContext.Products

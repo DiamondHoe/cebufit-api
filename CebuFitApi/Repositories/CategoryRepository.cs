@@ -22,8 +22,7 @@ namespace CebuFitApi.Repositories
         public async Task<Category> GetByIdAsync(Guid categoryId, Guid userIdClaim)
         {
             var category = await _dbContext.Categories
-                .Where(x => x.Id == categoryId && x.User.Id == userIdClaim)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(x => x.Id == categoryId && x.User.Id == userIdClaim);
             return category;
         }
         public async Task AddAsync(Category category)
@@ -44,8 +43,7 @@ namespace CebuFitApi.Repositories
         public async Task DeleteAsync(Guid categoryId, Guid userIdClaim)
         {
             var categoryToDelete = await _dbContext.Categories
-                .Where(x => x.Id == categoryId && x.User.Id == userIdClaim)
-                .FirstAsync();
+                .FirstOrDefaultAsync(x => x.Id == categoryId && x.User.Id == userIdClaim);
             if (categoryToDelete != null)
             {
                 var productsToUpdate = _dbContext.Products

@@ -34,19 +34,17 @@ namespace CebuFitApi.Repositories
         public async Task<Ingredient> GetByIdAsync(Guid id, Guid userIdClaim)
         {
             var ingredient = await _dbContext.Ingredients
-                 .Where(x => x.User.Id == userIdClaim && x.Id == id)
-                 .FirstAsync();
+                 .FirstOrDefaultAsync(x => x.User.Id == userIdClaim && x.Id == id);
             return ingredient;
         }
         public async Task<Ingredient> GetByIdWithProductAsync(Guid id, Guid userIdClaim)
         {
             var ingredient = await _dbContext.Ingredients
-                    .Where(x => x.User.Id == userIdClaim)
                     .Include(x => x.Product)
                         .ThenInclude(x => x.Category)
                     .Include(x => x.Product)
                         .ThenInclude(x => x.Macro)
-                    .FirstAsync();
+                    .FirstOrDefaultAsync(x => x.User.Id == userIdClaim);
             return ingredient;
 
         }
@@ -58,8 +56,7 @@ namespace CebuFitApi.Repositories
         public async Task UpdateAsync(Ingredient ingredient, Guid userIdClaim)
         {
             var existingIngredient = await _dbContext.Ingredients
-                .Where(x => x.User.Id == userIdClaim)
-                .FirstAsync(ing => ing.Id == ingredient.Id);
+                .FirstOrDefaultAsync(ing => ing.Id == ingredient.Id && ing.User.Id == userIdClaim));
 
             if (existingIngredient != null)
             {
@@ -70,7 +67,7 @@ namespace CebuFitApi.Repositories
         public async Task DeleteAsync(Guid id, Guid userIdClaim)
         {
             var IngredientToDelete = await _dbContext.Ingredients
-                                .FirstAsync(x => x.User.Id == userIdClaim && x.Id == id);
+                                .FirstOrDefaultAsync(x => x.User.Id == userIdClaim && x.Id == id);
             if (IngredientToDelete != null)
             {
                 _dbContext.Ingredients.Remove(IngredientToDelete);
