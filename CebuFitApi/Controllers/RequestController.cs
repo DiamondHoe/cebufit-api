@@ -58,9 +58,6 @@ public class RequestController : Controller
 
         if (requests.Count == 0) return NoContent();
         return Ok(requests);
-
-            
-        
     }
     
     [HttpGet("ProductByStatusWithDetails", Name = "GetRequestsProductByStatusWithDetails")]
@@ -80,7 +77,7 @@ public class RequestController : Controller
     }
     
     [HttpGet("RecipeByStatusWithDetails", Name = "GetRequestsRecipeByStatusWithDetails")]
-    public async Task<ActionResult<List<RequestProductWithDetailsDto>>> GetRequestsRecipeByStatusWithDetails(
+    public async Task<ActionResult<List<RequestRecipeWithDetailsDto>>> GetRequestsRecipeByStatusWithDetails(
         [FromQuery] RequestStatus requestStatus)
     {
         var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
@@ -90,6 +87,22 @@ public class RequestController : Controller
         if (userRole != RoleEnum.Admin && userRole != RoleEnum.Maintainer) return Forbid();
         
         var requests = await _requestService.GetRequestsRecipeByStatusWithDetails(requestStatus);
+            
+        if (requests.Count == 0) return NoContent();
+        return Ok(requests);
+    }
+    
+    [HttpGet("ProductTypeByStatusWithDetails", Name = "GetRequestsProductTypeByStatusWithDetails")]
+    public async Task<ActionResult<List<RequestProductWithDetailsDto>>> GetRequestsProductTypeByStatusWithDetails(
+        [FromQuery] RequestStatus requestStatus)
+    {
+        var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+        var userRole = _jwtTokenHelper.GetUserRole();
+        
+        if (userIdClaim == Guid.Empty) return NotFound("User not found");
+        if (userRole != RoleEnum.Admin && userRole != RoleEnum.Maintainer) return Forbid();
+        
+        var requests = await _requestService.GetRequestsProductTypeByStatusWithDetails(requestStatus);
             
         if (requests.Count == 0) return NoContent();
         return Ok(requests);
