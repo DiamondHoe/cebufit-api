@@ -1,6 +1,6 @@
 ﻿namespace CebuFitApi.DTOs
 {
-    public class RequestProductTypeWithDetailsDto : RequestWithDetailsDto
+    public class RequestProductTypeDto : RequestWithDetailsDto
     {
         public ProductTypeDto RequestedProductType { get; set; }
     }

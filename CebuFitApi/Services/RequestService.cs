@@ -13,6 +13,7 @@ public class RequestService(
     IProductRepository productRepository,
     IRecipeRepository recipeRepository,
     IProductTypeRepository productTypeRepository,
+    ICategoryRepository categoryRepository,
     IUserRepository userRepository,
     IMapper mapper) : IRequestService
 {
@@ -71,11 +72,11 @@ public class RequestService(
         return requestDtoList;
     }
     
-    public async Task<List<RequestProductTypeWithDetailsDto>> GetRequestsProductTypeByStatusWithDetails(
+    public async Task<List<RequestProductTypeDto>> GetRequestsProductTypeByStatus(
         RequestStatus requestStatus)
     {
         var requestsEntities = await requestRepository.GetByTypeAndStatus(RequestType.PromoteProductTypeToPublic, requestStatus);
-        var requestDtoList = mapper.Map<List<RequestProductTypeWithDetailsDto>>(requestsEntities);
+        var requestDtoList = mapper.Map<List<RequestProductTypeDto>>(requestsEntities);
         foreach (var request in requestsEntities)
         {
             var dto = requestDtoList.Find(r => r.Id == request.Id);
@@ -83,6 +84,22 @@ public class RequestService(
             var productType = await productTypeRepository.GetByIdAsync(request.RequestedItemId, request.Requester.Id);
             var productTypeDto = mapper.Map<ProductTypeDto>(productType);
             dto.RequestedProductType = productTypeDto;
+        }
+        return requestDtoList;
+    }
+    
+    public async Task<List<RequestCategoryDto>> GetRequestsCategoriesByStatus(
+        RequestStatus requestStatus)
+    {
+        var requestsEntities = await requestRepository.GetByTypeAndStatus(RequestType.PromoteCategoryToPublic, requestStatus);
+        var requestDtoList = mapper.Map<List<RequestCategoryDto>>(requestsEntities);
+        foreach (var request in requestsEntities)
+        {
+            var dto = requestDtoList.Find(r => r.Id == request.Id);
+            if (dto == null) throw new Exception("Request not found");
+            var category = await categoryRepository.GetByIdAsync(request.RequestedItemId, request.Requester.Id);
+            var categoryDto = mapper.Map<CategoryDTO>(category);
+            dto.RequestedCategory = categoryDto;
         }
         return requestDtoList;
     }
@@ -150,6 +167,16 @@ public class RequestService(
                 {
                     productType.IsPublic = true;
                     await productTypeRepository.UpdateAsync(productType, requestEntity.Requester.Id);
+                }
+                break;
+            case RequestType.PromoteCategoryToPublic:
+                var category = await categoryRepository.GetByIdAsync(requestEntity.RequestedItemId, requestEntity.Requester.Id);
+                if (category == null) return;
+        
+                if (requestStatus == RequestStatus.Approved)
+                {
+                    category.IsPublic = true;
+                    await categoryRepository.UpdateAsync(category, requestEntity.Requester.Id);
                 }
                 break;
         }

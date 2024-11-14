@@ -12,7 +12,8 @@ public interface IRequestService
     Task<List<RequestDto>> GetRequestsByTypeAndStatus(RequestType requestType, RequestStatus requestStatus);
     Task<List<RequestProductWithDetailsDto>> GetRequestsProductByStatusWithDetails(RequestStatus requestStatus);
     Task<List<RequestRecipeWithDetailsDto>> GetRequestsRecipeByStatusWithDetails(RequestStatus requestStatus);
-    Task<List<RequestProductTypeWithDetailsDto>> GetRequestsProductTypeByStatusWithDetails(RequestStatus requestStatus);
+    Task<List<RequestProductTypeDto>> GetRequestsProductTypeByStatus(RequestStatus requestStatus);
+    Task<List<RequestCategoryDto>> GetRequestsCategoriesByStatus(RequestStatus requestStatus);
     
     Task<bool> CreateRequestAsync(RequestCreateDto requestCreate, Guid userIdClaim);
     Task UpdateRequestAsync(RequestDto request, Guid userIdClaim);

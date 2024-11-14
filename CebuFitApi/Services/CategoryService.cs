@@ -5,6 +5,7 @@ using CebuFitApi.Models;
 using CebuFitApi.Repositories;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CebuFitApi.Helpers.Enums;
 
 public class CategoryService : ICategoryService
 {
@@ -19,11 +20,11 @@ public class CategoryService : ICategoryService
         _mapper = mapper;
     }
 
-    public async Task<List<CategoryDTO>> GetAllCategoriesAsync(Guid userIdClaim)
+    public async Task<List<CategoryDTO>> GetAllCategoriesAsync(Guid userIdClaim, DataType dataType)
     {
-        var categoryEntities = await _categoryRepository.GetAllAsync(userIdClaim);
-        var categoryDTOs = _mapper.Map<List<CategoryDTO>>(categoryEntities);
-        return categoryDTOs;
+        var categoryEntities = await _categoryRepository.GetAllAsync(userIdClaim, dataType);
+        var categoryDtos = _mapper.Map<List<CategoryDTO>>(categoryEntities);
+        return categoryDtos;
     }
 
     public async Task<CategoryDTO> GetCategoryByIdAsync(Guid categoryId, Guid userIdClaim)
