@@ -4,4 +4,6 @@ public enum RequestType
 {
     PromoteProductToPublic,
     PromoteRecipeToPublic,
+    PromoteProductTypeToPublic,
+    PromoteCategoryToPublic,
 }
