@@ -1,60 +1,67 @@
 ﻿using CebuFitApi.Data;
+using CebuFitApi.Helpers.Enums;
 using CebuFitApi.Interfaces;
 using CebuFitApi.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace CebuFitApi.Repositories
 {
-    public class CategoryRepository : ICategoryRepository
+    public class CategoryRepository(CebuFitApiDbContext dbContext) : ICategoryRepository
     {
-        private readonly CebuFitApiDbContext _dbContext;
-        public CategoryRepository(CebuFitApiDbContext dbContext)
+        public async Task<List<Category>> GetAllAsync(Guid userIdClaim, DataType dataType)
         {
-            _dbContext = dbContext;
-        }
-        public async Task<List<Category>> GetAllAsync(Guid userIdClaim)
-        {
-            var categories = await _dbContext.Categories
-                .Where(x => x.User.Id == userIdClaim)
-                .ToListAsync();
-            return categories;
+            return dataType switch
+            {
+                DataType.Private => await dbContext.Categories
+                    .Where(x => x.User != null && x.User.Id == userIdClaim && x.IsPublic == false)
+                    .ToListAsync(),
+                DataType.Public => await dbContext.Categories
+                    .Where(x => x.IsPublic == true)
+                    .ToListAsync(),
+                DataType.Both => await dbContext.Categories
+                    .Where(x => x.User != null && x.User.Id == userIdClaim || x.IsPublic == true)
+                    .ToListAsync(),
+                _ => await dbContext.Categories
+                    .Where(x => x.User != null && x.User.Id == userIdClaim)
+                    .ToListAsync(),
+            };
         }
         public async Task<Category> GetByIdAsync(Guid categoryId, Guid userIdClaim)
         {
-            var category = await _dbContext.Categories
+            var category = await dbContext.Categories
                 .FirstOrDefaultAsync(x => x.Id == categoryId && x.User.Id == userIdClaim);
             return category;
         }
         public async Task AddAsync(Category category)
         {
-            await _dbContext.Categories.AddAsync(category);
-            await _dbContext.SaveChangesAsync();
+            await dbContext.Categories.AddAsync(category);
+            await dbContext.SaveChangesAsync();
         }
         public async Task UpdateAsync(Category category, Guid userIdClaim)
         {
-            var existingCategory = await _dbContext.Categories
+            var existingCategory = await dbContext.Categories
                 .FirstOrDefaultAsync(x => x.Id == category.Id && x.User.Id == userIdClaim);
             if (existingCategory != null)
             {
-                _dbContext.Entry(existingCategory).CurrentValues.SetValues(category);
-                await _dbContext.SaveChangesAsync();
+                dbContext.Entry(existingCategory).CurrentValues.SetValues(category);
+                await dbContext.SaveChangesAsync();
             }
         }
         public async Task DeleteAsync(Guid categoryId, Guid userIdClaim)
         {
-            var categoryToDelete = await _dbContext.Categories
+            var categoryToDelete = await dbContext.Categories
                 .FirstOrDefaultAsync(x => x.Id == categoryId && x.User.Id == userIdClaim);
             if (categoryToDelete != null)
             {
-                var productsToUpdate = _dbContext.Products
+                var productsToUpdate = dbContext.Products
                     .Where(p => p.Category.Id == categoryId)
                     .ToList();
                 foreach (var product in productsToUpdate)
                 {
                     product.Category = null;
                 }
-                _dbContext.Categories.Remove(categoryToDelete);
-                await _dbContext.SaveChangesAsync();
+                dbContext.Categories.Remove(categoryToDelete);
+                await dbContext.SaveChangesAsync();
             }
         }
     }

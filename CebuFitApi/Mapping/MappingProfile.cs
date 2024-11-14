@@ -157,8 +157,10 @@ namespace CebuFitApi.Mapping
             CreateMap<RequestProductWithDetailsDto, Request>();
             CreateMap<Request, RequestRecipeWithDetailsDto>();
             CreateMap<RequestRecipeWithDetailsDto, Request>();
-            CreateMap<Request, RequestProductTypeWithDetailsDto>();
-            CreateMap<RequestProductTypeWithDetailsDto, Request>();
+            CreateMap<Request, RequestProductTypeDto>();
+            CreateMap<RequestProductTypeDto, Request>();
+            CreateMap<Request, RequestCategoryDto>();
+            CreateMap<RequestCategoryDto, Request>();
             #endregion
 
             #region Demand

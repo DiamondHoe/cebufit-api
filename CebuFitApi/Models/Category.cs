@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.ComponentModel.DataAnnotations;
 
 namespace CebuFitApi.Models
 {
@@ -12,6 +11,7 @@ namespace CebuFitApi.Models
         }
         public User? User { get; set; }
         public string? Name { get; set; }
+        public bool IsPublic { get; set; }
         public List<Product> Products { get; set; } = new List<Product>();
     }
 
