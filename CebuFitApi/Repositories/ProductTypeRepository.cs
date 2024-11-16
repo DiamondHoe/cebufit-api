@@ -29,7 +29,7 @@ namespace CebuFitApi.Repositories
         public async Task<ProductType?> GetByIdAsync(Guid typeId, Guid userIdClaim)
         {
             var productType = await dbContext.ProductTypes
-                .FirstOrDefaultAsync(x => x.Id == typeId && x.User != null && x.User.Id == userIdClaim);
+                .FirstOrDefaultAsync(x => x.Id == typeId);
             return productType;
         }
         public async Task AddAsync(ProductType productType)

@@ -70,7 +70,8 @@ namespace CebuFitApi.Mapping
             #region Product
             CreateMap<ProductDTO, Product>();
             CreateMap<Product, ProductDTO>()
-                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.Category.Id));
+                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.Category.Id))
+                .ForMember(dest => dest.ProductTypeId, opt => opt.MapFrom(src => src.ProductType.Id));
             CreateMap<ProductCreateDTO, Product>();
             CreateMap<Product, ProductCreateDTO>();
             CreateMap<ProductUpdateDTO, Product>();

@@ -78,10 +78,12 @@ namespace CebuFitApi.Repositories
 
         //    return productsWithMacro;
         //}
-        public async Task<Product> GetByIdAsync(Guid productId, Guid userIdClaim)
+        public async Task<Product?> GetByIdAsync(Guid productId, Guid userIdClaim)
         {
             var product = await _dbContext.Products
                 .Include(c => c.Category)
+                .Include(t => t.ProductType)
+                .Include(m => m.Macro)
                 .FirstOrDefaultAsync(x => x.Id == productId);
  
             return product;

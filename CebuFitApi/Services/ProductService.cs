@@ -87,7 +87,7 @@ namespace CebuFitApi.Services
             var productType = await _productTypeRepository.GetByIdAsync(productDTO.ProductTypeId, userIdClaim);
             var category = await _categoryRepository.GetByIdAsync(productDTO.CategoryId.GetValueOrDefault(), userIdClaim);
 
-            if (foundUser != null && category != null)
+            if (foundUser != null && category != null && productType != null)
             {
                 product.User = foundUser;
                 product.ProductType = _mapper.Map<ProductType>(productType);
