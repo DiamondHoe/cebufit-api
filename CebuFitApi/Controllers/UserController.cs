@@ -48,6 +48,20 @@ namespace CebuFitApi.Controllers
         }
 
         [Authorize]
+        [HttpGet("details")]
+        public async Task<ActionResult<UserDetailsDTO>> GetUserDetailsAsync()
+        {
+            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+            if (userIdClaim != Guid.Empty)
+            {
+                var userDetails = await _userService.GetDetailsAsync(userIdClaim);
+                return Ok(userDetails);
+            }
+
+            return NotFound("User not found");
+        }
+
+        [Authorize]
         [HttpGet("summary")]
         public async Task<ActionResult<SummaryDTO>> GetSummaryAsync(DateTime start, DateTime end)
         {

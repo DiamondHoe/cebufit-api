@@ -63,6 +63,12 @@ namespace CebuFitApi.Services
 
             return (isRegistered, userEntity);
         }
+        public async Task<UserDetailsDTO> GetDetailsAsync(Guid userIdClaim)
+        {
+            var userEntity = await _userRepository.GetByIdAsync(userIdClaim);
+            var userDTO = _mapper.Map<UserDetailsDTO>(userEntity);
+            return userDTO;
+        }
         public async Task<UserDTO> GetByEmailAsync(string email)
         {
             var userEntity = await _userRepository.GetByEmailAsync(email);

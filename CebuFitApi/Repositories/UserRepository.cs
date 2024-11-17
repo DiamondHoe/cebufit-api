@@ -14,7 +14,10 @@ namespace CebuFitApi.Repositories
         }
         public async Task<User> GetByIdAsync(Guid userIdclaim)
         {
-            var foundUser =  await _dbContext.Users.FirstOrDefaultAsync(user => user.Id == userIdclaim);
+            var foundUser = await _dbContext.Users
+                .Include(user => user.Demand)
+                .FirstOrDefaultAsync(user => user.Id == userIdclaim);
+                
             return foundUser;
         }
         public async Task<User?> GetByEmailAsync(string email)

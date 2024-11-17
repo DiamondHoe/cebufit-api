@@ -19,6 +19,8 @@ namespace CebuFitApi.Mapping
             CreateMap<User, UserLoginDTO>();
             CreateMap<UserPublicDto, User>();
             CreateMap<User, UserPublicDto>();
+            CreateMap<UserDetailsDTO, User>();
+            CreateMap<User, UserDetailsDTO>();
             CreateMap<UserUpdateDTO, User>();
             CreateMap<User, UserUpdateDTO>();
             #endregion
