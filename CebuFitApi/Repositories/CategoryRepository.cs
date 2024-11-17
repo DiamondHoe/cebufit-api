@@ -26,10 +26,10 @@ namespace CebuFitApi.Repositories
                     .ToListAsync(),
             };
         }
-        public async Task<Category> GetByIdAsync(Guid categoryId, Guid userIdClaim)
+        public async Task<Category?> GetByIdAsync(Guid categoryId, Guid userIdClaim)
         {
             var category = await dbContext.Categories
-                .FirstOrDefaultAsync(x => x.Id == categoryId && x.User.Id == userIdClaim);
+                .FirstOrDefaultAsync(x => x.Id == categoryId);
             return category;
         }
         public async Task AddAsync(Category category)
