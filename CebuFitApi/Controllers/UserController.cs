@@ -92,13 +92,10 @@ namespace CebuFitApi.Controllers
         public async Task<ActionResult> UpdateUser(UserUpdateDTO user)
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
-            if (userIdClaim != Guid.Empty)
-            {
-                await _userService.UpdateAsync(userIdClaim, user);
-                return Ok();
-            }
-
-            return NotFound("User not found");
+            if (userIdClaim == Guid.Empty) return NotFound("User not found");
+            
+            await _userService.UpdateAsync(userIdClaim, user);
+            return Ok();
         }
 
         //NP: Can be implemented, but for now we do it on client side - if needed i'll add blacklisting

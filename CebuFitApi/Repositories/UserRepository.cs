@@ -70,9 +70,11 @@ namespace CebuFitApi.Repositories
             var existingUser = await _dbContext.Users
                 .FirstOrDefaultAsync(u => u.Id == user.Id);
 
+            // TODO np
             if (existingUser != null)
             {
-                _dbContext.Entry(existingUser).CurrentValues.SetValues(user);
+                existingUser.Weight = user.Weight;
+                _dbContext.Entry(existingUser).CurrentValues.SetValues(existingUser);
                 await _dbContext.SaveChangesAsync();
             }
         }
