@@ -102,11 +102,13 @@ namespace CebuFitApi.Services
             var macro = _mapper.Map<Macro>(productDTO.Macro);
             var foundUser = await _userRepository.GetByIdAsync(userIdClaim);
             var category = await _categoryRepository.GetByIdAsync(productDTO.CategoryId.GetValueOrDefault(), userIdClaim);
+            var productType = await _productTypeRepository.GetByIdAsync(productDTO.ProductTypeId, userIdClaim);
 
-            if (foundUser != null && category != null)
+            if (foundUser != null && productType != null)
             {
                 product.Macro = macro;
                 product.Category = category;
+                product.ProductType = productType;
 
                 await _productRepository.UpdateAsync(product, userIdClaim);
             }
