@@ -5,12 +5,14 @@ namespace CebuFitApi.DTOs.User
 {
     public class UserUpdateDTO
     {
-        public string Name { get; set; }
-        public bool Gender { get; set; } //False = Man, True = Woman
-        public int Height { get; set; }
-        public decimal Weight { get; set; }
-        public DateTime BirthDate { get; set; }
-        public PhysicalActivityLevelEnum PhysicalActivityLevel { get; set; } = PhysicalActivityLevelEnum.LightlyActive;
+        //jeżeli potrzebujesz zmianę maila lub inne dane, dodaj je tutaj
+        //a później w UserService.cs w metodzie UpdateAsync
+        public string? Name { get; set; }
+        public bool? Gender { get; set; } //False = Man, True = Woman
+        public int? Height { get; set; }
+        public decimal? Weight { get; set; }
+        public DateTime? BirthDate { get; set; }
+        public PhysicalActivityLevelEnum? PhysicalActivityLevel { get; set; } = PhysicalActivityLevelEnum.LightlyActive;
         public UserDemandCreateDTO? Demand { get; set; }
     }
 }

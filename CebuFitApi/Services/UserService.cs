@@ -94,10 +94,20 @@ namespace CebuFitApi.Services
         }
         public async Task UpdateAsync(Guid userIdClaim, UserUpdateDTO userDTO)
         {
-            var userEntity = _mapper.Map<User>(userDTO);
-            userEntity.Id = userIdClaim;
             var foundUser = await _userRepository.GetByIdAsync(userIdClaim);
-            if (foundUser != null) await _userRepository.UpdateAsync(userEntity);
+
+            if (foundUser != null)
+            {
+                foundUser.Name = userDTO.Name ?? foundUser.Name;
+                foundUser.Gender = userDTO.Gender ?? foundUser.Gender;
+                foundUser.Height = userDTO.Height ?? foundUser.Height;
+                foundUser.Weight = userDTO.Weight ?? foundUser.Weight;
+                foundUser.BirthDate = userDTO.BirthDate ?? foundUser.BirthDate;
+                foundUser.PhysicalActivityLevel = userDTO.PhysicalActivityLevel ?? foundUser.PhysicalActivityLevel;
+                foundUser.Demand = _mapper.Map<UserDemand>(userDTO.Demand) ?? foundUser.Demand;
+
+                await _userRepository.UpdateAsync(foundUser);
+            }
         }
 
         public Task<bool> DeleteAsync(Guid userIdClaim)
