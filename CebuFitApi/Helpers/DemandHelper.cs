@@ -71,9 +71,9 @@ namespace CebuFitApi.Helpers
             return new UserDemand
             {
                 Calories = (int?)(bmr * activityFactor),
-                CarbPercent = 65,
-                FatPercent = 20,
-                ProteinPercent = 15
+                CarbPercent = user.Demand?.CarbPercent ?? 65,
+                FatPercent = user.Demand?.FatPercent ?? 20,
+                ProteinPercent = user.Demand?.ProteinPercent ?? 15
             };
         }
         private static double CalculateBasalMetabolicRate(User user)
