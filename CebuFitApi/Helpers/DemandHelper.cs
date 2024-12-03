@@ -1,5 +1,4 @@
 ﻿using CebuFitApi.DTOs;
-using CebuFitApi.DTOs.Demand;
 using CebuFitApi.Helpers.Enums;
 using CebuFitApi.Models;
 
@@ -45,23 +44,23 @@ namespace CebuFitApi.Helpers
                 && (demand.ProteinPercent + demand.CarbPercent + demand.FatPercent == 100);
         }
 
-        public static UserDemand CalculateDemand(User user)
+        public static UserDemand CalculateDemand(User user, Guid? demandId = null)
         {
             var userDemand = CalculateUserDemand(user);
-
+            
             if (IsDemandValid(userDemand))
             {
-                userDemand.Id = Guid.NewGuid();
+                userDemand.Id = demandId ?? Guid.NewGuid();
+                userDemand.User = user;
                 userDemand.UserId = user.Id;
                 return userDemand;
             }
-            else
-            {
-                var newDemand = GetDefaultUserDemand();
-                newDemand.Id = Guid.NewGuid();
-                newDemand.UserId = user.Id;
-                return newDemand;
-            }
+            
+            var newDemand = GetDefaultUserDemand();
+            userDemand.Id = demandId ?? Guid.NewGuid();
+            userDemand.User = user;
+            newDemand.UserId = user.Id;
+            return newDemand;
         }
 
         private static UserDemand CalculateUserDemand(User user)
@@ -72,9 +71,9 @@ namespace CebuFitApi.Helpers
             return new UserDemand
             {
                 Calories = (int?)(bmr * activityFactor),
-                CarbPercent = 40,
-                FatPercent = 30,
-                ProteinPercent = 30
+                CarbPercent = 65,
+                FatPercent = 20,
+                ProteinPercent = 15
             };
         }
         private static double CalculateBasalMetabolicRate(User user)
@@ -105,9 +104,9 @@ namespace CebuFitApi.Helpers
             return new UserDemand
             {
                 Calories = 2000,
-                CarbPercent = 40,
-                FatPercent = 30,
-                ProteinPercent = 30
+                CarbPercent = 65,
+                FatPercent = 20,
+                ProteinPercent = 15
             };
         }
     }
