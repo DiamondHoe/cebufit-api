@@ -50,7 +50,7 @@ namespace CebuFitApi.Services
             var foundDemand = await _demandRepository.GetDemandAsync(userId);
             if (foundDemand == null) return;
 
-            foundDemand = DemandHelper.CalculateDemand(foundUser);
+            foundDemand = DemandHelper.CalculateDemand(foundUser, foundDemand.Id);
             await _demandRepository.UpdateDemandAsync(foundDemand, userId);
         }
     }

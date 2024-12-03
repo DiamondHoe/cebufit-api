@@ -16,7 +16,7 @@ namespace CebuFitApi.Repositories
         public async Task<UserDemand?> GetDemandAsync(Guid userId)
         {
             var demand = await _dbContext.UsersDemands
-                .FirstOrDefaultAsync(x => x.User != null && x.User.Id == userId);
+                .FirstOrDefaultAsync(x => x.User.Id == userId);
             return demand;
         }
 
@@ -28,11 +28,11 @@ namespace CebuFitApi.Repositories
 
         public async Task UpdateDemandAsync(UserDemand demand, Guid userId)
         {
-            var exisitingDemand = await _dbContext.UsersDemands
+            var existingDemand = await _dbContext.UsersDemands
                 .FirstOrDefaultAsync(x => x.User.Id == userId);
-            if (exisitingDemand != null)
+            if (existingDemand != null)
             {
-                _dbContext.Entry(exisitingDemand).CurrentValues.SetValues(demand);
+                _dbContext.Entry(existingDemand).CurrentValues.SetValues(demand);
                 await _dbContext.SaveChangesAsync();
             }
         }

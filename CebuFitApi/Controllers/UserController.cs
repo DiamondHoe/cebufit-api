@@ -9,27 +9,20 @@ namespace CebuFitApi.Controllers
 {
     [Route("api/users")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController(
+        IUserService userService,
+        IJwtTokenHelper jwtTokenHelper,
+        IUserDemandService demandService
+        ) : ControllerBase 
     {
-        private readonly IUserService _userService;
-        private readonly IJwtTokenHelper _jwtTokenHelper;
-
-        public UserController(IUserService userService, IJwtTokenHelper jwtTokenHelper)
-        {
-            _userService = userService;
-            _jwtTokenHelper = jwtTokenHelper;
-        }
 
         [HttpPost("login")]
         public async Task<ActionResult> Login(UserLoginDTO user, bool? expire = true)
         {
-            var loggedUser = await _userService.AuthenticateAsync(user);
+            var loggedUser = await userService.AuthenticateAsync(user);
+            if (loggedUser == null) return Unauthorized("Invalid credentials");
 
-            if (loggedUser == null)
-            {
-                return Unauthorized("Invalid credentials");
-            }
-            var token = await _jwtTokenHelper.GenerateJwtToken(loggedUser, expire);
+            var token = await jwtTokenHelper.GenerateJwtToken(loggedUser, expire);
 
             return Ok(new { Token = token });
         }
@@ -40,10 +33,10 @@ namespace CebuFitApi.Controllers
             if (registerUser == null) return BadRequest();
             registerUser.Password = BCrypt.Net.BCrypt.HashPassword(registerUser.Password);
 
-            var (registerSuccess, userEntity) = await _userService.CreateAsync(registerUser);
+            var (registerSuccess, userEntity) = await userService.CreateAsync(registerUser);
             if (!registerSuccess) return Conflict("Name is already taken");
 
-            var token = await _jwtTokenHelper.GenerateJwtToken(userEntity, true);
+            var token = await jwtTokenHelper.GenerateJwtToken(userEntity, true);
             return Ok(new { Token = token });
         }
 
@@ -51,10 +44,10 @@ namespace CebuFitApi.Controllers
         [HttpGet("details")]
         public async Task<ActionResult<UserDetailsDTO>> GetUserDetailsAsync()
         {
-            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+            var userIdClaim = jwtTokenHelper.GetCurrentUserId();
             if (userIdClaim != Guid.Empty)
             {
-                var userDetails = await _userService.GetDetailsAsync(userIdClaim);
+                var userDetails = await userService.GetDetailsAsync(userIdClaim);
                 return Ok(userDetails);
             }
 
@@ -65,10 +58,10 @@ namespace CebuFitApi.Controllers
         [HttpGet("summary")]
         public async Task<ActionResult<SummaryDTO>> GetSummaryAsync(DateTime start, DateTime end)
         {
-            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+            var userIdClaim = jwtTokenHelper.GetCurrentUserId();
             if (userIdClaim != Guid.Empty)
             {
-                var summaryData = await _userService.GetSummaryAsync(userIdClaim, start, end);
+                var summaryData = await userService.GetSummaryAsync(userIdClaim, start, end);
                 return Ok(summaryData);
             }
 
@@ -78,10 +71,10 @@ namespace CebuFitApi.Controllers
         [HttpGet("resetPassword")]
         public async Task<ActionResult> ResetPassword(string email)
         {
-            var foundUser = await _userService.GetByEmailAsync(email);
+            var foundUser = await userService.GetByEmailAsync(email);
             if(foundUser == null) return NotFound("User not found");
 
-            var newPassword = await _userService.ResetPasswordAsync(email);
+            var newPassword = await userService.ResetPasswordAsync(email);
             if (!string.IsNullOrEmpty(newPassword)) return Ok();
 
             return BadRequest("Password reset failed");
@@ -91,10 +84,11 @@ namespace CebuFitApi.Controllers
         [HttpPut("update")]
         public async Task<ActionResult> UpdateUser(UserUpdateDTO user)
         {
-            var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+            var userIdClaim = jwtTokenHelper.GetCurrentUserId();
             if (userIdClaim == Guid.Empty) return NotFound("User not found");
             
-            await _userService.UpdateAsync(userIdClaim, user);
+            await userService.UpdateAsync(userIdClaim, user);
+            await demandService.AutoCalculateDemandAsync(userIdClaim);
             return Ok();
         }
 

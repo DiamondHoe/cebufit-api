@@ -21,7 +21,7 @@ namespace CebuFitApi.Models
         public int? ProteinPercent { get; set; } = 15;
         public decimal? Protein => Calories * ProteinPercent / 100 / 4;
 
-        public User? User { get; set; }
+        public User User { get; set; }
         public Guid UserId { get; set; }
     }
     public class UserDemandConfiguration : IEntityTypeConfiguration<UserDemand>
