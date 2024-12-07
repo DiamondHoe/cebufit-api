@@ -254,9 +254,16 @@ namespace CebuFitApi.Controllers
             {
                 var days = await _dayService.GetShoppingForDateRangeAsync(start, end, userIdClaim);
 
-                var excelBytes = await _excelHelper.GenerateExcel(days);
+                try
+                {
+                    var excelBytes = await _excelHelper.GenerateExcel(days);
+                    return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "shopping_list.xlsx");
+                }
+                catch (ArgumentNullException e)
+                {
+                    return BadRequest(e.Message);
+                }
 
-                return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "shopping_list.xlsx");
             }
 
             return NotFound("User not found");

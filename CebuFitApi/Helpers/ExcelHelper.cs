@@ -12,6 +12,10 @@ namespace CebuFitApi.Helpers
     {
         public async Task<byte[]> GenerateExcel(List<Day> days)
         {
+            if (days == null)
+            {
+                throw new ArgumentNullException(nameof(days));
+            }
             using var package = new ExcelPackage();
             var worksheet = package.Workbook.Worksheets.Add("ShoppingList");
 

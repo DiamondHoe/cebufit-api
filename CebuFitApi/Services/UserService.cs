@@ -83,14 +83,21 @@ namespace CebuFitApi.Services
                 return ("");
             }
 
-            string generatedPassword = PasswordGenerator.GenerateRandomPassword(12);
- 
-            foundUser.Password = BCrypt.Net.BCrypt.HashPassword(generatedPassword);
-            var userEntity = _mapper.Map<User>(foundUser);
-            await _userRepository.UpdateAsync(userEntity);
-            EmailService.SendEmail(email, foundUser.Name, generatedPassword);
+            try
+            {
+                string generatedPassword = PasswordGenerator.GenerateRandomPassword(12);
+                foundUser.Password = BCrypt.Net.BCrypt.HashPassword(generatedPassword);
+                var userEntity = _mapper.Map<User>(foundUser);
+                await _userRepository.UpdateAsync(userEntity);
+                EmailService.SendEmail(email, foundUser.Name, generatedPassword);
 
-            return generatedPassword;
+                return generatedPassword;
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                Console.WriteLine(e);
+                return ("");
+            }
         }
         public async Task UpdateAsync(Guid userIdClaim, UserUpdateDTO userDTO)
         {

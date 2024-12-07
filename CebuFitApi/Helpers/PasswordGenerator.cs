@@ -7,6 +7,8 @@ namespace CebuFitApi.Helpers
     {
         public static string GenerateRandomPassword(int length)
         {
+            if(length < 1) throw new ArgumentOutOfRangeException(nameof(length), "Password length must be greater than 0");
+            
             const string validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()";
             StringBuilder password = new StringBuilder();
             using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
