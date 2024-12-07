@@ -116,16 +116,16 @@ namespace CebuFitApi.Services
             // Aggregate storage items by product and sum quantities and weights
             foreach (var storageItem in await _storageItemService.GetAllStorageItemsWithProductAsync(userIdClaim, true))
             {
-                if (!availableStorageItems.ContainsKey(storageItem.Product.Id))
+                if (!availableStorageItems.ContainsKey(storageItem.Product.ProductTypeId))
                 {
-                    availableStorageItems.Add(storageItem.Product.Id, new Tuple<decimal?, decimal?>(
+                    availableStorageItems.Add(storageItem.Product.ProductTypeId, new Tuple<decimal?, decimal?>(
                         storageItem.ActualQuantity, storageItem.ActualWeight));
                 }
                 else
                 {
-                    availableStorageItems[storageItem.Product.Id] = new Tuple<decimal?, decimal?>(
-                        availableStorageItems[storageItem.Product.Id].Item1 + storageItem.ActualQuantity,
-                        availableStorageItems[storageItem.Product.Id].Item2 + storageItem.ActualWeight);
+                    availableStorageItems[storageItem.Product.ProductTypeId] = new Tuple<decimal?, decimal?>(
+                        availableStorageItems[storageItem.Product.ProductTypeId].Item1 + storageItem.ActualQuantity,
+                        availableStorageItems[storageItem.Product.ProductTypeId].Item2 + storageItem.ActualWeight);
                 }
             }
 
@@ -137,10 +137,10 @@ namespace CebuFitApi.Services
 
                 foreach (var ingredient in recipe.Ingredients)
                 {
-                    if (availableStorageItems.ContainsKey(ingredient.Product.Id))
+                    if (availableStorageItems.ContainsKey(ingredient.Product.ProductTypeId))
                     {
-                        var availableQuantity = availableStorageItems[ingredient.Product.Id].Item1;
-                        var availableWeight = availableStorageItems[ingredient.Product.Id].Item2;
+                        var availableQuantity = availableStorageItems[ingredient.Product.ProductTypeId].Item1;
+                        var availableWeight = availableStorageItems[ingredient.Product.ProductTypeId].Item2;
 
                         // Check Quantity
                         if (ingredient.Quantity.HasValue && availableQuantity.HasValue)
