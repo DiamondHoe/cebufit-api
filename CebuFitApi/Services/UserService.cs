@@ -74,7 +74,7 @@ namespace CebuFitApi.Services
             var userEntity = await _userRepository.GetByEmailAsync(email);
             var userDTO = _mapper.Map<UserDTO>(userEntity);
             return userDTO;
-        }   
+        }
         public async Task<string> ResetPasswordAsync(string email)
         {
             var foundUser = await _userRepository.GetByEmailAsync(email);
@@ -83,21 +83,13 @@ namespace CebuFitApi.Services
                 return ("");
             }
 
-            try
-            {
-                string generatedPassword = PasswordGenerator.GenerateRandomPassword(12);
-                foundUser.Password = BCrypt.Net.BCrypt.HashPassword(generatedPassword);
-                var userEntity = _mapper.Map<User>(foundUser);
-                await _userRepository.UpdateAsync(userEntity);
-                EmailService.SendEmail(email, foundUser.Name, generatedPassword);
+            string generatedPassword = PasswordGenerator.GenerateRandomPassword(12);
+            foundUser.Password = BCrypt.Net.BCrypt.HashPassword(generatedPassword);
+            var userEntity = _mapper.Map<User>(foundUser);
+            await _userRepository.UpdateAsync(userEntity);
+            EmailService.SendEmail(email, foundUser.Name, generatedPassword);
 
-                return generatedPassword;
-            }
-            catch (ArgumentOutOfRangeException e)
-            {
-                Console.WriteLine(e);
-                return ("");
-            }
+            return generatedPassword;
         }
         public async Task UpdateAsync(Guid userIdClaim, UserUpdateDTO userDTO)
         {
@@ -201,7 +193,7 @@ namespace CebuFitApi.Services
                     foreach (var product in productsPerDay)
                     {
                         var foundCategory = await _categoryService.GetCategoryByIdAsync(product.CategoryId.GetValueOrDefault(), userIdClaim);
-                        if(foundCategory != null)
+                        if (foundCategory != null)
                         {
                             if (summaryDto.AverageCategories.ContainsKey(foundCategory.Name))
                             {

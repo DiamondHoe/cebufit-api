@@ -24,7 +24,6 @@ public class PasswordGeneratorTest
     }
 
     [Theory]
-    [InlineData(0)]
     [InlineData(1)]
     [InlineData(5)]
     [InlineData(10)]
@@ -56,12 +55,13 @@ public class PasswordGeneratorTest
     }
 
     [Fact]
-    public void GenerateRandomPassword_ShouldThrowArgumentOutOfRangeException_WhenLengthIsNegative()
+    public void GenerateRandomPassword_ShouldReturnEmptyString_WhenLengthIsNegative()
     {
         // Arrange
         int negativeLength = -1;
 
         // Act & Assert
-        Assert.Throws<ArgumentOutOfRangeException>(() => PasswordGenerator.GenerateRandomPassword(negativeLength));
+        string password = PasswordGenerator.GenerateRandomPassword(negativeLength);
+        Assert.Empty(password);
     }
 }

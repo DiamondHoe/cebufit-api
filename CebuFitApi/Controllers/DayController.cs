@@ -259,7 +259,7 @@ namespace CebuFitApi.Controllers
                     var excelBytes = await _excelHelper.GenerateExcel(days);
                     return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "shopping_list.xlsx");
                 }
-                catch (ArgumentNullException e)
+                catch (Exception e)
                 {
                     return BadRequest(e.Message);
                 }

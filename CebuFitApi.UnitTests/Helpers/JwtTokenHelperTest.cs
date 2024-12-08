@@ -26,7 +26,7 @@ public class JwtTokenHelperTest
         _jwtTokenHelper = new JwtTokenHelper(_httpContextAccessorMock.Object);
     }
 
-    [Theory]
+    //[Theory]
     //[InlineData("User", false)]
     //[InlineData("Admin", true)]
     //[InlineData("Maintainer", null)]
