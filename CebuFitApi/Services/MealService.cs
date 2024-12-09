@@ -86,13 +86,17 @@ namespace CebuFitApi.Services
 
                 meal.Ingredients.Clear();
 
-                var ingredients = new List<Ingredient>();
-                foreach (var ing in mealDTO.Ingredients)
+                if (mealDTO.Ingredients != null && mealDTO.Ingredients.Any())
                 {
-                    var ingredientId = await _ingredientService.CreateIngredientAsync(ing, userIdClaim);
-                    ingredients.Add(await _ingredientRepository.GetByIdAsync(ingredientId, userIdClaim));
+                    var ingredients = new List<Ingredient>();
+                    foreach (var ing in mealDTO.Ingredients)
+                    {
+                        var ingredientId = await _ingredientService.CreateIngredientAsync(ing, userIdClaim);
+                        ingredients.Add(await _ingredientRepository.GetByIdAsync(ingredientId, userIdClaim));
+                    }
+                    meal.Ingredients = ingredients;
+
                 }
-                meal.Ingredients = ingredients;
 
                 var mealID = await _mealRepository.CreateAsync(meal, userIdClaim);
                 return mealID;
@@ -109,11 +113,14 @@ namespace CebuFitApi.Services
 
             // Create tasks for adding new ingredients
             var addIngredientTasks = new List<Task<Ingredient>>();
-            foreach (var ingredientDTO in mealDTO.Ingredients)
+            if (mealDTO.Ingredients != null && mealDTO.Ingredients.Any())
             {
-                var ingredientId = await _ingredientService.CreateIngredientAsync(ingredientDTO, userIdClaim);
-                var newIngredient = await _ingredientRepository.GetByIdAsync(ingredientId, userIdClaim);
-                addIngredientTasks.Add(Task.FromResult(newIngredient));
+                foreach (var ingredientDTO in mealDTO.Ingredients)
+                {
+                    var ingredientId = await _ingredientService.CreateIngredientAsync(ingredientDTO, userIdClaim);
+                    var newIngredient = await _ingredientRepository.GetByIdAsync(ingredientId, userIdClaim);
+                    addIngredientTasks.Add(Task.FromResult(newIngredient));
+                }
             }
 
             // Wait for all tasks to complete
@@ -159,26 +166,29 @@ namespace CebuFitApi.Services
             var existingMeal = await _mealRepository.GetByIdAsync(mealPrepareDTO.Id, userIdClaim);
             if (existingMeal != null)
             {
-                foreach (var storageItemPrepare in mealPrepareDTO.StorageItems)
+                if (mealPrepareDTO.StorageItems != null && mealPrepareDTO.StorageItems.Any())
                 {
-                    var foundSi = await _storageItemService.GetStorageItemByIdAsync(storageItemPrepare.Id, userIdClaim);
-                    var unitweight = (await _storageItemService.GetStorageItemByIdWithProductAsync(storageItemPrepare.Id, userIdClaim)).Product.UnitWeight;
-
-                    if (foundSi != null)
+                    foreach (var storageItemPrepare in mealPrepareDTO.StorageItems)
                     {
-                        if (storageItemPrepare.Quantity.HasValue && foundSi.ActualQuantity > 0)
-                        {
-                            foundSi.ActualQuantity -= storageItemPrepare.Quantity.Value;
-                            foundSi.ActualWeight = foundSi.ActualQuantity * unitweight;
-                        }
+                        var foundSi = await _storageItemService.GetStorageItemByIdAsync(storageItemPrepare.Id, userIdClaim);
+                        var unitweight = (await _storageItemService.GetStorageItemByIdWithProductAsync(storageItemPrepare.Id, userIdClaim)).Product.UnitWeight;
 
-                        if (storageItemPrepare.Weight.HasValue && foundSi.ActualWeight > 0)
+                        if (foundSi != null)
                         {
-                            foundSi.ActualWeight -= storageItemPrepare.Weight.Value;
-                            foundSi.ActualQuantity = Math.Ceiling((decimal)(foundSi.ActualWeight / unitweight));
-                        }
+                            if (storageItemPrepare.Quantity.HasValue && foundSi.ActualQuantity > 0)
+                            {
+                                foundSi.ActualQuantity -= storageItemPrepare.Quantity.Value;
+                                foundSi.ActualWeight = foundSi.ActualQuantity * unitweight;
+                            }
 
-                        await _storageItemService.UpdateStorageItemAsync(foundSi, userIdClaim);
+                            if (storageItemPrepare.Weight.HasValue && foundSi.ActualWeight > 0)
+                            {
+                                foundSi.ActualWeight -= storageItemPrepare.Weight.Value;
+                                foundSi.ActualQuantity = Math.Ceiling((decimal)(foundSi.ActualWeight / unitweight));
+                            }
+
+                            await _storageItemService.UpdateStorageItemAsync(foundSi, userIdClaim);
+                        }
                     }
                 }
 
