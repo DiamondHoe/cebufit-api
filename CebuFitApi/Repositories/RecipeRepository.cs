@@ -68,22 +68,20 @@ namespace CebuFitApi.Repositories
         public async Task<Recipe> GetByIdAsync(Guid id, Guid userIdClaim)
         {
             var recipe = await _dbContext.Recipes
-                .Where(x => x.User.Id == userIdClaim && x.Id == id)
                 .Include(x => x.Ingredients)
-                .FirstAsync();
+                .FirstOrDefaultAsync(x => x.User.Id == userIdClaim && x.Id == id);
             return recipe;
         }
         public async Task<Recipe> GetByIdWithDetailsAsync(Guid id, Guid userIdClaim)
         {
             var recipe = await _dbContext.Recipes
-                .Where(x => x.User.Id == userIdClaim && x.Id == id)
                 .Include(x => x.Ingredients)
                     .ThenInclude(x => x.Product)
                     .ThenInclude(x => x.Category)
                 .Include(x => x.Ingredients)
                     .ThenInclude(x => x.Product)
                     .ThenInclude(x => x.Macro)
-                .FirstAsync();
+                .FirstOrDefaultAsync(x => x.User.Id == userIdClaim && x.Id == id);
             return recipe;
         }
         public async Task CreateAsync(Recipe recipe, Guid userIdClaim)
@@ -94,9 +92,8 @@ namespace CebuFitApi.Repositories
         public async Task UpdateAsync(Recipe recipe, Guid userIdClaim)
         {
             var existingRecipe = await _dbContext.Recipes
-                .Where(si => si.Id == recipe.Id && si.User.Id == userIdClaim)
                 .Include (x => x.Ingredients)
-                .FirstAsync();
+                .FirstOrDefaultAsync(si => si.Id == recipe.Id && si.User.Id == userIdClaim);
 
             if (existingRecipe != null)
             {
@@ -108,8 +105,7 @@ namespace CebuFitApi.Repositories
         public async Task DeleteAsync(Guid id, Guid userIdClaim)
         {
             var recipeToDelete = await _dbContext.Recipes
-                .Where(x =>x.Id == id && x.User.Id == userIdClaim)
-                .FirstAsync();
+                .FirstOrDefaultAsync(x => x.Id == id && x.User.Id == userIdClaim);
             if (recipeToDelete != null)
             {
                 _dbContext.Recipes.Remove(recipeToDelete);

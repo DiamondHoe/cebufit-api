@@ -50,19 +50,17 @@ namespace CebuFitApi.Repositories
         public async Task<StorageItem> GetByIdAsync(Guid id, Guid userIdClaim)
         {
             var storageItem = await _dbContext.StorageItems
-                .Where(si => si.Id == id && si.User.Id == userIdClaim)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(si => si.Id == id && si.User.Id == userIdClaim);
             return storageItem;
         }
         public async Task<StorageItem> GetByIdWithProductAsync(Guid id, Guid userIdClaim)
         {
             var storageItem = await _dbContext.StorageItems
-                .Where(si => si.Id == id && si.User.Id == userIdClaim)
                 .Include(x => x.Product)
                     .ThenInclude(x => x.Category)
                 .Include(x => x.Product)
                     .ThenInclude(x => x.Macro)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(si => si.Id == id && si.User.Id == userIdClaim);
             return storageItem;
         }
         public async Task CreateAsync(StorageItem storageItem, Guid userIdClaim)

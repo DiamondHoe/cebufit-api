@@ -1,4 +1,5 @@
 ﻿using CebuFitApi.Data;
+using CebuFitApi.Helpers.Enums;
 using CebuFitApi.Interfaces;
 using CebuFitApi.Models;
 using Microsoft.EntityFrameworkCore;
@@ -7,18 +8,28 @@ namespace CebuFitApi.Repositories
 {
     public class ProductTypeRepository(CebuFitApiDbContext dbContext) : IProductTypeRepository
     {
-        public async Task<List<ProductType>> GetAllAsync(Guid userIdClaim)
+        public async Task<List<ProductType>> GetAllAsync(Guid userIdClaim, DataType dataType)
         {
-            var productTypes = await dbContext.ProductTypes
-                .Where(x => x.User != null && x.User.Id == userIdClaim)
-                .ToListAsync();
-            return productTypes;
+            return dataType switch
+            {
+                DataType.Private => await dbContext.ProductTypes
+                    .Where(x => x.User != null && x.User.Id == userIdClaim && x.IsPublic == false)
+                    .ToListAsync(),
+                DataType.Public => await dbContext.ProductTypes
+                    .Where(x => x.IsPublic == true)
+                    .ToListAsync(),
+                DataType.Both => await dbContext.ProductTypes
+                    .Where(x => (x.User != null && x.User.Id == userIdClaim) || x.IsPublic == true)
+                    .ToListAsync(),
+                _ => await dbContext.ProductTypes
+                    .Where(x => x.User != null && x.User.Id == userIdClaim)
+                    .ToListAsync(),
+            };
         }
         public async Task<ProductType?> GetByIdAsync(Guid typeId, Guid userIdClaim)
         {
             var productType = await dbContext.ProductTypes
-                .Where(x => x.Id == typeId && x.User != null && x.User.Id == userIdClaim)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(x => x.Id == typeId);
             return productType;
         }
         public async Task AddAsync(ProductType productType)
@@ -40,8 +51,7 @@ namespace CebuFitApi.Repositories
         public async Task DeleteAsync(Guid productTypeId, Guid userIdClaim)
         {
             var typeToDelete = await dbContext.ProductTypes
-                .Where(x => x.Id == productTypeId && x.User != null && x.User.Id == userIdClaim)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(x => x.Id == productTypeId && x.User != null && x.User.Id == userIdClaim);
             if (typeToDelete != null)
             {
                 var productsToUpdate = dbContext.Products

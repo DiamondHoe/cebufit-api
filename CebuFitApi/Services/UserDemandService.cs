@@ -36,7 +36,7 @@ namespace CebuFitApi.Services
         {
             var demand = _mapper.Map<UserDemand>(demandUpdateDTO);
 
-            if (await _userRepository.GetById(userId) != null)
+            if (await _userRepository.GetByIdAsync(userId) != null)
             {
                 await _demandRepository.UpdateDemandAsync(demand, userId);
             }
@@ -44,13 +44,13 @@ namespace CebuFitApi.Services
 
         public async Task AutoCalculateDemandAsync(Guid userId, UserDemandCreateDTO? demandCreateDTO = null)
         {
-            var foundUser = await _userRepository.GetById(userId);
+            var foundUser = await _userRepository.GetByIdAsync(userId);
             if (foundUser == null) return;
 
             var foundDemand = await _demandRepository.GetDemandAsync(userId);
             if (foundDemand == null) return;
 
-            foundDemand = DemandHelper.CalculateDemand(foundUser);
+            foundDemand = DemandHelper.CalculateDemand(foundUser, foundDemand.Id);
             await _demandRepository.UpdateDemandAsync(foundDemand, userId);
         }
     }

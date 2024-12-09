@@ -175,7 +175,7 @@ namespace CebuFitApi.Controllers
 
             if (userIdClaim != Guid.Empty)
             {
-                return await _ingredientService.IsIngredientAvailable(ingredientDTO, userIdClaim);
+                return Ok((await _ingredientService.IsIngredientAvailable(ingredientDTO, userIdClaim)));
             }
 
             return NotFound("User not found");

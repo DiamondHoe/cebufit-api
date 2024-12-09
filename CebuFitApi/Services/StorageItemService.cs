@@ -54,7 +54,7 @@ namespace CebuFitApi.Services
             var storageItem = _mapper.Map<StorageItem>(storageItemDTO);
             storageItem.Id = Guid.NewGuid();
 
-            var foundUser = await _userRepository.GetById(userIdClaim);
+            var foundUser = await _userRepository.GetByIdAsync(userIdClaim);
             var baseProduct = await _productRepository.GetByIdAsync(storageItemDTO.baseProductId, userIdClaim);
             if (baseProduct != null && foundUser != null)
             {
@@ -82,7 +82,7 @@ namespace CebuFitApi.Services
         public async Task UpdateStorageItemAsync(StorageItemDTO storageItemDTO, Guid userIdClaim)
         {
             var storageItem = _mapper.Map<StorageItem>(storageItemDTO);
-            var foundUser = await _userRepository.GetById(userIdClaim);
+            var foundUser = await _userRepository.GetByIdAsync(userIdClaim);
             if (foundUser != null)
             {
                 await _storageItemRepository.UpdateAsync(storageItem, userIdClaim);

@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
 using CebuFitApi.DTOs;
-using CebuFitApi.Helpers;
+using CebuFitApi.Helpers.Enums;
 using CebuFitApi.Interfaces;
-using CebuFitApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace CebuFitApi.Controllers
 {
@@ -27,20 +25,14 @@ namespace CebuFitApi.Controllers
         }
 
         [HttpGet(Name = "GetCategories")]
-        public async Task<ActionResult<CategoryDTO>> GetAll()
+        public async Task<ActionResult<CategoryDTO>> GetAll(DataType dataType = DataType.Both)
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
-
-            if (userIdClaim != Guid.Empty)
-            {
-                var categories = await _categoryService.GetAllCategoriesAsync(userIdClaim);
-                if (categories.Count == 0)
-                {
-                    return NoContent();
-                }
-                return Ok(categories);
-            }
-            return NotFound("Username not found");
+            if (userIdClaim == Guid.Empty) return NotFound("Username not found");
+            
+            var categories = await _categoryService.GetAllCategoriesAsync(userIdClaim, dataType);
+            if (categories.Count == 0) return NoContent();
+            return Ok(categories);
         }
 
         [HttpGet("{categoryId}", Name = "GetCategoryById")]
