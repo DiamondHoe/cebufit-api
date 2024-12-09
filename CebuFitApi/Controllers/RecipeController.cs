@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CebuFitApi.Helpers.Enums;
+using CebuFitApi.Helpers;
 
 namespace CebuFitApi.Controllers
 {
@@ -172,10 +173,9 @@ namespace CebuFitApi.Controllers
         }
 
         [HttpGet("available/{recipesCount}", Name = "GetAvailableRecipes")]
-        public async Task<ActionResult<List<Tuple<RecipeWithDetailsDTO, List<Tuple<IngredientWithProductDTO, Tuple<decimal?, decimal?>>>>>>> GetAvailableRecipes(int recipesCount)
+        public async Task<ActionResult<List<RecipeDetail>>> GetAvailableRecipes(int recipesCount)
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
-
             if (userIdClaim != Guid.Empty)
             {
                 var meals = await _recipeService.GetRecipesFromAvailableStorageItemsAsync(userIdClaim, recipesCount);
@@ -183,9 +183,18 @@ namespace CebuFitApi.Controllers
                 {
                     return NoContent();
                 }
-                return Ok(meals);
+                var recipeDetails = meals.Select(meal => new RecipeDetail
+                {
+                    Recipe = meal.Item1,
+                    Ingredients = meal.Item2.Select(ingredientTuple => new IngredientDetail
+                    {
+                        Ingredient = ingredientTuple.Item1,
+                        Quantity = ingredientTuple.Item2.Item1,
+                        Weight = ingredientTuple.Item2.Item2
+                    }).ToList()
+                }).ToList();
+                return Ok(recipeDetails);
             }
-
             return NotFound("User not found");
         }
     }
