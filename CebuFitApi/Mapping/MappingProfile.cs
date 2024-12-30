@@ -123,7 +123,7 @@ namespace CebuFitApi.Mapping
             CreateMap<IngredientWithProductDTO, Ingredient>();
             CreateMap<Ingredient, IngredientWithProductDTO>()
                 .ForMember(dest => dest.Product, opt => opt.MapFrom(src => src.Product))
-                .AfterMap((src, dest) => dest.Product.CategoryId = src.Product.Category.Id);
+                .AfterMap((src, dest) => dest.Product.CategoryId = src.Product.Category?.Id);
             #endregion
 
             #region Recipes
