@@ -5,6 +5,7 @@ using CebuFitApi.Models;
 using CebuFitApi.Repositories;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CebuFitApi.Helpers.Enums;
 
 public class CategoryService : ICategoryService
 {
@@ -19,11 +20,11 @@ public class CategoryService : ICategoryService
         _mapper = mapper;
     }
 
-    public async Task<List<CategoryDTO>> GetAllCategoriesAsync(Guid userIdClaim)
+    public async Task<List<CategoryDTO>> GetAllCategoriesAsync(Guid userIdClaim, DataType dataType)
     {
-        var categoryEntities = await _categoryRepository.GetAllAsync(userIdClaim);
-        var categoryDTOs = _mapper.Map<List<CategoryDTO>>(categoryEntities);
-        return categoryDTOs;
+        var categoryEntities = await _categoryRepository.GetAllAsync(userIdClaim, dataType);
+        var categoryDtos = _mapper.Map<List<CategoryDTO>>(categoryEntities);
+        return categoryDtos;
     }
 
     public async Task<CategoryDTO> GetCategoryByIdAsync(Guid categoryId, Guid userIdClaim)
@@ -37,7 +38,7 @@ public class CategoryService : ICategoryService
         var category = _mapper.Map<Category>(categoryDTO);
         category.Id = Guid.NewGuid();
 
-        var foundUser = await _userRepository.GetById(userIdClaim);
+        var foundUser = await _userRepository.GetByIdAsync(userIdClaim);
         if(foundUser != null)
         {
             category.User = foundUser;
@@ -49,7 +50,7 @@ public class CategoryService : ICategoryService
     public async Task UpdateCategoryAsync(CategoryDTO categoryDTO, Guid userIdClaim)
     {
         var category = _mapper.Map<Category>(categoryDTO);
-        var foundUser = await _userRepository.GetById(userIdClaim);
+        var foundUser = await _userRepository.GetByIdAsync(userIdClaim);
         if (foundUser != null)
         {
             await _categoryRepository.UpdateAsync(category, userIdClaim);

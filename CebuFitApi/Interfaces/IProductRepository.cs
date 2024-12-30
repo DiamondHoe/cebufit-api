@@ -8,7 +8,7 @@ public interface IProductRepository
     //Task<List<Product>> GetAllWithMacroAsync(Guid userIdClaim, DataType dataType);
     //Task<List<Product>> GetAllWithCategoryAsync(Guid userIdClaim, DataType dataType);
     //Task<List<Product>> GetAllWithDetailsAsync(Guid userIdClaim, DataType dataType);
-    Task<Product> GetByIdAsync(Guid id, Guid userIdClaim);
+    Task<Product?> GetByIdAsync(Guid id, Guid userIdClaim);
     //Task<Product> GetByIdWithMacroAsync(Guid id, Guid userIdClaim);
     //Task<Product> GetByIdWithCategoryAsync(Guid id, Guid userIdClaim);
     Task<Product> GetByIdWithDetailsAsync(Guid id, Guid userIdClaim);

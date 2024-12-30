@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CebuFitApi.DTOs;
+using CebuFitApi.Helpers.Enums;
 using CebuFitApi.Interfaces;
 using CebuFitApi.Models;
 namespace CebuFitApi.Services;
@@ -9,9 +10,9 @@ public class ProductTypeService(
     IUserRepository userRepository,
     IMapper mapper) : IProductTypeService
 {
-    public async Task<List<ProductTypeDto>> GetAllProductTypesAsync(Guid userIdClaim)
+    public async Task<List<ProductTypeDto>> GetAllProductTypesAsync(Guid userIdClaim, DataType dataType)
     {
-        var productTypeEntities = await productTypeRepository.GetAllAsync(userIdClaim);
+        var productTypeEntities = await productTypeRepository.GetAllAsync(userIdClaim, dataType);
         var productTypeDtos = mapper.Map<List<ProductTypeDto>>(productTypeEntities);
         return productTypeDtos;
     }
@@ -27,7 +28,7 @@ public class ProductTypeService(
         var productType = mapper.Map<ProductType>(productTypeDto);
         productType.Id = Guid.NewGuid();
 
-        var foundUser = await userRepository.GetById(userIdClaim);
+        var foundUser = await userRepository.GetByIdAsync(userIdClaim);
         if(foundUser != null)
         {
             productType.User = foundUser;
@@ -39,7 +40,7 @@ public class ProductTypeService(
     public async Task UpdateProductTypeAsync(ProductTypeDto productTypeDto, Guid userIdClaim)
     {
         var productType = mapper.Map<ProductType>(productTypeDto);
-        var foundUser = await userRepository.GetById(userIdClaim);
+        var foundUser = await userRepository.GetByIdAsync(userIdClaim);
         if (foundUser != null) await productTypeRepository.UpdateAsync(productType, userIdClaim);
     }
 

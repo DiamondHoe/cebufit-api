@@ -1,5 +1,4 @@
 ﻿using CebuFitApi.DTOs;
-using CebuFitApi.DTOs.Demand;
 using CebuFitApi.Helpers.Enums;
 using CebuFitApi.Models;
 
@@ -7,28 +6,30 @@ namespace CebuFitApi.Helpers
 {
     public static class DemandHelper
     {
-        public static void CountDayDemand(DayWithMealsDTO? day)
-        {   
+        public static void CountDayDemand(DayWithMealsDTO day)
+        {
             foreach (var meal in day.Meals)
             {
+
+
                 if (meal.Eaten)
                 {
                     foreach (var ingredient in meal.Ingredients)
                     {
-                        day.Demand.CaloriesEaten += ingredient.Product.Macro.Calories;
-                        day.Demand.CarbEaten += ingredient.Product.Macro.Carb;
-                        day.Demand.FatEaten += ingredient.Product.Macro.Fat;
-                        day.Demand.ProteinEaten += ingredient.Product.Macro.Protein;
+                        day.Demand.CaloriesEaten += ingredient.Product.Macro.Calories * ingredient.Product.UnitWeight / 100;
+                        day.Demand.CarbEaten += ingredient.Product.Macro.Carb * ingredient.Product.UnitWeight / 100;
+                        day.Demand.FatEaten += ingredient.Product.Macro.Fat * ingredient.Product.UnitWeight / 100;
+                        day.Demand.ProteinEaten += ingredient.Product.Macro.Protein * ingredient.Product.UnitWeight / 100;
                     }
                 }
                 else
                 {
                     foreach (var ingredient in meal.Ingredients)
                     {
-                        day.Demand.CaloriesPlanned += ingredient.Product.Macro.Calories;
-                        day.Demand.CarbPlanned += ingredient.Product.Macro.Carb;
-                        day.Demand.FatPlanned += ingredient.Product.Macro.Fat;
-                        day.Demand.ProteinPlanned += ingredient.Product.Macro.Protein;
+                        day.Demand.CaloriesPlanned += ingredient.Product.Macro.Calories * ingredient.Product.UnitWeight / 100;
+                        day.Demand.CarbPlanned += ingredient.Product.Macro.Carb * ingredient.Product.UnitWeight / 100;
+                        day.Demand.FatPlanned += ingredient.Product.Macro.Fat * ingredient.Product.UnitWeight / 100;
+                        day.Demand.ProteinPlanned += ingredient.Product.Macro.Protein * ingredient.Product.UnitWeight / 100;
                     }
                 }
             }
@@ -43,23 +44,23 @@ namespace CebuFitApi.Helpers
                 && (demand.ProteinPercent + demand.CarbPercent + demand.FatPercent == 100);
         }
 
-        public static UserDemand CalculateDemand(User user)
+        public static UserDemand CalculateDemand(User user, Guid? demandId = null)
         {
             var userDemand = CalculateUserDemand(user);
-
+            
             if (IsDemandValid(userDemand))
             {
-                userDemand.Id = Guid.NewGuid();
+                userDemand.Id = demandId ?? Guid.NewGuid();
+                userDemand.User = user;
                 userDemand.UserId = user.Id;
                 return userDemand;
             }
-            else
-            {
-                var newDemand = GetDefaultUserDemand();
-                newDemand.Id = Guid.NewGuid();
-                newDemand.UserId = user.Id;
-                return newDemand;
-            }
+            
+            var newDemand = GetDefaultUserDemand();
+            userDemand.Id = demandId ?? Guid.NewGuid();
+            userDemand.User = user;
+            newDemand.UserId = user.Id;
+            return newDemand;
         }
 
         private static UserDemand CalculateUserDemand(User user)
@@ -70,9 +71,9 @@ namespace CebuFitApi.Helpers
             return new UserDemand
             {
                 Calories = (int?)(bmr * activityFactor),
-                CarbPercent = 40,
-                FatPercent = 30,
-                ProteinPercent = 30
+                CarbPercent = user.Demand?.CarbPercent ?? 65,
+                FatPercent = user.Demand?.FatPercent ?? 20,
+                ProteinPercent = user.Demand?.ProteinPercent ?? 15
             };
         }
         private static double CalculateBasalMetabolicRate(User user)
@@ -103,9 +104,9 @@ namespace CebuFitApi.Helpers
             return new UserDemand
             {
                 Calories = 2000,
-                CarbPercent = 40,
-                FatPercent = 30,
-                ProteinPercent = 30
+                CarbPercent = 65,
+                FatPercent = 20,
+                ProteinPercent = 15
             };
         }
     }

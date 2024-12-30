@@ -92,19 +92,18 @@ namespace CebuFitApi.Controllers
         public async Task<ActionResult<List<MealWithDetailsDTO>>> GetByIdWithDetails(Guid mealId)
         {
             var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
-
-            if (userIdClaim != Guid.Empty)
+            if (userIdClaim == Guid.Empty)
             {
-                var meal = await _mealService.GetMealByIdWithDetailsAsync(mealId, userIdClaim);
-                if (meal == null)
-                {
-                    return NotFound();
-                }
-                return Ok(meal);
+                return NotFound("User not found");
             }
-
-            return NotFound("User not found");
+            var meal = await _mealService.GetMealByIdWithDetailsAsync(mealId, userIdClaim);
+            if (meal == null)
+            {
+                return NotFound();
+            }
+            return Ok(meal);
         }
+
 
         [HttpPost]
         public async Task<ActionResult<Guid>> CreateMeal(MealCreateDTO mealDTO)
@@ -190,7 +189,7 @@ namespace CebuFitApi.Controllers
 
             return NotFound("User not found");
         }
-        
+
         [HttpPut("EatMeal/{mealId}")]
         public async Task<ActionResult> EatMeal(Guid mealId)
         {
@@ -212,7 +211,7 @@ namespace CebuFitApi.Controllers
 
             return NotFound("User not found");
         }
-        
+
         [HttpPost("EatSnack")]
         public async Task<ActionResult> EatSnack(SnackCreateDTO snackDto)
         {

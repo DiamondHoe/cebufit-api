@@ -4,40 +4,28 @@ using CebuFitApi.Helpers.Enums;
 using CebuFitApi.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CebuFitApi.Controllers;
 
 [Authorize]
 [ApiController]
 [Route("/api/requests")]
-public class RequestController : Controller
+public class RequestController(
+    IRequestService requestService, 
+    IJwtTokenHelper jwtTokenHelper, 
+    WebSocketHandler webSocketHandler
+    ) : Controller
 {
-    private readonly IRequestService _requestService;
-    private readonly IJwtTokenHelper _jwtTokenHelper;
-    private readonly WebSocketHandler _webSocketHandler;
-
-    public RequestController(
-        IRequestService requestService, 
-        IJwtTokenHelper jwtTokenHelper, 
-        WebSocketHandler webSocketHandler
-        )
-    {
-        _requestService = requestService;
-        _jwtTokenHelper = jwtTokenHelper;
-        _webSocketHandler = webSocketHandler;
-    }
-    
     [HttpGet(Name = "GetRequests")]
     public async Task<ActionResult<List<RequestDto>>> GetAll()
     {
-        var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
-        var userRole = _jwtTokenHelper.GetUserRole();
+        var userIdClaim = jwtTokenHelper.GetCurrentUserId();
+        var userRole = jwtTokenHelper.GetUserRole();
         
         if(userIdClaim == Guid.Empty) return NotFound("User not found");
         if (userRole != RoleEnum.Admin && userRole != RoleEnum.Maintainer) return Forbid();
 
-        var requests = await _requestService.GetAllRequestsAsync();
+        var requests = await requestService.GetAllRequestsAsync();
         
         if (requests.Count == 0) return NoContent();
         return Ok(requests);
@@ -48,48 +36,77 @@ public class RequestController : Controller
         [FromQuery] RequestType requestType,
         [FromQuery] RequestStatus requestStatus)
     {
-        var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
-        var userRole = _jwtTokenHelper.GetUserRole();
+        var userIdClaim = jwtTokenHelper.GetCurrentUserId();
+        var userRole = jwtTokenHelper.GetUserRole();
         
         if (userIdClaim == Guid.Empty) return NotFound("User not found");
         if (userRole != RoleEnum.Admin && userRole != RoleEnum.Maintainer) return Forbid();
 
-        var requests = await _requestService.GetRequestsByTypeAndStatus(requestType, requestStatus);
+        var requests = await requestService.GetRequestsByTypeAndStatus(requestType, requestStatus);
 
         if (requests.Count == 0) return NoContent();
         return Ok(requests);
-
-            
-        
     }
     
     [HttpGet("ProductByStatusWithDetails", Name = "GetRequestsProductByStatusWithDetails")]
     public async Task<ActionResult<List<RequestProductWithDetailsDto>>> GetRequestsProductByStatusWithDetails(
         [FromQuery] RequestStatus requestStatus)
     {
-        var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
-        var userRole = _jwtTokenHelper.GetUserRole();
+        var userIdClaim = jwtTokenHelper.GetCurrentUserId();
+        var userRole = jwtTokenHelper.GetUserRole();
         
         if (userIdClaim == Guid.Empty) return NotFound("User not found");
         if (userRole != RoleEnum.Admin && userRole != RoleEnum.Maintainer) return Forbid();
         
-        var requests = await _requestService.GetRequestsProductByStatusWithDetails(requestStatus);
+        var requests = await requestService.GetRequestsProductByStatusWithDetails(requestStatus);
             
         if (requests.Count == 0) return NoContent();
         return Ok(requests);
     }
     
     [HttpGet("RecipeByStatusWithDetails", Name = "GetRequestsRecipeByStatusWithDetails")]
-    public async Task<ActionResult<List<RequestProductWithDetailsDto>>> GetRequestsRecipeByStatusWithDetails(
+    public async Task<ActionResult<List<RequestRecipeWithDetailsDto>>> GetRequestsRecipeByStatusWithDetails(
         [FromQuery] RequestStatus requestStatus)
     {
-        var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
-        var userRole = _jwtTokenHelper.GetUserRole();
+        var userIdClaim = jwtTokenHelper.GetCurrentUserId();
+        var userRole = jwtTokenHelper.GetUserRole();
         
         if (userIdClaim == Guid.Empty) return NotFound("User not found");
         if (userRole != RoleEnum.Admin && userRole != RoleEnum.Maintainer) return Forbid();
         
-        var requests = await _requestService.GetRequestsRecipeByStatusWithDetails(requestStatus);
+        var requests = await requestService.GetRequestsRecipeByStatusWithDetails(requestStatus);
+            
+        if (requests.Count == 0) return NoContent();
+        return Ok(requests);
+    }
+    
+    [HttpGet("ProductTypeByStatusWithDetails", Name = "GetRequestsProductTypeByStatusWithDetails")]
+    public async Task<ActionResult<List<RequestProductTypeDto>>> GetRequestsProductTypeByStatusWithDetails(
+        [FromQuery] RequestStatus requestStatus)
+    {
+        var userIdClaim = jwtTokenHelper.GetCurrentUserId();
+        var userRole = jwtTokenHelper.GetUserRole();
+        
+        if (userIdClaim == Guid.Empty) return NotFound("User not found");
+        if (userRole != RoleEnum.Admin && userRole != RoleEnum.Maintainer) return Forbid();
+        
+        var requests = await requestService.GetRequestsProductTypeByStatus(requestStatus);
+            
+        if (requests.Count == 0) return NoContent();
+        return Ok(requests);
+    }
+    
+    [HttpGet("CategoriesByStatusWithDetails", Name = "GetRequestsCategoriesByStatusWithDetails")]
+    public async Task<ActionResult<List<RequestCategoryDto>>> GetRequestsCategoriesByStatusWithDetails(
+        [FromQuery] RequestStatus requestStatus)
+    {
+        var userIdClaim = jwtTokenHelper.GetCurrentUserId();
+        var userRole = jwtTokenHelper.GetUserRole();
+        
+        if (userIdClaim == Guid.Empty) return NotFound("User not found");
+        if (userRole != RoleEnum.Admin && userRole != RoleEnum.Maintainer) return Forbid();
+        
+        var requests = await requestService.GetRequestsCategoriesByStatus(requestStatus);
             
         if (requests.Count == 0) return NoContent();
         return Ok(requests);
@@ -98,16 +115,16 @@ public class RequestController : Controller
     [HttpPost]
     public async Task<ActionResult> CreateRequest(RequestCreateDto requestDto)
     {
-        var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
+        var userIdClaim = jwtTokenHelper.GetCurrentUserId();
         
         if (userIdClaim == Guid.Empty) return NotFound("User not found");
         
-        bool requestAlreadyCreated = await _requestService.CreateRequestAsync(requestDto, userIdClaim);
+        bool requestAlreadyCreated = await requestService.CreateRequestAsync(requestDto, userIdClaim);
         if (requestAlreadyCreated)
         {
             return Conflict("Request already created for this item.");
         }
-        await _webSocketHandler.BroadcastMessageAsync(new { Message = "Request added" });
+        await webSocketHandler.BroadcastMessageAsync(new { Message = "Request added" });
         return Ok();
     }
     [HttpPut("ChangeStatus", Name = "ChangeRequestStatus")]
@@ -115,18 +132,18 @@ public class RequestController : Controller
         [FromQuery] Guid id,
         [FromQuery] RequestStatus requestStatus)
     {
-        var userIdClaim = _jwtTokenHelper.GetCurrentUserId();
-        var userRole = _jwtTokenHelper.GetUserRole();
+        var userIdClaim = jwtTokenHelper.GetCurrentUserId();
+        var userRole = jwtTokenHelper.GetUserRole();
         
         if (userIdClaim == Guid.Empty) return NotFound("User not found");
         if (userRole != RoleEnum.Admin && userRole != RoleEnum.Maintainer) return Forbid();
         
-        await _requestService.ChangeRequestStatusAsync(id, requestStatus, userIdClaim);
+        await requestService.ChangeRequestStatusAsync(id, requestStatus, userIdClaim);
 
         if(requestStatus == RequestStatus.Rejected)
-            await _webSocketHandler.BroadcastMessageAsync(new { Message = "Request rejected" });
+            await webSocketHandler.BroadcastMessageAsync(new { Message = "Request rejected" });
         if(requestStatus == RequestStatus.Approved) 
-            await _webSocketHandler.BroadcastMessageAsync(new { Message = "Request approved" });
+            await webSocketHandler.BroadcastMessageAsync(new { Message = "Request approved" });
 
         return Ok();
     }

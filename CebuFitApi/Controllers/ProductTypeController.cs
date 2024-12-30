@@ -1,4 +1,5 @@
 ﻿using CebuFitApi.DTOs;
+using CebuFitApi.Helpers.Enums;
 using CebuFitApi.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,12 +14,12 @@ namespace CebuFitApi.Controllers
         IJwtTokenHelper jwtTokenHelper) : Controller
     {
         [HttpGet(Name = "GetProductTypes")]
-        public async Task<ActionResult<ProductTypeDto>> GetAll()
+        public async Task<ActionResult<ProductTypeDto>> GetAll(DataType dataType = DataType.Both)
         {
             var userIdClaim = jwtTokenHelper.GetCurrentUserId();
             if (userIdClaim == Guid.Empty) return NotFound("Username not found");
             
-            var productTypes = await productTypeService.GetAllProductTypesAsync(userIdClaim);
+            var productTypes = await productTypeService.GetAllProductTypesAsync(userIdClaim, dataType);
             if (productTypes.Count == 0) return NoContent();
             return Ok(productTypes);
         }
@@ -68,6 +69,7 @@ namespace CebuFitApi.Controllers
             
             var existingProductType = await productTypeService.GetProductTypeByIdAsync(productTypeId, userIdClaim);
             if (existingProductType == null) return NotFound();
+            if (existingProductType.IsPublic) return BadRequest("Cannot delete public product type.");
 
             await productTypeService.DeleteProductTypeAsync(productTypeId, userIdClaim);
             return Ok();
